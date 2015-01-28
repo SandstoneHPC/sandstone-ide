@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html ng-app="oide">
+<head>
+  <title></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+  <link href="app.less" type="text/css" rel="stylesheet/less">
+</head>
+<body>
+
+  <!-- Livereload script for development only (stripped during dist build) -->
+  <script src="http://localhost:35729/livereload.js" data-concat="false"></script>
+
+  <!-- JS from Bower Components -->
+  <script src="bower_components/less.js/dist/less-1.6.2.js" data-concat="false"></script>
+  <script src="bower_components/jquery/jquery.js"></script>
+  <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <script src="bower_components/underscore/underscore.js"></script>
+  <script src="bower_components/moment/moment.js"></script>
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-route/angular-route.js"></script>
+  <script src="bower_components/angular-animate/angular-animate.js"></script>
+  <script src="bower_components/angular-resource/angular-resource.js"></script>
+  <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+  <script src="bower_components/angular-ui-utils/ui-utils.js"></script>
+  <!-- Add New Bower Component JS Above -->
+
+
+  <!-- Main App JS -->
+  <script src="app.js"></script>
+  <!-- Add New Component JS Above -->
+
+  <div>
+    <div id="content" class="container">
+      <div class="row">
+        <div ng-view>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
