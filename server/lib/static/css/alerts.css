@@ -1,0 +1,6 @@
+#alert-area {
+  position: fixed;
+  top: 60px;
+  right: 10px;
+  z-index: 7000;
+}

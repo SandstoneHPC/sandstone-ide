@@ -25,7 +25,7 @@ class OIDEApplication(tornado.web.Application):
     def __init__(self, *args, **kwargs):
         
         handlers = [
-                (r"/static/(.*)", tornado.web.StaticFileHandler, {'path': os.path.join(STATIC_DIR,'static')}),
+                (r"/static/(.*)", tornado.web.StaticFileHandler, {'path': STATIC_DIR}),
             ] + URL_SCHEMA
 
         settings = dict(

@@ -1,0 +1,14 @@
+.ide-nav {
+  padding-top: 50px;
+}
+.ide-nav .col-lg-4 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+.ide-nav h2 {
+  font-weight: normal;
+}
+.ide-nav .col-lg-4 p {
+  margin-right: 10px;
+  margin-left: 10px;
+}
