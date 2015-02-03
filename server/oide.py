@@ -35,6 +35,7 @@ class OIDEApplication(tornado.web.Application):
             cookie_secret = global_settings.COOKIE_SECRET,
             debug = global_settings.DEBUG,
             xsrf_cookies=True,
+            ui_methods=ui_methods,
             )
 
         tornado.web.Application.__init__(self, handlers, **settings)
