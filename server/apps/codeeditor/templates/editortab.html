@@ -1,0 +1,10 @@
+{% if is_active %}
+<li class="opentab active">
+{% else %}
+<li class="opentab">
+{% end %}
+  <a href="#editortab-{{ enumeration }}" role="tab" data-toggle="tab">
+  <span class="editortab-save-indicator glyphicon">&nbsp;</span><span id="editortab-{{ enumeration }}-filename">{{ filename }}</span><span>&nbsp;&nbsp;</span>
+  <span class="editortab-close glyphicon glyphicon-remove pull-right"></span></a>
+  <input type="hidden" name="filepath" value="{{ filepath }}">
+</li>

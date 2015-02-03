@@ -1,0 +1,12 @@
+<li>
+  {% if is_dir %}
+  <input type="hidden" name="dirpath" value="{{ file_path }}">
+  <span class="directory-icon glyphicon glyphicon-folder-close">&nbsp;</span>
+  <span class="directory glyphicon">{{ file_name }}</span>
+  <ul class="no-bullet"></ul>
+  {% else %}
+  <input type="hidden" name="filepath" value="{{ file_path }}">
+  <span class="file-icon glyphicon glyphicon-file">&nbsp;</span>
+  <span class="file glyphicon">{{ file_name }}</span>
+  {% end %}
+</li>

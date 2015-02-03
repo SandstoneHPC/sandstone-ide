@@ -1,0 +1,115 @@
+html {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+body {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: Arial, Helvetica, sans-serif, Tahoma, Verdana, sans-serif;
+    font-size: 12px;
+    /*color: white;*/
+}
+
+.modal-dialogue {
+  min-height: 50%;
+  max-height: 50%;
+}
+
+.modal-body {
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.fileinput-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.fileinput-button input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  -ms-filter: 'alpha(opacity=0)';
+  font-size: 200px;
+  direction: ltr;
+  cursor: pointer;
+}
+
+.table>tbody>tr>td {
+  vertical-align: baseline;
+}
+
+.progress {
+  border: none;
+  background-color: inherit;
+  box-shadow: none;
+}
+
+.upload-bar {
+    height: 18px;
+    background: green;
+}
+
+#c9-logo, #ace-logo {
+    padding: 0;
+    border: none;
+}
+
+#options-panel {
+    position:absolute;
+    top: 50px;
+    height:100%;
+    width:260px
+}
+
+.input-rename {
+  height:20px;
+  width:106px;
+}
+
+#editor-wrapper {
+  position: absolute;
+  top: 50px;
+  left: 280px;
+  bottom: 0px;
+  right: 0px;
+  background: #272822;
+}
+
+#editor {
+    position: relative;
+    /*top:  30px;*/
+    /*left: 0px;*/
+    /*bottom: 20px;*/
+    /*right: 0px;*/
+    height: 100%;
+    width: 100%;
+    border-top-style: solid;
+    border-top-color: #428bca;
+    border-width: 1px;
+}
+
+#controls {
+    padding: 5px;
+}
+
+#controls td {
+    text-align: right;
+}
+
+#controls td + td {
+    text-align: left;
+}
+.ace_status-indicator {
+    color: gray;
+    position: absolute;
+    right: 0;
+    border-left: 1px solid;
+}

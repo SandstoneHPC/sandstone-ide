@@ -1,0 +1,17 @@
+<div class="filetree-container">
+
+      {% from apps.filebrowser.ui_methods import get_root_paths %}
+      
+      <ul class="no-bullet">
+      {% for root_path in get_root_paths(current_user) %}
+      <li>
+        <input type="hidden" name="dirpath" value="{{ root_path }}">
+        <span class="directory-icon glyphicon glyphicon-hdd">&nbsp;</span>
+        <span class="directory glyphicon">{{ root_path }}</span>
+        <ul class="no-bullet"></ul>
+      </li>
+      {% end %}
+      
+      </ul>
+</div>
+
