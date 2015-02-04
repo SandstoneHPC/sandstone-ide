@@ -9,7 +9,7 @@ from datetime import date
 from pymongo.connection import Connection
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_DIR = os.path.join(PROJECT_DIR,'../client')
+STATIC_DIR = os.path.join(PROJECT_DIR,'../client/oide')
 sys.path.insert(0, PROJECT_DIR)
 sys.path.insert(0, STATIC_DIR)
 

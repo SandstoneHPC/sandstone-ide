@@ -1,0 +1,16 @@
+{
+  "name": "OIDE",
+  "description": "Online Integrated Development Environment",
+  "homepage": "https://github.com/ResearchComputing/OIDE.git",
+  "license": "GPLv2",
+  "private": true,
+  "dependencies": {
+    "angular": "1.2.x",
+    "angular-route": "1.2.x",
+    "angular-loader": "1.2.x",
+    "angular-mocks": "~1.2.x",
+    "html5-boilerplate": "~4.3.0",
+    "bootstrap": "",
+    "angular-ui-bootstrap": ""
+  }
+}
