@@ -29,7 +29,7 @@ INSTALLED_MODULES = (
         },
         {
             'name': 'Web Terminal',
-            'link': '/#/webterminal',
+            'link': '/#/terminal',
             'description': 'The GateOne web terminal.'
         },
         {

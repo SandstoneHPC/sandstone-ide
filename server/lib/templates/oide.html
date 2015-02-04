@@ -1,37 +1,33 @@
-<!DOCTYPE html>
-<html lang="en" ng-app="oide" class="no-js">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>My AngularJS App</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends "base.html" %}
+
+{% block title %}Online Integrated Development Environment{% end %}
+
+{% block extra_head %}
   <link rel="stylesheet" href="/static/bower_components/html5-boilerplate/css/normalize.css">
   <link rel="stylesheet" href="/static/bower_components/html5-boilerplate/css/main.css">
   <link rel="stylesheet" href="/static/oide.css">
+
+  <link href="/static/filetree.css" rel="stylesheet" type="text/css" />
+  <link href="/static/editor/editor.css" rel="stylesheet" type="text/css" />
+
   <script src="/static/bower_components/html5-boilerplate/js/vendor/modernizr-2.6.2.min.js"></script>
-</head>
-<body>
-  <ul class="menu">
-    <li><a href="#/editor">view1</a></li>
-    <li><a href="#/terminal">view2</a></li>
-  </ul>
+{% end %}
 
-  <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-  <![endif]-->
+{% block content %}
+<div class="container-fluid" ng-app="oide">
 
-  <div ng-view></div>
+<div ng-view></div>
 
-  <div>Angular seed app: v<span app-version></span></div>
+</div>
+{% end %}
 
-  <script src="/static/bower_components/angular/angular.js"></script>
-  <script src="/static/bower_components/angular-route/angular-route.js"></script>
-  <script src="/static/oide.js"></script>
-  <script src="/static/editor/editor.js"></script>
-  <script src="/static/terminal/terminal.js"></script>
-  <script src="/static/components/version/version.js"></script>
-  <script src="/static/components/version/version-directive.js"></script>
-  <script src="/static/components/version/interpolate-filter.js"></script>
-</body>
-</html>
+{% block extra_script %}
+<script src="/static/bower_components/angular/angular.js"></script>
+<script src="/static/bower_components/angular-route/angular-route.js"></script>
+<script src="/static/oide.js"></script>
+<script src="/static/editor/editor.js"></script>
+<script src="/static/terminal/terminal.js"></script>
+<script src="/static/components/version/version.js"></script>
+<script src="/static/components/version/version-directive.js"></script>
+<script src="/static/components/version/interpolate-filter.js"></script>
+{% end %}
