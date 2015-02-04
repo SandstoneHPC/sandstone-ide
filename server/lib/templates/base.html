@@ -1,26 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-  {% block head %}
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="../../favicon.ico">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="../../favicon.ico">
 
-    <title>{% block title %}Welcome to OIDE!{% end %}</title>
+  <title>{% block title %}Welcome to OIDE!{% end %}</title>
 
-    <script src="/static/jquery/jquery-1.11.1.min.js"></script>
-    <script src="/static/jquery/jquery-ui/jquery-ui.min.js"></script>
-
-    {% block style %}
-    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/static/jquery/jquery-ui/jquery-ui.min.css" />
-    <link href="/static/css/base.css" rel="stylesheet">
-    <link href="/static/css/alerts.css" rel="stylesheet">
-    {% block extra_style %}
-    {% end %}
-    
-    {% end %}
+  <link href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/base.css" rel="stylesheet">
+  <link href="/static/alerts.css" rel="stylesheet">
+  {% block extra_head %}
   {% end %}
   </head>
 
@@ -47,37 +38,12 @@
       </div>
     </div>
 
-    {% block modal %}
-    {% end %}
-
-    {% block alerts %}
     <div id="alert-area" class="pull-right">
     </div>
-    {% end %}
 
   {% block content %}
     
   {% end %}
-
-
-    {% block script %}
-    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
-    <script>
-      function getCookie(name) {
-        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
-        return r ? r[1] : undefined;
-      }
-      Function.prototype.curry = function curry() {
-        var fn = this, args = Array.prototype.slice.call(arguments);
-        return function curryed() {
-          return fn.apply(this, args.concat(Array.prototype.slice.call(arguments)));
-        };
-      };
-    </script>
-    <script src="/static/js/alertmanager.js"></script>
-    {% block end_script %}
-    {% end %}
-    
-    {% end %}
+  
   </body>
 </html>

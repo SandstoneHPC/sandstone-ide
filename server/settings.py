@@ -19,17 +19,17 @@ MONGO_PORT = 27017
 INSTALLED_MODULES = (
         {
             'name': 'Code Editor',
-            'link': '/codeeditor',
+            'link': '/#/codeeditor',
             'description': 'A simple online editor for your code and other files.'
         },
         {
             'name': 'File Browser',
-            'link': '/filebrowser',
+            'link': '/#/filebrowser',
             'description': 'A powerful online file browser.'
         },
         {
             'name': 'Web Terminal',
-            'link': '/webterminal',
+            'link': '/#/webterminal',
             'description': 'The GateOne web terminal.'
         },
         {

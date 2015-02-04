@@ -10,6 +10,6 @@ class MainHandler(BaseHandler, DBMixin):
     
     @tornado.web.authenticated
     def get(self):
-        self.redirect('/codeeditor')
-        # self.render('lib/templates/main.html')
+        # self.redirect('/codeeditor')
+        self.render('lib/templates/oide.html')
             
