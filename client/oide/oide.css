@@ -1,4 +1,6 @@
-/* app css stylesheet */
+/* oide app-wide css stylesheet */
+
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
 body {
   padding-bottom: 40px;

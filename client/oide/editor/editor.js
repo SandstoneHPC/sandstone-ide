@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('oide.editor', ['ngRoute'])
+angular.module('oide.editor', ['ngRoute','ui.bootstrap'])
 
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/editor', {
