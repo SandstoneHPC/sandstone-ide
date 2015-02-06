@@ -11,12 +11,19 @@
     <title>Welcome to the OIDE!</title>
         <!-- Bootstrap core CSS -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- link for CSS when using the tree as a Dom element -->
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-tree-control/css/tree-control.css">
+    <!-- link for CSS when using the tree as an attribute -->
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-tree-control/css/tree-control-attribute.css">
     <style>
     /*
  * Base structure
  */
 
 /* Move down content because we have a fixed navbar that is 50px tall */
+html, body {
+  height: 100%;
+}
 body {
   padding-top: 50px;
 }
@@ -119,11 +126,30 @@ body {
 }
 #aceplace {
   padding-top: 20px;
-  width: 100%;
-  height: 900px;
-  border-style: none;
-  background-color: #666666;
-  color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  /*background-color: #666666;*/
+  /*color: white;*/
+  position: absolute;
+  top: 60px;
+  bottom: 90px;
+  right: 10px;
+  left: 10px;
+  margin: 10px;
+  margin-top: 0px;
+  margin-bottom: 15px;
+}
+.tab-icon {
+  display: none;
+}
+#find-menu {
+  position: absolute;
+  bottom: 0px;
+  right: 30px;
+  left: 30px;
+}
+.fill {
+  height: 100%;
 }
     </style>
 
@@ -151,33 +177,65 @@ body {
             <li><a href="#">Terminal</a></li>
             <li><a href="#">Scheduler</a></li>
           </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
         </div>
       </div>
     </nav>
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
 
+
+
+    <div class="container-fluid fill">
+      <div class="row fill">
+        <div class="col-sm-3 col-md-2 sidebar" ng-controller="TreeCtrl">
+           <treecontrol class="tree-classic" tree-model="TreeCrtl.treedata" expanded-nodes="expandedNodes" options="opts">
+               label: {{node.name}} ({{node.age}})
+           </treecontrol>
         </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main fill">
           <!-- <h2 class="sub-header">Section title</h2> -->
           <div>
-            <ul class="nav nav-tabs">
-              <li role="presentation" class="active"><a href="#">Doc1</a></li>
-              <li role="presentation"><a href="#">Doc2</a></li>
-              <li role="presentation"><a href="#">Doc3</a></li>
-            </ul>
+            <tabset vertical=false>
+              <tab active="tab.active">
+                <tab-heading>
+                    Doc1
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
+                    <span class="glyphicon glyphicon-remove"></span>
+                </tab-heading>
+              </tab>
+              <tab>
+                <tab-heading>
+                  Doc2
+                  <span class="glyphicon glyphicon-triangle-bottom"></span>
+                  <span class="glyphicon glyphicon-remove"></span>
+                  </tab-heading>
+                </tab>
+              <tab>
+                <tab-heading>
+                  Doc3
+                  <span class="glyphicon glyphicon-triangle-bottom"></span>
+                  <span class="glyphicon glyphicon-remove"></span>
+                </tab-heading>
+              </tab>
+              <tab>
+                <tab-heading>
+                  <span class="glyphicon glyphicon-plus"></span>
+                </tab-heading>
+              </tab>
+            </tabset>
           </div>
-          <div class="row placeholders">
-            <textarea id="aceplace"></textarea>
+          <div class="fill">
+            <!-- <textarea id="aceplace"></textarea> -->
+            <!-- <div id="aceplace" class="panel panel-default">
+              <div class="panel-body">
+                <div ui-ace>
+                </div>
+              </div>
+            </div> -->
+            <div id="aceplace" ui-ace></div>
 
-            <form class="form-horizontal">
-              <div class="form-group">
-                <div class="input-group" >
+            <form id="find-menu" class="form-horizontal">
+              <div class="form-group form-group-sm">
+                <div class="input-group input-group-sm" >
                   <span class="input-group-addon" popover="Case Sensitive" popover-trigger="mouseenter">
                     <input type="checkbox" aria-label="">
                     Aa
@@ -201,9 +259,14 @@ body {
                   </div>
                 </div>
               </div>
-              <div class="form-group">
-                <div class="input-group" >
+              <div class="form-group form-group-sm">
+                <div class="input-group input-group-sm" >
                   <input type="text" placeholder="Replace selected string with..." class="form-control" aria-label="...">
+                  <div class="input-group-btn">
+                    <button type="button" class="btn btn-default">&laquo; Replace Previous</button>
+                    <button type="button" class="btn btn-default">Replace Next &raquo;</button>
+                    <button type="button" class="btn btn-default">Replace All</button>
+                  </div>
                 </div>
               </div>
               
@@ -219,8 +282,39 @@ body {
 
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="bower_components/angular-ui-bootstrap/dist/ui-bootstrap-tpls-0.12.0.min.js"></script>
+    <script type="text/javascript" src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>
+  <script type="text/javascript" src="bower_components/angular-ui-ace/ui-ace.js"></script>
+  <script type="text/javascript" src="bower_components/angular-tree-control/angular-tree-control.js"></script>
     <script>
-    angular.module('uiMockup', ['ui.bootstrap'])
+    angular.module('uiMockup', ['ui.bootstrap','ui.ace','treeControl']);
+    // angular.module('uiMockup').directive('showOnHoverParent',
+    //    function() {
+    //       return {
+    //          link : function(scope, element, attrs) {
+    //             element.parent().bind('mouseenter', function() {
+    //                 element.show();
+    //             });
+    //             element.parent().bind('mouseleave', function() {
+    //                  element.hide();
+    //             });
+    //        }
+    //    };
+    // });
+    angular.module('uiMockup').controller('TreeCtrl', ['$scope', function($scope) {
+        $scope.treedata=[
+            { "name" : "Joe", "age" : "21", "children" : [
+                { "name" : "Smith", "age" : "42", "children" : [] },
+                { "name" : "Joe", "age" : "21", "children" : [
+                    { "name" : "Jenifer", "age" : "23", "children" : [
+                        { "name" : "Dani", "age" : "32", "children" : [] },
+                        { "name" : "Max", "age" : "34", "children" : [] }
+                    ]}
+                ]}
+            ]},
+            { "name" : "Albert", "age" : "33", "children" : [] },
+            { "name" : "Ron", "age" : "29", "children" : [] }
+        ];
+    }]);
     </script>
   </body>
 </html>
