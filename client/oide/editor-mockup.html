@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css" href="bower_components/angular-tree-control/css/tree-control.css">
     <!-- link for CSS when using the tree as an attribute -->
     <link rel="stylesheet" type="text/css" href="bower_components/angular-tree-control/css/tree-control-attribute.css">
+    <link rel="stylesheet" type="text/css" href="angular-tree-view.css">
     <style>
     /*
  * Base structure
@@ -148,6 +149,9 @@ body {
   right: 30px;
   left: 30px;
 }
+.partial-fill {
+  height: 90%;
+}
 .fill {
   height: 100%;
 }
@@ -187,8 +191,7 @@ body {
     <div class="container-fluid fill">
       <div class="row fill">
         <div class="col-sm-3 col-md-2 sidebar" ng-controller="TreeCtrl">
-           <treecontrol class="tree-classic" tree-model="TreeCrtl.treedata" expanded-nodes="expandedNodes" options="opts">
-               label: {{node.name}} ({{node.age}})
+           <treecontrol class="tree-classic" tree-model="treedata" on-selection="showSelected(node)"> label: {{node.label}} ({{node.id}} ) {{$index}}
            </treecontrol>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main fill">
@@ -223,14 +226,7 @@ body {
               </tab>
             </tabset>
           </div>
-          <div class="fill">
-            <!-- <textarea id="aceplace"></textarea> -->
-            <!-- <div id="aceplace" class="panel panel-default">
-              <div class="panel-body">
-                <div ui-ace>
-                </div>
-              </div>
-            </div> -->
+          <div class="partial-fill">
             <div id="aceplace" ui-ace></div>
 
             <form id="find-menu" class="form-horizontal">
@@ -285,36 +281,83 @@ body {
     <script type="text/javascript" src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>
   <script type="text/javascript" src="bower_components/angular-ui-ace/ui-ace.js"></script>
   <script type="text/javascript" src="bower_components/angular-tree-control/angular-tree-control.js"></script>
+  <script type="text/javascript" src="angular-tree-view.js"></script>
     <script>
-    angular.module('uiMockup', ['ui.bootstrap','ui.ace','treeControl']);
-    // angular.module('uiMockup').directive('showOnHoverParent',
-    //    function() {
-    //       return {
-    //          link : function(scope, element, attrs) {
-    //             element.parent().bind('mouseenter', function() {
-    //                 element.show();
-    //             });
-    //             element.parent().bind('mouseleave', function() {
-    //                  element.hide();
-    //             });
-    //        }
-    //    };
-    // });
-    angular.module('uiMockup').controller('TreeCtrl', ['$scope', function($scope) {
-        $scope.treedata=[
-            { "name" : "Joe", "age" : "21", "children" : [
-                { "name" : "Smith", "age" : "42", "children" : [] },
-                { "name" : "Joe", "age" : "21", "children" : [
-                    { "name" : "Jenifer", "age" : "23", "children" : [
-                        { "name" : "Dani", "age" : "32", "children" : [] },
-                        { "name" : "Max", "age" : "34", "children" : [] }
-                    ]}
-                ]}
-            ]},
-            { "name" : "Albert", "age" : "33", "children" : [] },
-            { "name" : "Ron", "age" : "29", "children" : [] }
-        ];
-    }]);
+      angular.module('uiMockup', ['ui.bootstrap','ui.ace','treeControl']);
+      angular.module('uiMockup').directive('showOnHoverParent',
+         function() {
+            return {
+               link : function(scope, element, attrs) {
+                  element.parent().bind('mouseenter', function() {
+                      element.show();
+                  });
+                  element.parent().bind('mouseleave', function() {
+                       element.hide();
+                  });
+             }
+         };
+      });
+      angular.module('uiMockup').controller('TreeCtrl', ['$scope', function($scope) {
+          function createSubTree(level, width, prefix) {
+                if (level > 0) {
+                    var res = [];
+                    for (var i=1; i <= width; i++)
+                        res.push({ "label" : "Node " + prefix + i, "id" : "id"+prefix + i, "i": i, "children": createSubTree(level-1, width, prefix + i +".") });
+                    return res;
+                }
+                else
+                    return [];
+            }
+           $scope.treedata=createSubTree(3, 4, "");
+           $scope.lastClicked = null;
+           $scope.buttonClick = function($event, node) {
+               $scope.lastClicked = node;
+               $event.stopPropagation();
+           }
+           $scope.showSelected = function(sel) {
+               $scope.selectedNode = sel;
+           };
+      }]);
+    // angular.module('uiMockup', ['ui.bootstrap','ui.ace','AxelSoft']);
+    // angular.module('uiMockup').controller('TreeCtrl', ['$scope', function($scope) {
+    //     $scope.breadcrums = [''];
+          
+    //       $scope.structure = { folders: [
+    //         { name: 'Folder 1', files: [{ name: 'File 1.jpg' }, { name: 'File 2.png' }], folders: [
+    //           { name: 'Subfolder 1', files: [{ name: 'Subfile 1.txt' }] },
+    //           { name: 'Subfolder 2' },
+    //           { name: 'Subfolder 3' }
+    //         ]},
+    //         { name: 'Folder 2' }
+    //       ]};
+          
+    //       $scope.options = {
+    //         onNodeSelect: function (node, breadcrums) {
+    //           $scope.breadcrums = breadcrums;
+    //         }
+    //       };
+          
+    //       $scope.options2 = {
+    //         collapsible: false
+    //       };
+          
+    //       var iconClassMap = {
+    //         txt: 'icon-file-text',
+    //         jpg: 'icon-picture blue',
+    //         png: 'icon-picture orange'
+    //       },
+    //         defaultIconClass = 'icon-file';
+          
+    //       $scope.options3 = {
+    //         mapIcon: function (file) {
+    //           var pattern = /\.(\w+)$/,
+    //             match = pattern.exec(file.name),
+    //             ext = match && match[1];
+              
+    //           return iconClassMap[ext] || defaultIconClass;
+    //         }
+    //       };
+    // }]);
     </script>
   </body>
 </html>
