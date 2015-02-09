@@ -140,6 +140,13 @@ body {
   margin-top: 0px;
   margin-bottom: 15px;
 }
+#editor-settings-icon {
+  color: rgb(85, 85, 85);
+  position: absolute;
+  top: 80px;
+  right: 30px;
+  z-index: 9999;
+}
 .tab-icon {
   display: none;
 }
@@ -227,6 +234,7 @@ body {
             </tabset>
           </div>
           <div class="partial-fill">
+            <span id="editor-settings-icon" class="glyphicon glyphicon-cog" popover="Editor Settings" popover-placement="bottom" popover-trigger="mouseenter"></span>
             <div id="aceplace" ui-ace></div>
 
             <form id="find-menu" class="form-horizontal">
