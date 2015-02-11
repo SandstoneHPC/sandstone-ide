@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="bower_components/angular-tree-control/css/tree-control.css">
     <!-- link for CSS when using the tree as an attribute -->
     <link rel="stylesheet" type="text/css" href="bower_components/angular-tree-control/css/tree-control-attribute.css">
-    <link rel="stylesheet" type="text/css" href="angular-tree-view.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <style>
     /*
  * Base structure
@@ -141,17 +141,17 @@ body {
   margin-bottom: 15px;
 }
 #editor-settings-icon {
-  color: rgb(85, 85, 85);
+  color: rgb(169, 169, 169);
   position: absolute;
   top: 80px;
   right: 30px;
   z-index: 9999;
 }
 .tab-icon {
-  /*display: none;*/
-  font-size: 9px;
+  position: relative;
+  font-size: 11px;
   margin-left: 6px;
-  top: 0px;
+  top: -1px;
 }
 #find-menu {
   position: absolute;
@@ -211,22 +211,22 @@ body {
               <tab active="tab.active">
                 <tab-heading>
                   Doc1
-                  <span class="glyphicon glyphicon-triangle-bottom tab-icon"></span>
-                  <span class="glyphicon glyphicon-remove tab-icon"></span>
+                  <span class="fa fa-caret-down tab-icon"></span>
+                  <span class="fa fa-times tab-icon"></span>
                 </tab-heading>
               </tab>
               <tab>
                 <tab-heading>
                   Doc2
-                  <span class="glyphicon glyphicon-triangle-bottom tab-icon"></span>
-                  <span class="glyphicon glyphicon-remove tab-icon"></span>
+                  <span class="fa fa-caret-down tab-icon"></span>
+                  <span class="fa fa-times tab-icon"></span>
                   </tab-heading>
                 </tab>
               <tab>
                 <tab-heading>
                   Doc3
-                  <span class="glyphicon glyphicon-triangle-bottom tab-icon"></span>
-                  <span class="glyphicon glyphicon-remove tab-icon"></span>
+                  <span class="fa fa-caret-down tab-icon"></span>
+                  <span class="fa fa-times tab-icon"></span>
                 </tab-heading>
               </tab>
               <tab>
@@ -237,7 +237,15 @@ body {
             </tabset>
           </div>
           <div class="partial-fill">
-            <span id="editor-settings-icon" class="glyphicon glyphicon-cog" popover="Editor Settings" popover-placement="bottom" popover-trigger="mouseenter"></span>
+            <!-- <span id="editor-settings-icon" class="glyphicon glyphicon-cog" popover="Editor Settings" popover-placement="bottom" popover-trigger="mouseenter"></span> -->
+            <span id="editor-settings-icon"
+              class="fa fa-cog fa-2x"
+              ng-class="{'fa-spin':hover}"
+              ng-mouseenter="hover=true"
+              ng-mouseleave="hover=false"
+              popover="Editor Settings"
+              popover-placement="bottom"
+              popover-trigger="mouseenter"></span>
             <div id="aceplace" ui-ace></div>
 
             <form id="find-menu" class="form-horizontal">
@@ -292,7 +300,6 @@ body {
     <script type="text/javascript" src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>
   <script type="text/javascript" src="bower_components/angular-ui-ace/ui-ace.js"></script>
   <script type="text/javascript" src="bower_components/angular-tree-control/angular-tree-control.js"></script>
-  <script type="text/javascript" src="angular-tree-view.js"></script>
     <script>
       angular.module('uiMockup', ['ui.bootstrap','ui.ace','treeControl']);
       angular.module('uiMockup').directive('showOnHoverParent',
@@ -329,46 +336,6 @@ body {
                $scope.selectedNode = sel;
            };
       }]);
-    // angular.module('uiMockup', ['ui.bootstrap','ui.ace','AxelSoft']);
-    // angular.module('uiMockup').controller('TreeCtrl', ['$scope', function($scope) {
-    //     $scope.breadcrums = [''];
-          
-    //       $scope.structure = { folders: [
-    //         { name: 'Folder 1', files: [{ name: 'File 1.jpg' }, { name: 'File 2.png' }], folders: [
-    //           { name: 'Subfolder 1', files: [{ name: 'Subfile 1.txt' }] },
-    //           { name: 'Subfolder 2' },
-    //           { name: 'Subfolder 3' }
-    //         ]},
-    //         { name: 'Folder 2' }
-    //       ]};
-          
-    //       $scope.options = {
-    //         onNodeSelect: function (node, breadcrums) {
-    //           $scope.breadcrums = breadcrums;
-    //         }
-    //       };
-          
-    //       $scope.options2 = {
-    //         collapsible: false
-    //       };
-          
-    //       var iconClassMap = {
-    //         txt: 'icon-file-text',
-    //         jpg: 'icon-picture blue',
-    //         png: 'icon-picture orange'
-    //       },
-    //         defaultIconClass = 'icon-file';
-          
-    //       $scope.options3 = {
-    //         mapIcon: function (file) {
-    //           var pattern = /\.(\w+)$/,
-    //             match = pattern.exec(file.name),
-    //             ext = match && match[1];
-              
-    //           return iconClassMap[ext] || defaultIconClass;
-    //         }
-    //       };
-    // }]);
     </script>
   </body>
 </html>
