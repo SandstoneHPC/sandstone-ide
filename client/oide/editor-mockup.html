@@ -136,8 +136,8 @@ body {
   position: absolute;
   top: 60px;
   bottom: 90px;
-  right: 10px;
-  left: 10px;
+  right: 6px;
+  left: 6px;
   margin: 10px;
   margin-top: -4px;
   margin-bottom: 15px;
@@ -170,6 +170,12 @@ body {
 .fill {
   height: 100%;
 }
+/*.filetree-container {
+  padding-top: 55px;
+}*/
+/*.filetree-breadcrumb {
+  height: 36px;
+}*/
     </style>
 
 
@@ -205,7 +211,12 @@ body {
 
     <div class="container-fluid fill">
       <div class="row fill">
-        <div class="col-sm-3 col-md-2 sidebar" ng-controller="TreeCtrl">
+        <div class="filetree-container col-sm-3 col-md-2 sidebar" ng-controller="TreeCtrl">
+          <ol class="breadcrumb filetree-breadcrumb">
+            <li>Home</a></li>
+            <li>Library</li>
+            <li class="active">Data</li>
+          </ol>
           <treecontrol
             class="tree-oide"
             tree-model="treedata"
