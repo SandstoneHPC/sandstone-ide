@@ -213,15 +213,15 @@ body {
       <div class="row fill">
         <div class="filetree-container col-sm-3 col-md-2 sidebar" ng-controller="TreeCtrl">
           <ol class="breadcrumb filetree-breadcrumb">
-            <li>Home</a></li>
-            <li>Library</li>
-            <li class="active">Data</li>
+            <li>lustre</a></li>
+            <li>ProjectDir</li>
+            <li class="active">modules</li>
           </ol>
           <treecontrol
             class="tree-oide"
-            tree-model="treedata"
+            tree-model="treeData"
             options="treeOptions"
-            on-selection="showSelected(node)"> label: {{node.label}} ({{node.id}} ) {{$index}}
+            on-selection="showSelected(node)"> {{node.filename}} <span class="filetree-permissions">{{node.permissions}}</span>
           </treecontrol>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main fill">
@@ -374,7 +374,20 @@ body {
                 else
                     return [];
             }
-          $scope.treedata=createSubTree(3, 4, "");
+          $scope.treeData=[
+                { "filename" : "/lustre/", "children" : [
+                    { "filename" : "testFile.py", "permissions" : "rwxrw-r--", "children" : [] },
+                    { "filename" : "ProjectDir", "permissions" : "rwxrw-r--", "children" : [
+                        { "filename" : "modules", "permissions" : "rwxrw-r--", "children" : [
+                            { "filename" : "__init__.py", "permissions" : "rwxrw-r--", "children" : [] },
+                            { "filename" : "coolModule.py", "permissions" : "rwxrw-r--", "children" : [] }
+                        ]}
+                    ]}
+                ]},
+                { "filename" : "/projects/", "children" : [
+                  { "filename" : "outfile.txt", "permissions" : "rwxrw-r--", "children" : [] }
+                ] }
+            ];
           $scope.treeOptions = {
             injectClasses: {
               iExpanded: "filetree-icon fa fa-folder-open",

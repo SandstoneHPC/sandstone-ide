@@ -1,6 +1,11 @@
 .filetree-icon {
     color: #3e3f3a;
 }
+.filetree-permissions {
+    margin-left: 10px;
+    font-style: italic;
+    color: #A6A6A6;
+}
 treecontrol.tree-oide li.tree-expanded i {
     padding: 1px 10px;
     /*background: url("../images/folder.png") no-repeat;*/
