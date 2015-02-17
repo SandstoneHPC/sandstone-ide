@@ -147,7 +147,10 @@ body {
   position: absolute;
   bottom: 120px;
   right: 30px;
-  z-index: 9999;
+  z-index: 10000;
+}
+#editor-settings-icon.clicked {
+  color: white !important;
 }
 .tab-icon {
   position: relative;
@@ -178,9 +181,38 @@ body {
 .filetree-container {
   padding-top: 55px;
 }
-/*.filetree-breadcrumb {
-  height: 36px;
-}*/
+#editor-nav-tabs li.active {
+  z-index: 10000;
+}
+#editor-settings-menu {
+  position: absolute;
+  left: inherit;
+  right: 0px;
+}
+#editor-settings-header {
+  color: #93c54b;
+  margin: 10px;
+  margin-bottom: 30px;
+}
+#editor-settings-form {
+  padding: 20px;
+}
+#editor-settings-sidebar {
+  padding-top: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  position: absolute;
+  top: 60px;
+  bottom: 90px;
+  right: 6px;
+  color: white;
+  margin: 10px;
+  margin-top: -4px;
+  margin-bottom: 15px;
+
+  background-color: #3e3f3a;
+  z-index: 9998;
+}
     </style>
 
 
@@ -230,16 +262,31 @@ body {
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main fill">
           <!-- <h2 class="sub-header">Section title</h2> -->
-          <div>
+          <div id="editor-nav-tabs">
             <tabset vertical=false>
               <tab active="tab.active">
                 <tab-heading>
                   Doc1
                   <span
-                    class="fa fa-caret-down tab-icon"
+                    class="fa fa-caret-down tab-icon dropdown"
                     ng-class="{'tab-icon-selected':hoverMenu}"
                     ng-mouseenter="hoverMenu=true"
-                    ng-mouseleave="hoverMenu=false">
+                    ng-mouseleave="hoverMenu=false"
+                    dropdown
+                    dropdown-toggle>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Undo</a></li>
+                      <li><a href="#">Redo</a></li>
+                      <li><a href="#">Cut</a></li>
+                      <li><a href="#">Copy</a></li>
+                      <li><a href="#">Paste</a></li>
+                      <li><a href="#">Find &amp; Replace</a></li>
+                      <li><a href="#">Comment Selection</a></li>
+                      <li class="divider"></li>
+                      <li><a href="#">Save</a></li>
+                      <li><a href="#">Save As</a></li>
+                      <li><a href="#">Close File</a></li>
+                    </ul>
                   </span>
                   <span
                     class="fa fa-times tab-icon"
@@ -277,13 +324,54 @@ body {
             <!-- <span id="editor-settings-icon" class="glyphicon glyphicon-cog" popover="Editor Settings" popover-placement="bottom" popover-trigger="mouseenter"></span> -->
             <span id="editor-settings-icon"
               class="fa fa-cog fa-2x"
-              ng-class="{'fa-spin':hover}"
-              ng-mouseenter="hover=true"
-              ng-mouseleave="hover=false"
               tooltip="Editor Settings"
               tooltip-trigger="mouseenter"
-              tooltip-placement="top"></span>
-
+              tooltip-placement="top"
+              ng-mouseenter="hover=true"
+              ng-mouseleave="hover=false"
+              ng-init="settingsOpen=false"
+              ng-class="{'clicked':settingsOpen,'fa-spin':hover}"
+              ng-click="settingsOpen=!settingsOpen">
+            </span>
+            <div id="editor-settings-sidebar" ng-show="settingsOpen">
+              <h3 id="editor-settings-header" class="pull-right">Editor Settings</h3>
+              <form id="editor-settings-form" role="form">
+                  <div class="checkbox">
+                    <label>
+                      <input id="settings-soft-tabs" type="checkbox" checked> Use soft tabs
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <label for="settings-tab-size">Tab size</label>
+                    <select id="settings-tab-size" class="form-control input-sm">
+                      <option value=1>1</option>
+                      <option value=2>2</option>
+                      <option value=3>3</option>
+                      <option value=4 selected="selected">4</option>
+                      <option value=5>5</option>
+                      <option value=6>6</option>
+                      <option value=7>7</option>
+                      <option value=8>8</option>
+                    </select>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input id="settings-show-invisibles" type="checkbox"> Show invisible characters
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <label for="settings-font-size">Font Size</label>
+                    <select id="settings-font-size" class="form-control input-sm">
+                      <option value=10>10</option>
+                      <option value=12 selected="selected">12</option>
+                      <option value=14>14</option>
+                      <option value=16>16</option>
+                      <option value=18>18</option>
+                      <option value=20>20</option>
+                    </select>
+                  </div>
+                </form>
+              </div>
             <div id="aceplace" ui-ace="editorOption" ng-model="editorModel"></div>
 
             <form id="find-menu" class="form-horizontal">
