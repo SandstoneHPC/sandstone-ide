@@ -24,7 +24,7 @@ treecontrol.tree-oide li.tree-leaf i {
 
 treecontrol.tree-oide li .tree-selected {
     /*background-color: #aaddff;*/
-    color: #337ab7;
+    color: #93c54b;
     font-weight: bold;
 }
 
@@ -46,5 +46,5 @@ treecontrol.tree-oide li .tree-selected {
 
 [treecontrol].tree-oide li .tree-selected {
     /*background-color: #aaddff;*/
-    color: #337ab7: bold;
+    color: #93c54b: bold;
 }
