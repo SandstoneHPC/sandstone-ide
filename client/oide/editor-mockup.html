@@ -338,20 +338,22 @@ body {
               <form id="editor-settings-form" role="form">
                   <div class="checkbox">
                     <label>
-                      <input type="checkbox" ng-model="useSoftTabs"> Use soft tabs
+                      <input
+                        type="checkbox"
+                        ng-model="useSoftTabs"
+                        ng-change="setUseSoftTabs()">
+                      Use soft tabs
                     </label>
                   </div>
                   <div class="form-group">
                     <label for="settings-tab-size">Tab size</label>
-                    <select id="settings-tab-size" class="form-control input-sm">
-                      <option value=1>1</option>
-                      <option value=2>2</option>
-                      <option value=3>3</option>
-                      <option value=4 selected="selected">4</option>
-                      <option value=5>5</option>
-                      <option value=6>6</option>
-                      <option value=7>7</option>
-                      <option value=8>8</option>
+                    <select
+                      id="settings-tab-size"
+                      class="form-control input-sm"
+                      ng-model="tabSize"
+                      ng-change="setTabSize()"
+                      ng-options="opt as opt.label for opt in tabOptions">
+                      <option value="" selected="selected">4 (default)</option>
                     </select>
                   </div>
                   <div class="checkbox">
@@ -371,6 +373,7 @@ body {
                       ng-model="fontSize"
                       ng-change="setFontSize()"
                       ng-options="opt as opt.label for opt in fontOptions">
+                      <option value="" selected="selected">12 (default)</option>
                     </select>
                   </div>
                 </form>
@@ -461,10 +464,15 @@ body {
       });
       angular.module('uiMockup').controller('EditorCtrl', ['$scope', function($scope) {
         $scope.showInvisibles = true;
-        $scope.fontSize = 12;
+        $scope.useSoftTabs = true;
+        $scope.fontSize = { label:12, value:12 };
+        $scope.tabSize = { label:4, value:4 };
         var fontSizes = [];
+        var tabSizes = [];
+        for (var i=1;i<9;i++) { tabSizes.push({ label:i, value:i }) }
         for (var i=8;i<21;i+=2) { fontSizes.push({ label:i, value:i }) }
         $scope.fontOptions = fontSizes;
+        $scope.tabOptions = tabSizes;
         $scope.editorOptions = {
           disableSearch: true,
           showInvisibles: $scope.showInvisibles,
@@ -477,9 +485,15 @@ body {
               _ace.find('test');
               _ace.replace('tested');
             };
+            $scope.setTabSize = function () {
+              _ace.getSession().setTabSize($scope.tabSize.value);
+            };
             $scope.setFontSize = function () {
-              _ace.setFontSize($scope.fontSize);
-            },
+              _ace.setFontSize($scope.fontSize.value);
+            };
+            $scope.setUseSoftTabs = function () {
+              _ace.getSession().setUseSoftTabs($scope.tabSize.value);
+            };
             $scope.setShowInvisibles = function () {
               _ace.setShowInvisibles($scope.showInvisibles);
             };
