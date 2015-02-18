@@ -338,7 +338,7 @@ body {
               <form id="editor-settings-form" role="form">
                   <div class="checkbox">
                     <label>
-                      <input id="settings-soft-tabs" type="checkbox" checked> Use soft tabs
+                      <input type="checkbox" ng-model="useSoftTabs"> Use soft tabs
                     </label>
                   </div>
                   <div class="form-group">
@@ -356,23 +356,26 @@ body {
                   </div>
                   <div class="checkbox">
                     <label>
-                      <input id="settings-show-invisibles" type="checkbox"> Show invisible characters
+                      <input
+                        type="checkbox"
+                        ng-model="showInvisibles"
+                        ng-change="setShowInvisibles()">
+                      Show invisible characters
                     </label>
                   </div>
                   <div class="form-group">
                     <label for="settings-font-size">Font Size</label>
-                    <select id="settings-font-size" class="form-control input-sm">
-                      <option value=10>10</option>
-                      <option value=12 selected="selected">12</option>
-                      <option value=14>14</option>
-                      <option value=16>16</option>
-                      <option value=18>18</option>
-                      <option value=20>20</option>
+                    <select
+                      id="settings-font-size"
+                      class="form-control input-sm"
+                      ng-model="fontSize"
+                      ng-change="setFontSize()"
+                      ng-options="opt as opt.label for opt in fontOptions">
                     </select>
                   </div>
                 </form>
               </div>
-            <div id="aceplace" ui-ace="editorOption" ng-model="editorModel"></div>
+            <div id="aceplace" ui-ace="editorOptions" ng-model="editorModel"></div>
 
             <form id="find-menu" class="form-horizontal">
               <div class="form-group form-group-sm">
@@ -457,14 +460,28 @@ body {
          };
       });
       angular.module('uiMockup').controller('EditorCtrl', ['$scope', function($scope) {
-        $scope.editorOption = {
+        $scope.showInvisibles = true;
+        $scope.fontSize = 12;
+        var fontSizes = [];
+        for (var i=8;i<21;i+=2) { fontSizes.push({ label:i, value:i }) }
+        $scope.fontOptions = fontSizes;
+        $scope.editorOptions = {
+          disableSearch: true,
+          showInvisibles: $scope.showInvisibles,
+          showIndentGuides: true,
+          useSoftTabs: $scope.useSoftTabs,
           onLoad: function (_ace) {
-
             // HACK to have the ace instance in the scope...
             $scope.findString = function () {
               // _ace.getSession().setMode("ace/mode/" + $scope.mode.toLowerCase());
               _ace.find('test');
               _ace.replace('tested');
+            };
+            $scope.setFontSize = function () {
+              _ace.setFontSize($scope.fontSize);
+            },
+            $scope.setShowInvisibles = function () {
+              _ace.setShowInvisibles($scope.showInvisibles);
             };
           }
         };
