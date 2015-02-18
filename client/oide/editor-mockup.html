@@ -342,7 +342,8 @@ body {
             tree-model="treeData"
             options="treeOptions"
             order-by="type+filename"
-            on-selection="showSelected(node)">
+            selected-nodes="selectedNodes"
+            on-selection="showSelected(node, selected)">
             {{node.filename}}
             <span class="filetree-permissions">{{node.permissions}}</span>
           </treecontrol>
@@ -621,19 +622,18 @@ body {
                 ]}
             ];
           $scope.treeOptions = {
+            multiSelection: true,
             injectClasses: {
               iExpanded: "filetree-icon fa fa-folder-open",
               iCollapsed: "filetree-icon fa fa-folder",
               iLeaf: "filetree-icon fa fa-file",
             }
           };
-          $scope.lastClicked = null;
-          $scope.buttonClick = function($event, node) {
-              $scope.lastClicked = node;
-              $event.stopPropagation();
-          }
-          $scope.showSelected = function(sel) {
-              $scope.selectedNode = sel;
+          $scope.selectedNodes = [];
+          $scope.showSelected = function(node, selected) {
+            console.log(node);
+            console.log(selected);
+              // $scope.selectedNodes = selected;
           };
       }]);
     </script>
