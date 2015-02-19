@@ -267,83 +267,94 @@ body {
     <div class="container-fluid fill">
       <div class="row fill">
         <div class="filetree-container col-sm-3 col-md-2 sidebar" ng-controller="TreeCtrl">
-          <div class="btn-toolbar filetree-controls" role="toolbar" aria-label="...">
-            <div class="btn-group" role="group">
-              <button
-                type="button"
-                class="btn btn-default btn-sm filetree-btn"
-                tooltip="New File"
-                tooltip-trigger="mouseenter"
-                tooltip-placement="bottom">
-                <span class="fa fa-file"></span>
-              </button>
-              <button
-                type="button"
-                class="btn btn-default btn-sm filetree-btn"
-                tooltip="New Folder"
-                tooltip-trigger="mouseenter"
-                tooltip-placement="bottom">
-                <span class="fa fa-folder"></span>
-              </button>
-              <button
-                type="button"
-                class="btn btn-default btn-sm filetree-btn"
-                tooltip="Edit Selected"
-                tooltip-trigger="mouseenter"
-                tooltip-placement="bottom">
-                <span class="fa fa-pencil"></span>
-              </button>
+          <!-- <div class="btn-toolbar filetree-controls" role="toolbar" aria-label="..."> -->
+            <div class="btn-group btn-group-sm btn-group-justified filetree-controls" role="group">
+              <div class="btn-group btn-group-sm" role="group">
+                <button
+                  type="button"
+                  class="btn btn-default filetree-btn"
+                  tooltip="New File"
+                  tooltip-trigger="mouseenter"
+                  tooltip-placement="bottom"
+                  ng-disabled="noSelections||(multipleSelections||!dirSelected)">
+                  <span class="fa fa-file"></span>
+                </button>
+              </div>
+              <div class="btn-group btn-group-sm" role="group">
+                <button
+                  type="button"
+                  class="btn btn-default filetree-btn"
+                  tooltip="New Folder"
+                  tooltip-trigger="mouseenter"
+                  tooltip-placement="bottom"
+                  ng-disabled="noSelections||(multipleSelections||!dirSelected)">
+                  <span class="fa fa-folder"></span>
+                </button>
+              </div>
+              <div class="btn-group btn-group-sm" role="group">
+                <button
+                  type="button"
+                  class="btn btn-default filetree-btn"
+                  tooltip="Edit Selected"
+                  tooltip-trigger="mouseenter"
+                  tooltip-placement="bottom"
+                  ng-disabled="noSelections||dirSelected">
+                  <span class="fa fa-pencil"></span>
+                </button>
+              </div>
+              <div class="btn-group btn-group-sm" role="group">
+                <button
+                  type="button"
+                  class="btn btn-default filetree-btn"
+                  tooltip="Duplicate Selected"
+                  tooltip-trigger="mouseenter"
+                  tooltip-placement="bottom"
+                  ng-disabled="noSelections||multipleSelections">
+                  <span class="fa fa-files-o"></span>
+                </button>
+              </div>
+              <div class="btn-group btn-group-sm" role="group">
+                <button
+                  type="button"
+                  class="btn btn-default filetree-btn"
+                  tooltip="Move Selected"
+                  tooltip-trigger="mouseenter"
+                  tooltip-placement="bottom"
+                  ng-disabled="noSelections">
+                  <span class="fa fa-file-o"></span>
+                </button>
+              </div>
+              <div class="btn-group btn-group-sm" role="group">
+                <button
+                  type="button"
+                  class="btn btn-default filetree-btn"
+                  tooltip="Delete Selected"
+                  tooltip-trigger="mouseenter"
+                  tooltip-placement="bottom"
+                  ng-disabled="noSelections">
+                  <span class="fa fa-trash-o"></span>
+                </button>
+              </div>
+              <div class="btn-group btn-group-sm" role="group">
+                <button
+                  type="button"
+                  class="btn btn-default filetree-btn"
+                  tooltip="File Info"
+                  tooltip-trigger="mouseenter"
+                  tooltip-placement="bottom"
+                  ng-disabled="noSelections||multipleSelections">
+                  <span class="fa fa-info"></span>
+                </button>
+              </div>
             </div>
-            <div class="btn-group" role="group">
-              <button
-                type="button"
-                class="btn btn-default btn-sm filetree-btn"
-                tooltip="Duplicate Selected"
-                tooltip-trigger="mouseenter"
-                tooltip-placement="bottom">
-                <span class="fa fa-files-o"></span>
-              </button>
-              <button
-                type="button"
-                class="btn btn-default btn-sm filetree-btn"
-                tooltip="Move Selected"
-                tooltip-trigger="mouseenter"
-                tooltip-placement="bottom">
-                <span class="fa fa-file-o"></span>
-              </button>
-              <button
-                type="button"
-                class="btn btn-default btn-sm filetree-btn"
-                tooltip="Delete Selected"
-                tooltip-trigger="mouseenter"
-                tooltip-placement="bottom">
-                <span class="fa fa-trash-o"></span>
-              </button>
-              <button
-                type="button"
-                class="btn btn-default btn-sm filetree-btn"
-                tooltip="Rename"
-                tooltip-trigger="mouseenter"
-                tooltip-placement="bottom">
-                <span class="fa fa-file-text-o"></span>
-              </button>
-              <button
-                type="button"
-                class="btn btn-default btn-sm filetree-btn"
-                tooltip="File Info"
-                tooltip-trigger="mouseenter"
-                tooltip-placement="bottom">
-                <span class="fa fa-info"></span>
-              </button>
-            </div>
-          </div>
+          <!-- </div> -->
           <treecontrol
             class="tree-oide"
             tree-model="treeData"
             options="treeOptions"
             order-by="type+filename"
             selected-nodes="selectedNodes"
-            on-selection="showSelected(node, selected)">
+            on-selection="disableFilecontrols(node, selected)">
             {{node.filename}}
             <span class="filetree-permissions">{{node.permissions}}</span>
           </treecontrol>
@@ -629,7 +640,21 @@ body {
               iLeaf: "filetree-icon fa fa-file",
             }
           };
+          $scope.noSelections = true;
+          $scope.multipleSelections = false;
+          $scope.dirSelected = false;
           $scope.selectedNodes = [];
+          $scope.disableFilecontrols = function(node, selected) {
+            $scope.multipleSelections = $scope.selectedNodes.length > 1;
+            $scope.noSelections = $scope.selectedNodes.length === 0;
+            var dirSelected = false;
+            for (var i in $scope.selectedNodes) {
+              if ($scope.selectedNodes[i].type==='dir') {
+                dirSelected = true;
+              }
+            }
+            $scope.dirSelected = dirSelected;
+          };
           $scope.showSelected = function(node, selected) {
             console.log(node);
             console.log(selected);
