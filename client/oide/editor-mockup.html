@@ -486,15 +486,17 @@ body {
                     class="input-group-addon"
                     tooltip="Case Sensitive"
                     tooltip-trigger="mouseenter"
-                    tooltip-placement="top">
-                    <input type="checkbox" aria-label="">
+                    tooltip-placement="top"
+                    ng-model="findCaseSensitive">
+                    <input type="checkbox">
                     Aa
                   </span>
                   <span
                     class="input-group-addon"
                     tooltip="Match Whole Word"
                     tooltip-trigger="mouseenter"
-                    tooltip-placement="top">
+                    tooltip-placement="top"
+                    ng-model="findWholeWord">
                     <input type="checkbox" aria-label="">
                     \b
                   </span>
@@ -502,7 +504,8 @@ body {
                     class="input-group-addon"
                     tooltip="Use Regular Expressions"
                     tooltip-trigger="mouseenter"
-                    tooltip-placement="top">
+                    tooltip-placement="top"
+                    ng-model="findRegEx">
                     <input type="checkbox" aria-label="">
                     [.*]
                   </span>
@@ -510,23 +513,52 @@ body {
                     class="input-group-addon"
                     tooltip="Wrap Around"
                     tooltip-trigger="mouseenter"
-                    tooltip-placement="top">
+                    tooltip-placement="top"
+                    ng-model="findWrapAround">
                     <input type="checkbox" aria-label="">
                     Wrap
                   </span>
-                  <input type="text" placeholder="Find string in current document..." class="form-control" aria-label="...">
+                  <input
+                    type="text"
+                    placeholder="Find string in current document..."
+                    class="form-control"
+                    ng-model="findNeedle">
                   <div class="input-group-btn">
-                    <button type="button" class="btn btn-default">&laquo; Find Previous</button>
-                    <button type="button" class="btn btn-default">Find Next &raquo;</button>
+                    <button
+                      type="button"
+                      class="btn btn-default"
+                      ng-click="findPreviousString()">
+                      &laquo; Find Previous
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-default"
+                      ng-click="findString()">
+                      Find Next &raquo;
+                    </button>
                   </div>
                 </div>
               </div>
               <div class="form-group form-group-sm">
                 <div class="input-group input-group-sm" >
-                  <input type="text" placeholder="Replace selected string with..." class="form-control" aria-label="...">
+                  <input
+                    type="text"
+                    placeholder="Replace selected string with..."
+                    class="form-control"
+                    ng-model="replaceNeedle">
                   <div class="input-group-btn">
-                    <button type="button" class="btn btn-default">Replace</button>
-                    <button type="button" class="btn btn-default">Replace All</button>
+                    <button
+                      type="button"
+                      class="btn btn-default"
+                      ng-click="replaceCurrentString()">
+                      Replace
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-default"
+                      ng-click="replaceAllStrings()">
+                      Replace All
+                    </button>
                   </div>
                 </div>
               </div>
@@ -580,9 +612,28 @@ body {
           onLoad: function (_ace) {
             // HACK to have the ace instance in the scope...
             $scope.findString = function () {
-              // _ace.getSession().setMode("ace/mode/" + $scope.mode.toLowerCase());
-              _ace.find('test');
-              _ace.replace('tested');
+              var options = {
+                wrap: $scope.findWrapAround,
+                caseSensitive: $scope.findCaseSensitive,
+                wholeWord: $scope.findWholeWord,
+                regExp: $scope.findRegEx
+              };
+              _ace.find($scope.findNeedle, options);
+            };
+            $scope.findPreviousString = function () {
+              var options = {
+                wrap: $scope.findWrapAround,
+                caseSensitive: $scope.findCaseSensitive,
+                wholeWord: $scope.findWholeWord,
+                regExp: $scope.findRegEx
+              };
+              _ace.findPrevious($scope.findNeedle, options);
+            };
+            $scope.replaceCurrentString = function () {
+              _ace.replace($scope.replaceNeedle);
+            };
+            $scope.replaceAllStrings = function () {
+              _ace.replaceAll($scope.replaceNeedle);
             };
             $scope.setTabSize = function () {
               _ace.getSession().setTabSize($scope.tabSize.value);
