@@ -419,7 +419,7 @@ body {
               </tab>
             </tabset>
           </div>
-          <div class="partial-fill" ng-controller="EditorCtrl">
+          <div class="partial-fill">
             <!-- <span id="editor-settings-icon" class="glyphicon glyphicon-cog" popover="Editor Settings" popover-placement="bottom" popover-trigger="mouseenter"></span> -->
             <span id="editor-settings-icon"
               class="fa fa-cog fa-2x"
@@ -477,45 +477,57 @@ body {
                   </div>
                 </form>
               </div>
-            <div id="aceplace" ui-ace="editorOptions" ng-model="editorModel"></div>
+            <div
+              id="aceplace"
+              ui-ace="{onLoad:onAceLoad}"
+              ng-model="editorModel"
+              ng-controller="EditorCtrl">
+            </div>
 
-            <form id="find-menu" class="form-horizontal">
+            <form
+              id="find-menu"
+              class="form-horizontal"
+              ng-controller="EditorFindCtrl">
               <div class="form-group form-group-sm">
                 <div class="input-group input-group-sm" >
                   <span
                     class="input-group-addon"
                     tooltip="Case Sensitive"
                     tooltip-trigger="mouseenter"
-                    tooltip-placement="top"
-                    ng-model="findCaseSensitive">
-                    <input type="checkbox">
+                    tooltip-placement="top">
+                    <input
+                      type="checkbox"
+                      ng-model="findOptions.caseSensitive">
                     Aa
                   </span>
                   <span
                     class="input-group-addon"
                     tooltip="Match Whole Word"
                     tooltip-trigger="mouseenter"
-                    tooltip-placement="top"
-                    ng-model="findWholeWord">
-                    <input type="checkbox" aria-label="">
+                    tooltip-placement="top">
+                    <input
+                      type="checkbox"
+                      ng-model="findOptions.wholeWord">
                     \b
                   </span>
                   <span
                     class="input-group-addon"
                     tooltip="Use Regular Expressions"
                     tooltip-trigger="mouseenter"
-                    tooltip-placement="top"
-                    ng-model="findRegEx">
-                    <input type="checkbox" aria-label="">
+                    tooltip-placement="top">
+                    <input
+                      type="checkbox"
+                      ng-model="findOptions.regExp">
                     [.*]
                   </span>
                   <span
                     class="input-group-addon"
                     tooltip="Wrap Around"
                     tooltip-trigger="mouseenter"
-                    tooltip-placement="top"
-                    ng-model="findWrapAround">
-                    <input type="checkbox" aria-label="">
+                    tooltip-placement="top">
+                    <input
+                      type="checkbox"
+                      ng-model="findOptions.wrap">
                     Wrap
                   </span>
                   <input
@@ -576,86 +588,58 @@ body {
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="bower_components/angular-ui-bootstrap/dist/ui-bootstrap-tpls-0.12.0.min.js"></script>
     <script type="text/javascript" src="bower_components/ace-builds/src-min-noconflict/ace.js"></script>
-  <script type="text/javascript" src="bower_components/angular-ui-ace/ui-ace.js"></script>
-  <script type="text/javascript" src="bower_components/angular-tree-control/angular-tree-control.js"></script>
+    <script type="text/javascript" src="bower_components/angular-ui-ace/ui-ace.js"></script>
+    <script type="text/javascript" src="bower_components/angular-tree-control/angular-tree-control.js"></script>
     <script>
       angular.module('uiMockup', ['ui.bootstrap','ui.ace','treeControl']);
-      angular.module('uiMockup').directive('showOnHoverParent',
-         function() {
-            return {
-               link : function(scope, element, attrs) {
-                  element.parent().bind('mouseenter', function() {
-                      element.show();
-                  });
-                  element.parent().bind('mouseleave', function() {
-                       element.hide();
-                  });
-             }
-         };
-      });
-      angular.module('uiMockup').controller('EditorCtrl', ['$scope', function($scope) {
-        $scope.showInvisibles = true;
-        $scope.useSoftTabs = true;
-        $scope.fontSize = { label:12, value:12 };
-        $scope.tabSize = { label:4, value:4 };
-        var fontSizes = [];
-        var tabSizes = [];
-        for (var i=1;i<9;i++) { tabSizes.push({ label:i, value:i }) }
-        for (var i=8;i<21;i+=2) { fontSizes.push({ label:i, value:i }) }
-        $scope.fontOptions = fontSizes;
-        $scope.tabOptions = tabSizes;
-        $scope.editorOptions = {
-          disableSearch: true,
-          showInvisibles: $scope.showInvisibles,
-          showIndentGuides: true,
-          useSoftTabs: $scope.useSoftTabs,
-          onLoad: function (_ace) {
-            // HACK to have the ace instance in the scope...
-            $scope.findString = function () {
-              var options = {
-                wrap: $scope.findWrapAround,
-                caseSensitive: $scope.findCaseSensitive,
-                wholeWord: $scope.findWholeWord,
-                regExp: $scope.findRegEx
-              };
-              _ace.find($scope.findNeedle, options);
-            };
-            $scope.findPreviousString = function () {
-              var options = {
-                wrap: $scope.findWrapAround,
-                caseSensitive: $scope.findCaseSensitive,
-                wholeWord: $scope.findWholeWord,
-                regExp: $scope.findRegEx
-              };
-              _ace.findPrevious($scope.findNeedle, options);
-            };
-            $scope.replaceCurrentString = function () {
-              _ace.replace($scope.replaceNeedle);
-            };
-            $scope.replaceAllStrings = function () {
-              _ace.replaceAll($scope.replaceNeedle);
-            };
-            $scope.setTabSize = function () {
-              _ace.getSession().setTabSize($scope.tabSize.value);
-            };
-            $scope.setFontSize = function () {
-              _ace.setFontSize($scope.fontSize.value);
-            };
-            $scope.setUseSoftTabs = function () {
-              _ace.getSession().setUseSoftTabs($scope.tabSize.value);
-            };
-            $scope.setShowInvisibles = function () {
-              _ace.setShowInvisibles($scope.showInvisibles);
-            };
+      angular.module('uiMockup').controller('EditorCtrl', ['$scope', 'EditorService', function($scope, EditorService) {
+        $scope.onAceLoad = function(_ace) {
+          EditorService.onAceLoad(_ace);
+        };
+      }]);
+      angular.module('uiMockup').controller('EditorFindCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
+        $scope.findOptions = EditorService.findOptions;
+        $scope.findString = function () {
+          EditorService.findString($scope.findNeedle);
+        };
+        $scope.findPreviousString = function () {
+          EditorService.findPreviousString($scope.findNeedle);
+        };
+        $scope.replaceCurrentString = function () {
+          EditorService.replaceCurrentString($scope.replaceNeedle);
+        };
+        $scope.replaceAllStrings = function () {
+          EditorService.replaceAllStrings($scope.replaceNeedle);
+        };
+      }]);
+      angular.module('uiMockup').factory('EditorService', ['$log', function ($log) {
+        var editor = {};
+        var findOptions = {
+          backwards: false,
+          wrap: true,
+          caseSensitive: false,
+          wholeWord: false,
+          regExp: false
+        };
+        return {
+          findOptions: findOptions,
+          onAceLoad: function (_ace) {
+            editor = _ace;
+            $log.debug('Loaded Ace instance: ', editor);
+          },
+          findString: function (needle) {
+            editor.find(needle, findOptions);
+          },
+          findPreviousString: function (needle) {
+            editor.findPrevious(needle, findOptions);
+          },
+          replaceCurrentString: function (replaceNeedle) {
+            editor.replace(replaceNeedle);
+          },
+          replaceAllStrings: function (replaceNeedle) {
+            editor.replaceAll(replaceNeedle);
           }
         };
-        // Initial code content...
-        $scope.editorModel = ';; Scheme code in here.\n' +
-          '(define (double x)\n\t(* x x))\n\n\n' +
-          '<!-- XML code in here. -->\n' +
-          '<root>\n\t<foo>\n\t</foo>\n\t<bar/>\n</root>\n\n\n' +
-          '// Javascript code in here.\n' +
-          'function foo(msg) {\n\tvar r = Math.random();\n\treturn "" + r + " : " + msg;\n}';
       }]);
       angular.module('uiMockup').controller('TreeCtrl', ['$scope', function($scope) {
           function createSubTree(level, width, prefix) {
