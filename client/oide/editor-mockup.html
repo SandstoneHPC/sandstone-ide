@@ -158,7 +158,7 @@ body {
 }
 .tab-icon {
   position: relative;
-  font-size: 11px;
+  /*font-size: 11px;*/
   margin-left: 6px;
   top: -1px;
 }
@@ -226,6 +226,13 @@ body {
 
   background-color: #3e3f3a;
   z-index: 1028;
+}
+.tooltip-inner {
+  max-width: inherit !important;
+}
+.new-tab-hover {
+  background-color: #3e3f3a;
+  color:white;
 }
     </style>
 
@@ -369,9 +376,14 @@ body {
                 ng-repeat="tab in tabs"
                 active="tab.active">
                 <tab-heading>
-                  {{tab.heading}}
                   <span
-                    class="fa fa-caret-down tab-icon dropdown"
+                    tooltip="{{tab.filepath}}"
+                    tooltip-trigger="mouseenter"
+                    tooltip-placement="bottom">
+                    {{tab.filename}}
+                  </span>
+                  <span
+                    class="fa fa-lg fa-caret-down tab-icon dropdown"
                     ng-class="{'tab-icon-selected':hoverMenu}"
                     ng-mouseenter="hoverMenu=true"
                     ng-mouseleave="hoverMenu=false"
@@ -392,7 +404,7 @@ body {
                     </ul>
                   </span>
                   <span
-                    class="fa tab-icon"
+                    class="fa fa-lg tab-icon"
                     ng-class="{'fa-times':!tab.unsaved||hoverClose,'fa-circle-o':tab.unsaved&&!hoverClose,'tab-icon-selected':hoverClose}"
                     ng-mouseenter="hoverClose=true"
                     ng-mouseleave="hoverClose=false">
@@ -402,13 +414,14 @@ body {
               <tab
                 tooltip="Create New Document"
                 tooltip-trigger="mouseenter"
-                tooltip-placement="right">
+                tooltip-placement="right"
+                ng-mouseenter="hoverNew=true"
+                ng-mouseleave="hoverNew=false"
+                active="false">
                 <tab-heading>
                   <span
-                    class="fa fa-plus"
-                    ng-class="{'tab-icon-selected':hoverNew}"
-                    ng-mouseenter="hoverNew=true"
-                    ng-mouseleave="hoverNew=false">
+                    class="fa fa-lg fa-plus"
+                    ng-class="{'tab-icon-selected':hoverNew}">
                   </span>
                 </tab-heading>
               </tab>
@@ -595,8 +608,8 @@ body {
       }]);
       angular.module('uiMockup').controller('EditorTabsCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
         $scope.tabs = [
-          {heading:'coolModule.py', content:'', active:true, unsaved:true},
-          {heading:'outfile.txt', content:''}
+          {filename:'coolModule.py', filepath:'/lustre/ProjectDir/modules/coolModule.py', content:'', active:true, unsaved:true},
+          {filename:'outfile.txt', filepath:'/projects/outfile.txt', content:''}
         ];
       }]);
       // angular.module('uiMockup').directive('editorTabHeading', )
