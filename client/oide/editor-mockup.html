@@ -361,11 +361,15 @@ body {
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main fill">
           <!-- <h2 class="sub-header">Section title</h2> -->
-          <div id="editor-nav-tabs">
-            <tabset vertical=false>
-              <tab active="tab.active">
+          <div
+            id="editor-nav-tabs"
+            ng-controller="EditorTabsCtrl">
+            <tabset>
+              <tab
+                ng-repeat="tab in tabs"
+                active="tab.active">
                 <tab-heading>
-                  Doc1
+                  {{tab.heading}}
                   <span
                     class="fa fa-caret-down tab-icon dropdown"
                     ng-class="{'tab-icon-selected':hoverMenu}"
@@ -388,25 +392,11 @@ body {
                     </ul>
                   </span>
                   <span
-                    class="fa fa-times tab-icon"
-                    ng-class="{'tab-icon-selected':hoverClose}"
+                    class="fa tab-icon"
+                    ng-class="{'fa-times':!tab.unsaved||hoverClose,'fa-circle-o':tab.unsaved&&!hoverClose,'tab-icon-selected':hoverClose}"
                     ng-mouseenter="hoverClose=true"
                     ng-mouseleave="hoverClose=false">
                   </span>
-                </tab-heading>
-              </tab>
-              <tab>
-                <tab-heading>
-                  Doc2
-                  <span class="fa fa-caret-down tab-icon"></span>
-                  <span class="fa fa-times tab-icon"></span>
-                  </tab-heading>
-                </tab>
-              <tab>
-                <tab-heading>
-                  Doc3
-                  <span class="fa fa-caret-down tab-icon"></span>
-                  <span class="fa fa-times tab-icon"></span>
                 </tab-heading>
               </tab>
               <tab
@@ -414,7 +404,12 @@ body {
                 tooltip-trigger="mouseenter"
                 tooltip-placement="right">
                 <tab-heading>
-                  <span class="fa fa-plus"></span>
+                  <span
+                    class="fa fa-plus"
+                    ng-class="{'tab-icon-selected':hoverNew}"
+                    ng-mouseenter="hoverNew=true"
+                    ng-mouseleave="hoverNew=false">
+                  </span>
                 </tab-heading>
               </tab>
             </tabset>
@@ -598,6 +593,13 @@ body {
           EditorService.onAceLoad(_ace);
         };
       }]);
+      angular.module('uiMockup').controller('EditorTabsCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
+        $scope.tabs = [
+          {heading:'coolModule.py', content:'', active:true, unsaved:true},
+          {heading:'outfile.txt', content:''}
+        ];
+      }]);
+      // angular.module('uiMockup').directive('editorTabHeading', )
       angular.module('uiMockup').controller('EditorFindCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
         $scope.findOptions = EditorService.findOptions;
         $scope.findString = function () {
