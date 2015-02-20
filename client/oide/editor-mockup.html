@@ -434,13 +434,16 @@ body {
             </span>
             <div id="editor-settings-sidebar" ng-show="settingsOpen">
               <h3 id="editor-settings-header" class="pull-right">Editor Settings</h3>
-              <form id="editor-settings-form" role="form">
+              <form
+                id="editor-settings-form"
+                role="form"
+                ng-controller="EditorSettingsCtrl">
                   <div class="checkbox">
                     <label>
                       <input
                         type="checkbox"
-                        ng-model="useSoftTabs"
-                        ng-change="setUseSoftTabs()">
+                        ng-model="editorSettings.useSoftTabs"
+                        ng-change="applyEditorSettings()">
                       Use soft tabs
                     </label>
                   </div>
@@ -449,18 +452,17 @@ body {
                     <select
                       id="settings-tab-size"
                       class="form-control input-sm"
-                      ng-model="tabSize"
-                      ng-change="setTabSize()"
+                      ng-model="editorSettings.tabSize"
+                      ng-change="applyEditorSettings()"
                       ng-options="opt as opt.label for opt in tabOptions">
-                      <option value="" selected="selected">4 (default)</option>
                     </select>
                   </div>
                   <div class="checkbox">
                     <label>
                       <input
                         type="checkbox"
-                        ng-model="showInvisibles"
-                        ng-change="setShowInvisibles()">
+                        ng-model="editorSettings.showInvisibles"
+                        ng-change="applyEditorSettings()">
                       Show invisible characters
                     </label>
                   </div>
@@ -469,10 +471,9 @@ body {
                     <select
                       id="settings-font-size"
                       class="form-control input-sm"
-                      ng-model="fontSize"
-                      ng-change="setFontSize()"
+                      ng-model="editorSettings.fontSize"
+                      ng-change="applyEditorSettings()"
                       ng-options="opt as opt.label for opt in fontOptions">
-                      <option value="" selected="selected">12 (default)</option>
                     </select>
                   </div>
                 </form>
@@ -612,8 +613,30 @@ body {
           EditorService.replaceAllStrings($scope.replaceNeedle);
         };
       }]);
+      angular.module('uiMockup').controller('EditorSettingsCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
+        // $scope.editorSettings.fontSize = { label:12, value:12 };
+        // $scope.editorSettings.tabSize = { label:4, value:4 };
+        var fontSizes = [];
+        var tabSizes = [];
+        for (var i=1;i<9;i++) { tabSizes.push({ label:i, value:i }) }
+        for (var i=8;i<21;i+=2) { fontSizes.push({ label:i, value:i }) }
+        $scope.fontOptions = fontSizes;
+        $scope.tabOptions = tabSizes;
+
+        $scope.editorSettings = EditorService.editorSettings;
+        $scope.applyEditorSettings = function () {
+          EditorService.applyEditorSettings();
+        };
+      }]);
       angular.module('uiMockup').factory('EditorService', ['$log', function ($log) {
         var editor = {};
+        var editorSettings = {
+          showInvisibles: true,
+          useSoftTabs: true,
+          fontSize: {label:12, value:12},
+          tabSize: {label:4, value:4},
+          showIndentGuides: true
+        };
         var findOptions = {
           backwards: false,
           wrap: true,
@@ -621,11 +644,23 @@ body {
           wholeWord: false,
           regExp: false
         };
+        var applySettings = function () {
+          editor.setShowInvisibles(editorSettings.showInvisibles);
+          editor.getSession().setUseSoftTabs(editorSettings.useSoftTabs);
+          editor.setFontSize(editorSettings.fontSize.value);
+          editor.getSession().setTabSize(editorSettings.tabSize.value);
+          editor.setDisplayIndentGuides(editorSettings.showIndentGuides);
+        };
         return {
           findOptions: findOptions,
+          editorSettings: editorSettings,
           onAceLoad: function (_ace) {
             editor = _ace;
+            applySettings();
             $log.debug('Loaded Ace instance: ', editor);
+          },
+          applyEditorSettings: function () {
+            applySettings();
           },
           findString: function (needle) {
             editor.find(needle, findOptions);
