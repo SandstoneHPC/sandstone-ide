@@ -234,6 +234,11 @@ body {
   background-color: #3e3f3a;
   color:white;
 }
+/*#find-menu .input-group-addon {
+  color: #FFFFFF;
+  background-color: #3e3f3a;
+  border: 1px solid #3e3f3a;
+}*/
     </style>
 
 
@@ -374,7 +379,8 @@ body {
             <tabset>
               <tab
                 ng-repeat="tab in tabs"
-                active="tab.active">
+                active="tab.active"
+                ng-click="loadEditorContents(tab)">
                 <tab-heading>
                   <span
                     tooltip="{{tab.filepath}}"
@@ -395,7 +401,6 @@ body {
                       <li><a href="#">Cut</a></li>
                       <li><a href="#">Copy</a></li>
                       <li><a href="#">Paste</a></li>
-                      <li><a href="#">Find &amp; Replace</a></li>
                       <li><a href="#">Comment Selection</a></li>
                       <li class="divider"></li>
                       <li><a href="#">Save</a></li>
@@ -611,6 +616,9 @@ body {
           {filename:'coolModule.py', filepath:'/lustre/ProjectDir/modules/coolModule.py', content:'', active:true, unsaved:true},
           {filename:'outfile.txt', filepath:'/projects/outfile.txt', content:''}
         ];
+        $scope.loadEditorContents = function (tab) {
+          EditorService.loadSession(tab.filepath);
+        };
       }]);
       // angular.module('uiMockup').directive('editorTabHeading', )
       angular.module('uiMockup').controller('EditorFindCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
@@ -643,8 +651,10 @@ body {
           EditorService.applyEditorSettings();
         };
       }]);
-      angular.module('uiMockup').factory('EditorService', ['$log', function ($log) {
+      angular.module('uiMockup').factory('EditorService', ['$window', '$log', function ($window, $log) {
         var editor = {};
+        var currentSession = ''
+        var editorSessions = {};
         var editorSettings = {
           showInvisibles: true,
           useSoftTabs: true,
@@ -673,6 +683,16 @@ body {
             editor = _ace;
             applySettings();
             $log.debug('Loaded Ace instance: ', editor);
+          },
+          loadSession: function (filepath) {
+            if (!(filepath in editorSessions)) {
+              $log.debug('Creating new EditSession: ', filepath)
+              editorSessions[filepath] = $window.ace.createEditSession('','text');
+            }
+            editorSessions[currentSession] = editor.getSession();
+            editor.setSession(editorSessions[filepath]);
+            $log.debug('Switching sessions from ', currentSession, ' to ', filepath)
+            currentSession = filepath;
           },
           applyEditorSettings: function () {
             applySettings();
