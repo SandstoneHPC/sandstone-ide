@@ -396,12 +396,39 @@ body {
                     dropdown
                     dropdown-toggle>
                     <ul class="dropdown-menu">
-                      <li><a href="#">Undo</a></li>
-                      <li><a href="#">Redo</a></li>
-                      <li><a href="#">Cut</a></li>
-                      <li><a href="#">Copy</a></li>
-                      <li><a href="#">Paste</a></li>
-                      <li><a href="#">Comment Selection</a></li>
+                      <li><a
+                        href="#"
+                        ng-click="undoChanges(tab)">
+                        Undo
+                      </a></li>
+                      <li><a
+                        href="#"
+                        ng-click="redoChanges(tab)">
+                        Redo
+                      </a></li>
+                      <li><a
+                        href="#"
+                        ng-click="cutSelection()"
+                        ng-disabled="!tab.active">
+                        Cut
+                      </a></li>
+                      <li><a
+                        href="#"
+                        ng-click"copySelection()"
+                        ng-disabled="!tab.active">
+                        Copy
+                      </a></li>
+                      <li><a
+                        href="#"
+                        ng-click="pasteClipboard()"
+                        ng-disabled="!clipboardHasContents||!tab.active">
+                        Paste
+                      </a></li>
+                      <li><a
+                        href="#"
+                        ng-click="commentSelection()">
+                        Comment Selection
+                      </a></li>
                       <li class="divider"></li>
                       <li><a href="#">Save</a></li>
                       <li><a href="#">Save As</a></li>
@@ -619,6 +646,24 @@ body {
         $scope.loadEditorContents = function (tab) {
           EditorService.loadSession(tab.filepath);
         };
+        $scope.undoChanges = function (tab) {
+          EditorService.undoChanges(tab.filepath);
+        };
+        $scope.redoChanges = function (tab) {
+          EditorService.redoChanges(tab.filepath);
+        };
+        $scope.copySelection = function () {
+          EditorService.copySelection();
+        };
+        $scope.cutSelection = function () {
+          EditorService.cutSelection();
+        };
+        $scope.pasteClipboard = function () {
+          EditorService.pasteClipboard();
+        };
+        $scope.commentSelection = function () {
+          EditorService.commentSelection();
+        };
       }]);
       // angular.module('uiMockup').directive('editorTabHeading', )
       angular.module('uiMockup').controller('EditorFindCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
@@ -655,6 +700,7 @@ body {
         var editor = {};
         var currentSession = ''
         var editorSessions = {};
+        var clipboard = '';
         var editorSettings = {
           showInvisibles: true,
           useSoftTabs: true,
@@ -708,6 +754,25 @@ body {
           },
           replaceAllStrings: function (replaceNeedle) {
             editor.replaceAll(replaceNeedle);
+          },
+          undoChanges: function (filepath) {
+            editorSessions[filepath].getUndoManager().undo();
+          },
+          redoChanges: function (filepath) {
+            editorSessions[filepath].getUndoManager().redo();
+          },
+          copySelection: function () {
+            clipboard = editor.getCopyText();
+          },
+          cutSelection: function () {
+            clipboard = editor.getCopyText();
+            editor.insert('');
+          },
+          pasteClipboard: function () {
+            editor.insert(clipboard);
+          },
+          commentSelection: function () {
+            editor.toggleCommentLines();
           }
         };
       }]);
