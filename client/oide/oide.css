@@ -22,3 +22,13 @@ body {
 .navbar-fixed-top {
   border: 0;
 }
+
+/*
+ * OIDE theme modifications
+ */
+.navbar-default .navbar-brand {
+  color: #93c54b;
+}
+.navbar-default ul.nav > li.active > a {
+  color: #93c54b;
+}

@@ -91,6 +91,9 @@
   margin-top: -4px;
   margin-bottom: 15px;
 }
+.ace-tm .ace_marker-layer .ace_selection {
+  background: #93c54b !important;
+}
 #editor-settings-icon {
   color: #3e3f3a;
   position: absolute;
