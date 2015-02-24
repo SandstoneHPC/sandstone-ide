@@ -11,7 +11,7 @@
     <title>Welcome to the OIDE!</title>
         <!-- Bootstrap core CSS -->
     <!-- <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-    <link href="bootstrap.min.css" rel="stylesheet">
+    <link href="bootstrap-sandstone.min.css" rel="stylesheet">
     <!-- link for CSS when using the tree as a Dom element -->
     <link rel="stylesheet" type="text/css" href="bower_components/angular-tree-control/css/tree-control.css">
     <!-- link for CSS when using the tree as an attribute -->
@@ -189,6 +189,9 @@ body {
   color: #93c54b;
   margin-top: 5px;
   margin-bottom: 25px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 300px;
 }
 .filetree-btn {
   /*border-top: 1px solid #93c54b;*/
@@ -234,6 +237,10 @@ body {
   background-color: #3e3f3a;
   color:white;
 }
+.menu-shortcut {
+  font-size: 9px;
+  color: #C8C8C8;
+}
 /*#find-menu .input-group-addon {
   color: #FFFFFF;
   background-color: #3e3f3a;
@@ -278,7 +285,7 @@ body {
 
     <div class="container-fluid fill">
       <div class="row fill">
-        <div class="filetree-container col-sm-3 col-md-2 sidebar" ng-controller="TreeCtrl">
+        <div class="filetree-container col-sm-4 col-md-3 sidebar" ng-controller="TreeCtrl">
           <!-- <div class="btn-toolbar filetree-controls" role="toolbar" aria-label="..."> -->
             <div class="btn-group btn-group-sm btn-group-justified filetree-controls" role="group">
               <div class="btn-group btn-group-sm" role="group">
@@ -371,7 +378,7 @@ body {
             <span class="filetree-permissions">{{node.permissions}}</span>
           </treecontrol>
         </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main fill">
+        <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main fill">
           <!-- <h2 class="sub-header">Section title</h2> -->
           <div
             id="editor-nav-tabs"
@@ -400,34 +407,40 @@ body {
                         href="#"
                         ng-click="undoChanges(tab)">
                         Undo
+                        <span class="menu-shortcut pull-right">ctrl+z</span>
                       </a></li>
                       <li><a
                         href="#"
                         ng-click="redoChanges(tab)">
                         Redo
+                        <span class="menu-shortcut pull-right">ctrl+y</span>
                       </a></li>
                       <li><a
                         href="#"
                         ng-click="cutSelection()"
                         ng-disabled="!tab.active">
                         Cut
+                        <span class="menu-shortcut pull-right">ctrl+x</span>
                       </a></li>
                       <li><a
                         href="#"
                         ng-click"copySelection()"
                         ng-disabled="!tab.active">
                         Copy
+                        <span class="menu-shortcut pull-right">ctrl+c</span>
                       </a></li>
                       <li><a
                         href="#"
                         ng-click="pasteClipboard()"
                         ng-disabled="!clipboardHasContents||!tab.active">
                         Paste
+                        <span class="menu-shortcut pull-right">ctrl+v</span>
                       </a></li>
                       <li><a
                         href="#"
                         ng-click="commentSelection()">
-                        Comment Selection
+                        Comment
+                        <span class="menu-shortcut pull-right">ctrl+/</span>
                       </a></li>
                       <li class="divider"></li>
                       <li><a href="#">Save</a></li>
@@ -789,17 +802,17 @@ body {
             }
           $scope.treeData=[
                 { "type": "dir", "filename" : "/lustre/", "children" : [
-                    { "type": "file", "filename" : "aTestFile.py", "permissions" : "rwxrw-r--", "children" : [] },
-                    { "type": "file", "filename" : "testFile.py", "permissions" : "rwxrw-r--", "children" : [] },
-                    { "type": "dir", "filename" : "ProjectDir", "permissions" : "rwxrw-r--", "children" : [
-                        { "type": "dir", "filename" : "modules", "permissions" : "rwxrw-r--", "children" : [
-                            { "type": "file", "filename" : "__init__.py", "permissions" : "rwxrw-r--", "children" : [] },
-                            { "type": "file", "filename" : "coolModule.py", "permissions" : "rwxrw-r--", "children" : [] }
+                    { "type": "file", "filename" : "aTestFile.py", "children" : [] },
+                    { "type": "file", "filename" : "testFile.py", "children" : [] },
+                    { "type": "dir", "filename" : "ProjectDir", "children" : [
+                        { "type": "dir", "filename" : "modules", "children" : [
+                            { "type": "file", "filename" : "__init__.py", "children" : [] },
+                            { "type": "file", "filename" : "coolModule.py", "children" : [] }
                         ]}
                     ]}
                 ]},
                 { "type": "dir", "filename" : "/projects/", "children" : [
-                  { "type": "file", "filename" : "outfile.txt", "permissions" : "rwxrw-r--", "children" : [] }
+                  { "type": "file", "filename" : "outfile.txt", "children" : [] }
                 ]}
             ];
           $scope.treeOptions = {

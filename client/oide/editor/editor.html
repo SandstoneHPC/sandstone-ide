@@ -1,216 +1,350 @@
-<div id="options-panel">
-  <div style="width: 95%; height: 90%; position: absolute; overflow: hidden; top:5px; bottom:0">
-  <div style="width: 100%; height:100%;">
-    <!-- Nav tabs -->
-    <ul class="nav nav-pills" role="tablist">
-      <li class="active"><a href="#filesystem" role="tab" data-toggle="tab">Filesystem</a></li>
-      <li><a href="#menu" role="tab" data-toggle="tab">Menu</a></li>
-      <!--<li><a href="#filetransfer" role="tab" data-toggle="tab">Upload</a></li>-->
-    </ul>
-    <!-- Tab panes -->
-    <div style="width: 120%; height:100%; overflow-y: scroll">
-    <div class="tab-content" style="width: 85%; padding-top: 10px; height:100%;">
-      <div class="tab-pane active" id="filesystem">
+<div class="row fill">
+  <div class="filetree-container col-sm-4 col-md-3 sidebar" ng-controller="TreeCtrl">
+    <div class="btn-group btn-group-sm btn-group-justified filetree-controls" role="group">
+      <div class="btn-group btn-group-sm" role="group">
+        <button
+          type="button"
+          class="btn btn-default filetree-btn"
+          tooltip="New File"
+          tooltip-trigger="mouseenter"
+          tooltip-placement="bottom"
+          ng-disabled="noSelections||(multipleSelections||!dirSelected)">
+          <span class="fa fa-file"></span>
+        </button>
       </div>
-      <div class="tab-pane" id="menu">
-        <div class="controls-container">
-          <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href="#menu-file">
-                    File
-                  </a>
-                </h4>
-              </div>
-              <div id="menu-file" class="panel-collapse collapse in">
-                <div class="panel-body">
-                
-                  <div class="table-responsive">
-                    <table class="table table-hover">
-                      <tr><td id="menu-file-new">New File <small class="pull-right">Ctrl-N</small></td></tr>
-                      <tr><td id="menu-file-open">Open... <small class="pull-right">Ctrl-O</small></td></tr>
-                      <tr><td id="menu-file-save">Save <small class="pull-right">Ctrl-S</small></td></tr>
-                      <tr><td id="menu-file-save-as">Save As... <small class="pull-right">Ctrl-Shift-S</small></td></tr>
-                      <tr><td id="menu-file-close">Close File</td></tr>
-                      <tr><td id="menu-file-close-all">Close All Files</td></tr>
-                    </table>
-                  </div>
-                  
-                </div>
-              </div>
+      <div class="btn-group btn-group-sm" role="group">
+        <button
+          type="button"
+          class="btn btn-default filetree-btn"
+          tooltip="New Folder"
+          tooltip-trigger="mouseenter"
+          tooltip-placement="bottom"
+          ng-disabled="noSelections||(multipleSelections||!dirSelected)">
+          <span class="fa fa-folder"></span>
+        </button>
+      </div>
+      <div class="btn-group btn-group-sm" role="group">
+        <button
+          type="button"
+          class="btn btn-default filetree-btn"
+          tooltip="Edit Selected"
+          tooltip-trigger="mouseenter"
+          tooltip-placement="bottom"
+          ng-disabled="noSelections||dirSelected">
+          <span class="fa fa-pencil"></span>
+        </button>
+      </div>
+      <div class="btn-group btn-group-sm" role="group">
+        <button
+          type="button"
+          class="btn btn-default filetree-btn"
+          tooltip="Duplicate Selected"
+          tooltip-trigger="mouseenter"
+          tooltip-placement="bottom"
+          ng-disabled="noSelections||multipleSelections">
+          <span class="fa fa-files-o"></span>
+        </button>
+      </div>
+      <div class="btn-group btn-group-sm" role="group">
+        <button
+          type="button"
+          class="btn btn-default filetree-btn"
+          tooltip="Move Selected"
+          tooltip-trigger="mouseenter"
+          tooltip-placement="bottom"
+          ng-disabled="noSelections">
+          <span class="fa fa-file-o"></span>
+        </button>
+      </div>
+      <div class="btn-group btn-group-sm" role="group">
+        <button
+          type="button"
+          class="btn btn-default filetree-btn"
+          tooltip="Delete Selected"
+          tooltip-trigger="mouseenter"
+          tooltip-placement="bottom"
+          ng-disabled="noSelections">
+          <span class="fa fa-trash-o"></span>
+        </button>
+      </div>
+      <div class="btn-group btn-group-sm" role="group">
+        <button
+          type="button"
+          class="btn btn-default filetree-btn"
+          tooltip="File Info"
+          tooltip-trigger="mouseenter"
+          tooltip-placement="bottom"
+          ng-disabled="noSelections||multipleSelections">
+          <span class="fa fa-info"></span>
+        </button>
+      </div>
+    </div>
+    <treecontrol
+      class="tree-oide"
+      tree-model="treeData"
+      options="treeOptions"
+      order-by="type+filename"
+      selected-nodes="selectedNodes"
+      on-selection="disableFilecontrols(node, selected)">
+      {{node.filename}}
+      <span class="filetree-permissions">{{node.permissions}}</span>
+    </treecontrol>
+  </div>
+  <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main fill">
+    <!-- <h2 class="sub-header">Section title</h2> -->
+    <div
+      id="editor-nav-tabs"
+      ng-controller="EditorTabsCtrl">
+      <tabset>
+        <tab
+          ng-repeat="tab in tabs"
+          active="tab.active"
+          ng-click="loadEditorContents(tab)">
+          <tab-heading>
+            <span
+              tooltip="{{tab.filepath}}"
+              tooltip-trigger="mouseenter"
+              tooltip-placement="bottom">
+              {{tab.filename}}
+            </span>
+            <span
+              class="fa fa-lg fa-caret-down tab-icon dropdown"
+              ng-class="{'tab-icon-selected':hoverMenu}"
+              ng-mouseenter="hoverMenu=true"
+              ng-mouseleave="hoverMenu=false"
+              dropdown
+              dropdown-toggle>
+              <ul class="dropdown-menu">
+                <li><a
+                  href="#"
+                  ng-click="undoChanges(tab)">
+                  Undo
+                  <span class="menu-shortcut pull-right">ctrl+z</span>
+                </a></li>
+                <li><a
+                  href="#"
+                  ng-click="redoChanges(tab)">
+                  Redo
+                  <span class="menu-shortcut pull-right">ctrl+y</span>
+                </a></li>
+                <li><a
+                  href="#"
+                  ng-click="cutSelection()"
+                  ng-disabled="!tab.active">
+                  Cut
+                  <span class="menu-shortcut pull-right">ctrl+x</span>
+                </a></li>
+                <li><a
+                  href="#"
+                  ng-click"copySelection()"
+                  ng-disabled="!tab.active">
+                  Copy
+                  <span class="menu-shortcut pull-right">ctrl+c</span>
+                </a></li>
+                <li><a
+                  href="#"
+                  ng-click="pasteClipboard()"
+                  ng-disabled="!clipboardHasContents||!tab.active">
+                  Paste
+                  <span class="menu-shortcut pull-right">ctrl+v</span>
+                </a></li>
+                <li><a
+                  href="#"
+                  ng-click="commentSelection()">
+                  Comment
+                  <span class="menu-shortcut pull-right">ctrl+/</span>
+                </a></li>
+                <li class="divider"></li>
+                <li><a href="#">Save</a></li>
+                <li><a href="#">Save As</a></li>
+                <li><a href="#">Close File</a></li>
+              </ul>
+            </span>
+            <span
+              class="fa fa-lg tab-icon"
+              ng-class="{'fa-times':!tab.unsaved||hoverClose,'fa-circle-o':tab.unsaved&&!hoverClose,'tab-icon-selected':hoverClose}"
+              ng-mouseenter="hoverClose=true"
+              ng-mouseleave="hoverClose=false">
+            </span>
+          </tab-heading>
+        </tab>
+        <tab
+          tooltip="Create New Document"
+          tooltip-trigger="mouseenter"
+          tooltip-placement="right"
+          ng-mouseenter="hoverNew=true"
+          ng-mouseleave="hoverNew=false"
+          active="false">
+          <tab-heading>
+            <span
+              class="fa fa-lg fa-plus"
+              ng-class="{'tab-icon-selected':hoverNew}">
+            </span>
+          </tab-heading>
+        </tab>
+      </tabset>
+    </div>
+    <div class="partial-fill">
+      <!-- <span id="editor-settings-icon" class="glyphicon glyphicon-cog" popover="Editor Settings" popover-placement="bottom" popover-trigger="mouseenter"></span> -->
+      <span id="editor-settings-icon"
+        class="fa fa-cog fa-2x"
+        tooltip="Editor Settings"
+        tooltip-trigger="mouseenter"
+        tooltip-placement="top"
+        ng-mouseenter="hover=true"
+        ng-mouseleave="hover=false"
+        ng-init="settingsOpen=false"
+        ng-class="{'clicked':settingsOpen,'fa-spin':hover}"
+        ng-click="settingsOpen=!settingsOpen">
+      </span>
+      <div id="editor-settings-sidebar" ng-show="settingsOpen">
+        <h3 id="editor-settings-header" class="pull-right">Editor Settings</h3>
+        <form
+          id="editor-settings-form"
+          role="form"
+          ng-controller="EditorSettingsCtrl">
+            <div class="checkbox">
+              <label>
+                <input
+                  type="checkbox"
+                  ng-model="editorSettings.useSoftTabs"
+                  ng-change="applyEditorSettings()">
+                Use soft tabs
+              </label>
             </div>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href="#menu-edit">
-                    Edit
-                  </a>
-                </h4>
-              </div>
-              <div id="menu-edit" class="panel-collapse collapse">
-                <div class="panel-body">
-                  
-                  <div class="table-responsive">
-                    <table class="table table-hover">
-                      <tr><td id="menu-edit-undo">Undo <small class="pull-right">Ctrl-Z</small></td></tr>
-                      <tr><td id="menu-edit-redo">Redo <small class="pull-right">Ctrl-Y</small></td></tr>
-                      <tr><td id="menu-edit-cut">Cut <small class="pull-right">Ctrl-X</small></td></tr>
-                      <tr><td id="menu-edit-copy">Copy <small class="pull-right">Ctrl-C</small></td></tr>
-                      <tr><td id="menu-edit-paste">Paste <small class="pull-right">Ctrl-V</small></td></tr>
-                      <tr><td id="menu-edit-comment-selection">Comment Selection <small class="pull-right">Ctrl-/</small></td></tr>
-                    </table>
-                  </div>
-                  
-                </div>
-              </div>
+            <div class="form-group">
+              <label for="settings-tab-size">Tab size</label>
+              <select
+                id="settings-tab-size"
+                class="form-control input-sm"
+                ng-model="editorSettings.tabSize"
+                ng-change="applyEditorSettings()"
+                ng-options="opt as opt.label for opt in tabOptions">
+              </select>
             </div>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href="#menu-find">
-                    Find
-                  </a>
-                </h4>
-              </div>
-              <div id="menu-find" class="panel-collapse collapse">
-                <div class="panel-body">
-                  
-                  <form role="form">
-                    <div class="form-group">
-                      <label for="find-string">Find</label>
-                      <input type="text" class="form-control" id="find-string" placeholder="Search string...">
-                    </div>
-                    
-                    <div class="form-group">
-                      <div class="btn-group btn-group-sm">
-                        <button id="find-find-previous" type="button" class="btn btn-default">&laquo; Find Previous</button>
-                        <button id="find-find-next" type="button" class="btn btn-default">Find Next &raquo;</button>
-                      </div>
-                    </div>
-                    
-                    <div class="form-group">
-                      <label for="replace-string">Replace With</label>
-                      <input type="text" class="form-control" id="replace-string" placeholder="Replacement string...">
-                    </div>
-                   
-                    <div class="form-group">
-                      <div class="btn-group btn-group-sm">
-                        <button id="find-replace-current" type="button" class="btn btn-default">Replace Current</button>
-                        <button id="find-replace-all" type="button" class="btn btn-default">Replace All</button>
-                      </div>
-                    </div>
-                    
-                    <div class="checkbox">
-                      <label>
-                        <input id="find-case-sensitive" type="checkbox"> Case Sensitive
-                      </label>
-                    </div>
-                    <div class="checkbox">
-                      <label>
-                        <input id="find-regular-expressions" type="checkbox"> Regular Expressions
-                      </label>
-                    </div>
-                    <div class="checkbox">
-                      <label>
-                        <input id="find-whole-word" type="checkbox"> Whole Word
-                      </label>
-                    </div>
-                    <div class="checkbox">
-                      <label>
-                        <input id="find-wrap-around" type="checkbox"> Wrap Around
-                      </label>
-                    </div>
-                  </form>
-                  
-                </div>
-              </div>
+            <div class="checkbox">
+              <label>
+                <input
+                  type="checkbox"
+                  ng-model="editorSettings.showInvisibles"
+                  ng-change="applyEditorSettings()">
+                Show invisible characters
+              </label>
             </div>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href="#menu-settings">
-                    Settings
-                  </a>
-                </h4>
-              </div>
-              <div id="menu-settings" class="panel-collapse collapse">
-                <div class="panel-body">
-                  
-                  <form id="settings-form" role="form">
-                    <div class="checkbox">
-                      <label>
-                        <input id="settings-wrap-selection" type="checkbox" checked> Wrap selection with Parentheses, Brackets, etc.
-                      </label>
-                    </div>
-                    <div class="checkbox">
-                      <label>
-                        <input id="settings-soft-tabs" type="checkbox" checked> Use soft tabs
-                      </label>
-                    </div>
-                    <div class="form-group">
-                      <label for="settings-tab-size">Tab size</label>
-                      <select id="settings-tab-size" class="form-control">
-                        <option value=1>1</option>
-                        <option value=2>2</option>
-                        <option value=3>3</option>
-                        <option value=4 selected="selected">4</option>
-                        <option value=5>5</option>
-                        <option value=6>6</option>
-                        <option value=7>7</option>
-                        <option value=8>8</option>
-                      </select>
-                    </div>
-                    <div class="checkbox">
-                      <label>
-                        <input id="settings-show-invisibles" type="checkbox"> Show invisible characters
-                      </label>
-                    </div>
-                    <div class="form-group">
-                      <label for="settings-font-size">Font Size</label>
-                      <select id="settings-font-size" class="form-control">
-                        <option value=10>10</option>
-                        <option value=12 selected="selected">12</option>
-                        <option value=14>14</option>
-                        <option value=16>16</option>
-                        <option value=18>18</option>
-                        <option value=20>20</option>
-                      </select>
-                    </div>
-                  </form>
-                  
-                </div>
-              </div>
+            <div class="form-group">
+              <label for="settings-font-size">Font Size</label>
+              <select
+                id="settings-font-size"
+                class="form-control input-sm"
+                ng-model="editorSettings.fontSize"
+                ng-change="applyEditorSettings()"
+                ng-options="opt as opt.label for opt in fontOptions">
+              </select>
+            </div>
+          </form>
+        </div>
+      <div
+        id="aceplace"
+        ui-ace="{onLoad:onAceLoad}"
+        ng-model="editorModel"
+        ng-controller="EditorCtrl">
+      </div>
+
+      <form
+        id="find-menu"
+        class="form-horizontal"
+        ng-controller="EditorFindCtrl">
+        <div class="form-group form-group-sm">
+          <div class="input-group input-group-sm" >
+            <span
+              class="input-group-addon"
+              tooltip="Case Sensitive"
+              tooltip-trigger="mouseenter"
+              tooltip-placement="top">
+              <input
+                type="checkbox"
+                ng-model="findOptions.caseSensitive">
+              Aa
+            </span>
+            <span
+              class="input-group-addon"
+              tooltip="Match Whole Word"
+              tooltip-trigger="mouseenter"
+              tooltip-placement="top">
+              <input
+                type="checkbox"
+                ng-model="findOptions.wholeWord">
+              \b
+            </span>
+            <span
+              class="input-group-addon"
+              tooltip="Use Regular Expressions"
+              tooltip-trigger="mouseenter"
+              tooltip-placement="top">
+              <input
+                type="checkbox"
+                ng-model="findOptions.regExp">
+              [.*]
+            </span>
+            <span
+              class="input-group-addon"
+              tooltip="Wrap Around"
+              tooltip-trigger="mouseenter"
+              tooltip-placement="top">
+              <input
+                type="checkbox"
+                ng-model="findOptions.wrap">
+              Wrap
+            </span>
+            <input
+              type="text"
+              placeholder="Find string in current document..."
+              class="form-control"
+              ng-model="findNeedle">
+            <div class="input-group-btn">
+              <button
+                type="button"
+                class="btn btn-default"
+                ng-click="findPreviousString()">
+                &laquo; Find Previous
+              </button>
+              <button
+                type="button"
+                class="btn btn-default"
+                ng-click="findString()">
+                Find Next &raquo;
+              </button>
             </div>
           </div>
         </div>
-      </div>
-      <!--<div class="tab-pane" id="filetransfer">-->
-      <!--  <div class="controls-container">-->
-          <!--<ul id="editor-tabs" class="nav nav-pills nav-stacked">-->
-          <!--  <li>-->
-          <!--    <a href="#editortab-new" role="tab" data-toggle="tab">-->
-          <!--      <span class="glyphicon glyphicon-plus"> New</span>-->
-          <!--    </a>-->
-          <!--  </li>-->
-          <!--</ul>-->
-        <!--</div>-->
-      <!--</div>-->
-      </div>
+        <div class="form-group form-group-sm">
+          <div class="input-group input-group-sm" >
+            <input
+              type="text"
+              placeholder="Replace selected string with..."
+              class="form-control"
+              ng-model="replaceNeedle">
+            <div class="input-group-btn">
+              <button
+                type="button"
+                class="btn btn-default"
+                ng-click="replaceCurrentString()">
+                Replace
+              </button>
+              <button
+                type="button"
+                class="btn btn-default"
+                ng-click="replaceAllStrings()">
+                Replace All
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </form>
+
     </div>
-  </div>
+
+
   </div>
 </div>
-
-<div id="editor-wrapper">
-  <div id="workspace">
-    <ul id="editor-tabs" class="nav nav-pills">
-      <li>
-        <a href="#editortab-new" role="tab" data-toggle="tab">
-          <span class="glyphicon glyphicon-plus"> New</span>
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="editor"></div>
-  <div id="editor-info"></div>

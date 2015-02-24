@@ -4,9 +4,9 @@
 angular.module('oide', [
   'ngRoute',
   'ui.bootstrap',
-  'oide.editor',
-  'oide.terminal',
-  'oide.version'
+  'oide.editor'
+  // 'oide.terminal',
+  // 'oide.version'
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/editor'});
