@@ -149,7 +149,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     }
   };
 }])
-.controller('TreeCtrl', ['$scope', function($scope) {
+.controller('TreeCtrl', ['$scope', '$http', '$log', function($scope,$http,$log) {
     function createSubTree(level, width, prefix) {
           if (level > 0) {
               var res = [];
@@ -159,24 +159,39 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
           }
           else
               return [];
-      }
+      };
+    var initializeFiletree = function () {
+      $http
+        .get('/filebrowser/filetree/a/dir')
+        .success(function(data, status, headers, config) {
+          $scope.treeData = data;
+        }).
+        error(function(data, status, headers, config) {
+          $log.error('Failed to initialize filetree.');
+        });
+    };
     $scope.treeData=[
-          { "type": "dir", "filename" : "/lustre/", "children" : [
-              { "type": "file", "filename" : "aTestFile.py", "children" : [] },
-              { "type": "file", "filename" : "testFile.py", "children" : [] },
-              { "type": "dir", "filename" : "ProjectDir", "children" : [
-                  { "type": "dir", "filename" : "modules", "children" : [
-                      { "type": "file", "filename" : "__init__.py", "children" : [] },
-                      { "type": "file", "filename" : "coolModule.py", "children" : [] }
-                  ]}
-              ]}
-          ]},
-          { "type": "dir", "filename" : "/projects/", "children" : [
-            { "type": "file", "filename" : "outfile.txt", "children" : [] }
-          ]}
+      { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
+          // { "type": "dir", "filename" : "lustre", "children" : [
+          //     { "type": "file", "filename" : "aTestFile.py", "children" : [] },
+          //     { "type": "dir", "filename" : "anEmptyDir", "children" : [] },
+          //     { "type": "file", "filename" : "testFile.py", "children" : [] },
+          //     { "type": "dir", "filename" : "ProjectDir", "children" : [
+          //         { "type": "dir", "filename" : "modules", "children" : [
+          //             { "type": "file", "filename" : "__init__.py", "children" : [] },
+          //             { "type": "file", "filename" : "coolModule.py", "children" : [] }
+          //         ]}
+          //     ]}
+          // ]},
+          // { "type": "dir", "filename" : "projects", "children" : [
+          //   { "type": "file", "filename" : "outfile.txt", "children" : [] }
+          // ]}
       ];
     $scope.treeOptions = {
       multiSelection: true,
+      isLeaf: function(node) {
+        return node.type !== 'dir';
+      },
       injectClasses: {
         iExpanded: "filetree-icon fa fa-folder-open",
         iCollapsed: "filetree-icon fa fa-folder",
@@ -197,6 +212,24 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         }
       }
       $scope.dirSelected = dirSelected;
+    };
+    initializeFiletree();
+    $scope.getDirContents = function (node, expanded) {
+      $http
+        .get('/filebrowser/filetree/a/dir', {
+          params: {
+            dirpath: node.filepath
+          }
+        }).
+        success(function(data, status, headers, config) {
+          for (var i=0;i<data.length;i++) {
+            data[i].children = [];
+          }
+          node.children = data;
+        }).
+        error(function(data, status, headers, config) {
+          $log.error('Failed to grab dir contents from ',node.filepath);
+        });
     };
     $scope.showSelected = function(node, selected) {
       console.log(node);

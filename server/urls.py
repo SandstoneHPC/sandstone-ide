@@ -11,8 +11,6 @@ from apps.filebrowser.handlers import LocalFileHandler
 from apps.filebrowser.handlers import FilesystemUtilHandler
 from apps.filebrowser.handlers import FilesystemUploadHandler
 from apps.filebrowser.handlers import FileTreeHandler
-from apps.filebrowser.handlers import FileTreeUpdateHandler
-from apps.filebrowser.handlers import FileTreeEntryHandler
 from apps.webterminal.handlers import EmbedTerminalHandler
 #import handlers here
 
@@ -31,8 +29,8 @@ URL_SCHEMA = [
             (r"/filebrowser/a/fileutil", FilesystemUtilHandler),
             (r"/filebrowser/a/upload", FilesystemUploadHandler),
             (r"/filebrowser/filetree/a/dir", FileTreeHandler),
-            (r"/filebrowser/filetree/a/update", FileTreeUpdateHandler),
-            (r"/filebrowser/filetree/a/entry", FileTreeEntryHandler),
+            # (r"/filebrowser/filetree/a/update", FileTreeUpdateHandler),
+            # (r"/filebrowser/filetree/a/entry", FileTreeEntryHandler),
             # (r"/webterminal", EmbedTerminalHandler),
             # (r"/example/url", MyHandler),
         ]
