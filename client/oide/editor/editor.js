@@ -149,6 +149,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     }
   };
 }])
+.factory('FiletreeService', ['$scope', '$http', '$log', function($scope,$http,$log) {
+
+}])
 .controller('TreeCtrl', ['$scope', '$http', '$log', function($scope,$http,$log) {
     function createSubTree(level, width, prefix) {
           if (level > 0) {
