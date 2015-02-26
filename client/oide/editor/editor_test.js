@@ -264,14 +264,21 @@ describe('oide.editor module', function() {
 
   describe('EditorService', function() {
 
-    var service, createService;
+    var service, createService, $window;
 
     beforeEach(inject(function($injector) {
+      $window = {
+        ace: {
+          createEditSession: function(s,m) {
+            return {session:true};
+          }
+        }
+      };
       createService = function() {
         return $injector.get(
           'EditorService',
           {
-            $window: {}
+            $window: $window
           });
       }
     }));
@@ -285,6 +292,7 @@ describe('oide.editor module', function() {
         setShowInvisibles: jasmine.createSpy(),
         getSession: function() {
           return {
+            session: true,
             setUseSoftTabs: jasmine.createSpy(),
             setTabSize: jasmine.createSpy()
           }
@@ -292,6 +300,7 @@ describe('oide.editor module', function() {
         setFontSize: jasmine.createSpy(),
         setDisplayIndentGuides: jasmine.createSpy()
       };
+      service.editorSessions = {};
     });
 
     it('should be defined', function() {
@@ -307,6 +316,14 @@ describe('oide.editor module', function() {
         showIndentGuides: true
       });
     });
+
+    // it('should create a new session if one is not found', function() {
+    //   var filepath = '/path/to/file';
+    //   expect(service.editorSessions).toEqual({});
+    //   spyOn(service.$window.ace, 'createEditSession').andCallThrough();
+    //   service.loadSession(filepath);
+    //   expect(service.editorSessions.filepath.session).toEqual(true);
+    // });
 
   });
 

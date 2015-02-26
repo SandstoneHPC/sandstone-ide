@@ -149,75 +149,43 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     }
   };
 }])
-.factory('FiletreeService', ['$scope', '$http', '$log', function($scope,$http,$log) {
-
-}])
-.controller('TreeCtrl', ['$scope', '$http', '$log', function($scope,$http,$log) {
-    function createSubTree(level, width, prefix) {
-          if (level > 0) {
-              var res = [];
-              for (var i=1; i <= width; i++)
-                  res.push({ "label" : "Node " + prefix + i, "id" : "id"+prefix + i, "i": i, "children": createSubTree(level-1, width, prefix + i +".") });
-              return res;
-          }
-          else
-              return [];
-      };
-    var initializeFiletree = function () {
-      $http
-        .get('/filebrowser/filetree/a/dir')
-        .success(function(data, status, headers, config) {
-          $scope.treeData = data;
-        }).
-        error(function(data, status, headers, config) {
-          $log.error('Failed to initialize filetree.');
-        });
-    };
-    $scope.treeData=[
-      { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
-          // { "type": "dir", "filename" : "lustre", "children" : [
-          //     { "type": "file", "filename" : "aTestFile.py", "children" : [] },
-          //     { "type": "dir", "filename" : "anEmptyDir", "children" : [] },
-          //     { "type": "file", "filename" : "testFile.py", "children" : [] },
-          //     { "type": "dir", "filename" : "ProjectDir", "children" : [
-          //         { "type": "dir", "filename" : "modules", "children" : [
-          //             { "type": "file", "filename" : "__init__.py", "children" : [] },
-          //             { "type": "file", "filename" : "coolModule.py", "children" : [] }
-          //         ]}
-          //     ]}
-          // ]},
-          // { "type": "dir", "filename" : "projects", "children" : [
-          //   { "type": "file", "filename" : "outfile.txt", "children" : [] }
-          // ]}
-      ];
-    $scope.treeOptions = {
-      multiSelection: true,
-      isLeaf: function(node) {
-        return node.type !== 'dir';
-      },
-      injectClasses: {
-        iExpanded: "filetree-icon fa fa-folder-open",
-        iCollapsed: "filetree-icon fa fa-folder",
-        iLeaf: "filetree-icon fa fa-file",
-      }
-    };
-    $scope.noSelections = true;
-    $scope.multipleSelections = false;
-    $scope.dirSelected = false;
-    $scope.selectedNodes = [];
-    $scope.disableFilecontrols = function(node, selected) {
-      $scope.multipleSelections = $scope.selectedNodes.length > 1;
-      $scope.noSelections = $scope.selectedNodes.length === 0;
+.factory('FiletreeService', ['$http', '$log', function($http,$log) {
+  var treeData = {
+    filetreeContents: [
+      // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
+    ]
+  };
+  var selectionDesc = {
+    noSelections: true,
+    multipleSelections: false,
+    dirSelected: false
+  };
+  var initializeFiletree = function () {
+    $http
+      .get('/filebrowser/filetree/a/dir')
+      .success(function(data, status, headers, config) {
+        treeData.filetreeContents = data;
+      }).
+      error(function(data, status, headers, config) {
+        $log.error('Failed to initialize filetree.');
+      });
+  };
+  initializeFiletree();
+  return {
+    treeData: treeData,
+    selectionDesc: selectionDesc,
+    describeSelection: function (node, selected) {
+      selectionDesc.multipleSelections = treeData.selectedNodes.length > 1;
+      selectionDesc.noSelections = treeData.selectedNodes.length === 0;
       var dirSelected = false;
-      for (var i in $scope.selectedNodes) {
-        if ($scope.selectedNodes[i].type==='dir') {
+      for (var i in treeData.selectedNodes) {
+        if (treeData.selectedNodes[i].type==='dir') {
           dirSelected = true;
         }
       }
-      $scope.dirSelected = dirSelected;
-    };
-    initializeFiletree();
-    $scope.getDirContents = function (node, expanded) {
+      selectionDesc.dirSelected = dirSelected;
+    },
+    getDirContents: function (node, expanded) {
       $http
         .get('/filebrowser/filetree/a/dir', {
           params: {
@@ -233,10 +201,34 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         error(function(data, status, headers, config) {
           $log.error('Failed to grab dir contents from ',node.filepath);
         });
-    };
-    $scope.showSelected = function(node, selected) {
-      console.log(node);
-      console.log(selected);
-        // $scope.selectedNodes = selected;
-    };
+    }
+  };
+}])
+.controller('FiletreeControlCtrl', ['$scope', 'FiletreeService', function($scope,FiletreeService) {
+  $scope.sd = FiletreeService.selectionDesc;
+}])
+.controller('FiletreeCtrl', ['$scope', '$log', 'FiletreeService', function($scope,$log,FiletreeService) {
+  $scope.treeData= FiletreeService.treeData;
+  $scope.treeOptions = {
+    multiSelection: true,
+    isLeaf: function(node) {
+      return node.type !== 'dir';
+    },
+    injectClasses: {
+      iExpanded: "filetree-icon fa fa-folder-open",
+      iCollapsed: "filetree-icon fa fa-folder",
+      iLeaf: "filetree-icon fa fa-file",
+    }
+  };
+  $scope.describeSelection = function (node, selected) {
+    FiletreeService.describeSelection(node, selected);
+  };
+  $scope.getDirContents = function (node, expanded) {
+    FiletreeService.getDirContents(node,expanded);
+  };
+  $scope.showSelected = function(node, selected) {
+    console.log(node);
+    console.log(selected);
+      // $scope.selectedNodes = selected;
+  };
 }]);

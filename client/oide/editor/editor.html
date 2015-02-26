@@ -1,5 +1,5 @@
 <div class="row fill">
-  <div class="filetree-container col-sm-4 col-md-3 sidebar" ng-controller="TreeCtrl">
+  <div class="filetree-container col-sm-4 col-md-3 sidebar" ng-controller="FiletreeControlCtrl">
     <div class="btn-group btn-group-sm btn-group-justified filetree-controls" role="group">
       <div class="btn-group btn-group-sm" role="group">
         <button
@@ -8,7 +8,7 @@
           tooltip="New File"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
-          ng-disabled="noSelections||(multipleSelections||!dirSelected)">
+          ng-disabled="sd.noSelections||(sd.multipleSelections||!sd.dirSelected)">
           <span class="fa fa-file"></span>
         </button>
       </div>
@@ -19,7 +19,7 @@
           tooltip="New Folder"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
-          ng-disabled="noSelections||(multipleSelections||!dirSelected)">
+          ng-disabled="sd.noSelections||(sd.multipleSelections||!sd.dirSelected)">
           <span class="fa fa-folder"></span>
         </button>
       </div>
@@ -30,7 +30,7 @@
           tooltip="Edit Selected"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
-          ng-disabled="noSelections||dirSelected">
+          ng-disabled="sd.noSelections||sd.dirSelected">
           <span class="fa fa-pencil"></span>
         </button>
       </div>
@@ -41,7 +41,7 @@
           tooltip="Duplicate Selected"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
-          ng-disabled="noSelections||multipleSelections">
+          ng-disabled="sd.noSelections||sd.multipleSelections">
           <span class="fa fa-files-o"></span>
         </button>
       </div>
@@ -52,7 +52,7 @@
           tooltip="Move Selected"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
-          ng-disabled="noSelections">
+          ng-disabled="sd.noSelections">
           <span class="fa fa-file-o"></span>
         </button>
       </div>
@@ -63,7 +63,7 @@
           tooltip="Delete Selected"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
-          ng-disabled="noSelections">
+          ng-disabled="sd.noSelections">
           <span class="fa fa-trash-o"></span>
         </button>
       </div>
@@ -74,23 +74,25 @@
           tooltip="File Info"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
-          ng-disabled="noSelections||multipleSelections">
+          ng-disabled="sd.noSelections||sd.multipleSelections">
           <span class="fa fa-info"></span>
         </button>
       </div>
     </div>
-    <treecontrol
-      class="tree-oide"
-      tree-model="treeData"
-      options="treeOptions"
-      order-by="type+filename"
-      selected-nodes="selectedNodes"
-      expanded-nodes="expandedNodes"
-      on-selection="disableFilecontrols(node, selected)"
-      on-node-toggle="getDirContents(node)">
-      {{node.filename}}
-      <span class="filetree-permissions">{{node.permissions}}</span>
-    </treecontrol>
+    <div ng-controller="FiletreeCtrl">
+      <treecontrol
+        class="tree-oide"
+        tree-model="treeData.filetreeContents"
+        options="treeOptions"
+        order-by="type+filename"
+        selected-nodes="treeData.selectedNodes"
+        expanded-nodes="treeData.expandedNodes"
+        on-selection="describeSelection(node, selected)"
+        on-node-toggle="getDirContents(node,expanded)">
+        {{node.filename}}
+        <span class="filetree-permissions">{{node.permissions}}</span>
+      </treecontrol>
+    </div>
   </div>
   <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main fill">
     <!-- <h2 class="sub-header">Section title</h2> -->
