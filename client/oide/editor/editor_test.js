@@ -4,16 +4,16 @@ describe('oide.editor module', function() {
 
   beforeEach(module('oide.editor'));
 
-  var $controller;
-
-  beforeEach(inject(function(_$controller_){
-    // The injector unwraps the underscores (_) from around the parameter names when matching
-    $controller = _$controller_;
-  }));
-
   describe('EditorCtrl', function(){
 
     var $scope, controller, mockEditorService;
+
+    var $controller;
+
+    beforeEach(inject(function(_$controller_){
+      // The injector unwraps the underscores (_) from around the parameter names when matching
+      $controller = _$controller_;
+    }));
 
     beforeEach(function() {
       $scope = {};
@@ -42,6 +42,13 @@ describe('oide.editor module', function() {
   describe('EditorTabsCtrl', function() {
 
     var $scope, controller, mockEditorService;
+
+    var $controller;
+
+    beforeEach(inject(function(_$controller_){
+      // The injector unwraps the underscores (_) from around the parameter names when matching
+      $controller = _$controller_;
+    }));
 
     beforeEach(function() {
       $scope = {
@@ -110,6 +117,13 @@ describe('oide.editor module', function() {
 
     var $scope, controller, mockEditorService;
 
+    var $controller;
+
+    beforeEach(inject(function(_$controller_){
+      // The injector unwraps the underscores (_) from around the parameter names when matching
+      $controller = _$controller_;
+    }));
+
     beforeEach(function() {
       $scope = {
         findNeedle: 'string_to_find',
@@ -171,4 +185,129 @@ describe('oide.editor module', function() {
     });
 
   });
+
+  describe('EditorSettingsCtrl', function() {
+    var $scope, controller, mockEditorService;
+
+    var $controller;
+
+    beforeEach(inject(function(_$controller_){
+      // The injector unwraps the underscores (_) from around the parameter names when matching
+      $controller = _$controller_;
+    }));
+
+    beforeEach(function() {
+      $scope = {};
+      mockEditorService = {
+        editorSettings: {
+          showInvisibles: true,
+          useSoftTabs: true,
+          fontSize: {label:12, value:12},
+          tabSize: {label:4, value:4},
+          showIndentGuides: true
+        },
+        applyEditorSettings: jasmine.createSpy()
+      };
+      controller = $controller(
+        'EditorSettingsCtrl', {
+          $scope: $scope,
+          EditorService: mockEditorService
+        });
+    });
+
+    it('should be defined', function() {
+      expect(controller).toBeDefined();
+    });
+
+    it('$scope.editorSettings pulls initial values from EditorService.editorSettings', function() {
+      expect($scope.editorSettings)
+        .toEqual({
+          showInvisibles: true,
+          useSoftTabs: true,
+          fontSize: {label:12, value:12},
+          tabSize: {label:4, value:4},
+          showIndentGuides: true
+        });
+    });
+
+    it('should set $scope.fontOptions properly on load', function() {
+      expect($scope.fontOptions).toEqual([
+        {label:8, value:8},
+        {label:10, value:10},
+        {label:12, value:12},
+        {label:14, value:14},
+        {label:16, value:16},
+        {label:18, value:18},
+        {label:20, value:20}
+      ]);
+    });
+
+    it('should set $scope.tabOptions properly on load', function() {
+      expect($scope.tabOptions).toEqual([
+        {label:1, value:1},
+        {label:2, value:2},
+        {label:3, value:3},
+        {label:4, value:4},
+        {label:5, value:5},
+        {label:6, value:6},
+        {label:7, value:7},
+        {label:8, value:8}
+      ]);
+    });
+
+    it('$scope.applyEditorSettings() should call EditorService.applyEditorSettings()', function() {
+      $scope.applyEditorSettings();
+      expect(mockEditorService.applyEditorSettings).toHaveBeenCalledWith();
+    });
+
+  });
+
+  describe('EditorService', function() {
+
+    var service, createService;
+
+    beforeEach(inject(function($injector) {
+      createService = function() {
+        return $injector.get(
+          'EditorService',
+          {
+            $window: {}
+          });
+      }
+    }));
+
+    beforeEach(function() {
+      service = createService();
+    });
+
+    beforeEach(function() {
+      service.editor = {
+        setShowInvisibles: jasmine.createSpy(),
+        getSession: function() {
+          return {
+            setUseSoftTabs: jasmine.createSpy(),
+            setTabSize: jasmine.createSpy()
+          }
+        },
+        setFontSize: jasmine.createSpy(),
+        setDisplayIndentGuides: jasmine.createSpy()
+      };
+    });
+
+    it('should be defined', function() {
+      expect(service).toBeDefined();
+    });
+
+    it('should initialize with the proper editorSettings', function() {
+      expect(service.editorSettings).toEqual({
+        showInvisibles: true,
+        useSoftTabs: true,
+        fontSize: {label:12, value:12},
+        tabSize: {label:4, value:4},
+        showIndentGuides: true
+      });
+    });
+
+  });
+
 });
