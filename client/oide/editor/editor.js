@@ -177,12 +177,28 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         if (filepath === nodeList[i].filepath) {
           return nodeList[i];
         } else {
-          matchedNode = getNodeFromPath(filepath, nodeList[i].children);
+          return getNodeFromPath(filepath, nodeList[i].children);
         }
       }
     }
   };
-  var getDirContents = function (node, expanded) {
+  var isExpanded = function (filepath) {
+    for (var i=0;i<treeData.expandedNodes.length;i++) {
+      if (treeData.expandedNodes[i].filepath === filepath) {
+        return true;
+      }
+    }
+    return false;
+  };
+  var isDisplayed = function (filepath) {
+    for (var i=0;i<treeData.filetreeContents.length;i++) {
+      if (treeData.filetreeContents[i].filepath === filepath) {
+        return true;
+      }
+    }
+    return false;
+  }
+  var getDirContents = function (node) {
     $http
       .get('/filebrowser/filetree/a/dir', {
         params: {
@@ -194,8 +210,18 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
           if (!data[i].hasOwnProperty('children')) {
             data[i].children = [];
           }
+
         }
         node.children = data;
+        var matchedNode;
+        for (var i=0;i<data.length;i++) {
+          if (isExpanded(data[i].filepath)) {
+            matchedNode = getNodeFromPath(data[i].filepath,treeData.filetreeContents);
+            if (!(typeof matchedNode === 'undefined')) {
+              getDirContents(matchedNode);
+            }
+          }
+        }
       }).
       error(function(data, status, headers, config) {
         $log.error('Failed to grab dir contents from ',node.filepath);
@@ -239,7 +265,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     FiletreeService.describeSelection(node, selected);
   };
   $scope.getDirContents = function (node, expanded) {
-    FiletreeService.getDirContents(node,expanded);
+    FiletreeService.getDirContents(node);
   };
   $scope.showSelected = function(node, selected) {
     console.log(node);
