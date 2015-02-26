@@ -170,6 +170,37 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         $log.error('Failed to initialize filetree.');
       });
   };
+  var getNodeFromPath = function (filepath, nodeList) {
+    var matchedNode;
+    for (var i=0;i<nodeList.length;i++) {
+      if (filepath.lastIndexOf(nodeList[i].filepath,0) === 0) {
+        if (filepath === nodeList[i].filepath) {
+          return nodeList[i];
+        } else {
+          matchedNode = getNodeFromPath(filepath, nodeList[i].children);
+        }
+      }
+    }
+  };
+  var getDirContents = function (node, expanded) {
+    $http
+      .get('/filebrowser/filetree/a/dir', {
+        params: {
+          dirpath: node.filepath
+        }
+      }).
+      success(function(data, status, headers, config) {
+        for (var i=0;i<data.length;i++) {
+          if (!data[i].hasOwnProperty('children')) {
+            data[i].children = [];
+          }
+        }
+        node.children = data;
+      }).
+      error(function(data, status, headers, config) {
+        $log.error('Failed to grab dir contents from ',node.filepath);
+      });
+  };
   initializeFiletree();
   return {
     treeData: treeData,
@@ -185,23 +216,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       }
       selectionDesc.dirSelected = dirSelected;
     },
-    getDirContents: function (node, expanded) {
-      $http
-        .get('/filebrowser/filetree/a/dir', {
-          params: {
-            dirpath: node.filepath
-          }
-        }).
-        success(function(data, status, headers, config) {
-          for (var i=0;i<data.length;i++) {
-            data[i].children = [];
-          }
-          node.children = data;
-        }).
-        error(function(data, status, headers, config) {
-          $log.error('Failed to grab dir contents from ',node.filepath);
-        });
-    }
+    getDirContents: getDirContents
   };
 }])
 .controller('FiletreeControlCtrl', ['$scope', 'FiletreeService', function($scope,FiletreeService) {
