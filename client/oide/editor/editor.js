@@ -149,7 +149,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     }
   };
 }])
-.factory('FiletreeService', ['$http', '$log', function($http,$log) {
+.factory('FiletreeService', ['$http', '$document', '$log', function($http,$document,$log) {
   var treeData = {
     filetreeContents: [
       // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
@@ -282,6 +282,18 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     },
     updateFiletree: function () {
       updateFiletree();
+    },
+    createNewFile: function () {
+      var selectedDir = treeData.selectedNodes[0];
+      $http({
+        url: '/filebrowser/localfiles'+selectedDir.filepath,
+        method: 'POST',
+        // headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
+        params: {_xsrf:getCookie('_xsrf')}
+        })
+        .success(function (data, status, headers, config) {
+          $log.debug('POST: ', data);
+        });
     }
   };
 }])
@@ -289,6 +301,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   $scope.sd = FiletreeService.selectionDesc;
   $scope.updateFiletree = function () {
     FiletreeService.updateFiletree();
+  };
+  $scope.createNewFile = function () {
+    FiletreeService.createNewFile();
   };
 }])
 .controller('FiletreeCtrl', ['$scope', '$log', 'FiletreeService', function($scope,$log,FiletreeService) {

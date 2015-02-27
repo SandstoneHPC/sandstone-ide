@@ -8,7 +8,8 @@
           tooltip="New File"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
-          ng-disabled="sd.noSelections||(sd.multipleSelections||!sd.dirSelected)">
+          ng-disabled="sd.noSelections||(sd.multipleSelections||!sd.dirSelected)"
+          ng-click="createNewFile()">
           <span class="fa fa-file"></span>
         </button>
       </div>

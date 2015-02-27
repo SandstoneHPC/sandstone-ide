@@ -56,6 +56,12 @@
       ng-view>
     </div>
 
+    <script>
+    function getCookie(name) {
+      var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+      return r ? r[1] : undefined;
+    };
+    </script>
     <script src="/static/bower_components/angular/angular.min.js"></script>
     <script src="/static/bower_components/angular-route/angular-route.js"></script>
     <script src="/static/bower_components/angular-ui-bootstrap/dist/ui-bootstrap-tpls-0.12.0.min.js"></script>
