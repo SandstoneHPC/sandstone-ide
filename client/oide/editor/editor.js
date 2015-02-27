@@ -227,6 +227,40 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         $log.error('Failed to grab dir contents from ',node.filepath);
       });
   };
+  // var getDirContentsR = function (node) {
+  //   var retObj = {};
+  //   $http
+  //     .get('/filebrowser/filetree/a/dir', {
+  //       params: {
+  //         dirpath: node.filepath
+  //       }
+  //     }).
+  //     success(function(data, status, headers, config) {
+  //       var i, matchedNode;
+  //       for (i=0;i<data.length;i++) {
+  //         if (!data[i].hasOwnProperty('children')) {
+  //           data[i].children = [];
+  //         } else {
+  //           if (isExpanded(data[i].filepath)) {
+  //             matchedNode = getNodeFromPath(data[i].filepath,treeData.filetreeContents);
+  //             if (!(typeof matchedNode === 'undefined')) {
+  //               data[i].children = getDirContentsR(matchedNode);
+  //             }
+  //           }
+  //         }
+  //       }
+  //       retObj.data = data;
+  //     }).
+  //     error(function(data, status, headers, config) {
+  //       $log.error('Failed to grab dir contents from ',node.filepath);
+  //     });
+  //     return retObj.data;
+  // };
+  var updateFiletree = function () {
+    for (var i=0;i<treeData.filetreeContents.length;i++) {
+      getDirContents(treeData.filetreeContents[i]);
+    }
+  };
   initializeFiletree();
   return {
     treeData: treeData,
@@ -242,11 +276,20 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       }
       selectionDesc.dirSelected = dirSelected;
     },
-    getDirContents: getDirContents
+    getDirContents: function (node) {
+      getDirContents(node);
+      // updateFiletree();
+    },
+    updateFiletree: function () {
+      updateFiletree();
+    }
   };
 }])
 .controller('FiletreeControlCtrl', ['$scope', 'FiletreeService', function($scope,FiletreeService) {
   $scope.sd = FiletreeService.selectionDesc;
+  $scope.updateFiletree = function () {
+    FiletreeService.updateFiletree();
+  };
 }])
 .controller('FiletreeCtrl', ['$scope', '$log', 'FiletreeService', function($scope,$log,FiletreeService) {
   $scope.treeData= FiletreeService.treeData;
