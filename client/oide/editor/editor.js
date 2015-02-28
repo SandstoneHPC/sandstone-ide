@@ -227,39 +227,32 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         $log.error('Failed to grab dir contents from ',node.filepath);
       });
   };
-  // var getDirContentsR = function (node) {
-  //   var retObj = {};
-  //   $http
-  //     .get('/filebrowser/filetree/a/dir', {
-  //       params: {
-  //         dirpath: node.filepath
-  //       }
-  //     }).
-  //     success(function(data, status, headers, config) {
-  //       var i, matchedNode;
-  //       for (i=0;i<data.length;i++) {
-  //         if (!data[i].hasOwnProperty('children')) {
-  //           data[i].children = [];
-  //         } else {
-  //           if (isExpanded(data[i].filepath)) {
-  //             matchedNode = getNodeFromPath(data[i].filepath,treeData.filetreeContents);
-  //             if (!(typeof matchedNode === 'undefined')) {
-  //               data[i].children = getDirContentsR(matchedNode);
-  //             }
-  //           }
-  //         }
-  //       }
-  //       retObj.data = data;
-  //     }).
-  //     error(function(data, status, headers, config) {
-  //       $log.error('Failed to grab dir contents from ',node.filepath);
-  //     });
-  //     return retObj.data;
-  // };
   var updateFiletree = function () {
+    var filepath, node;
     for (var i=0;i<treeData.filetreeContents.length;i++) {
       getDirContents(treeData.filetreeContents[i]);
     }
+  };
+  var nextUntitledFile = function (dirpath) {
+    var fileExists = false;
+    var fileIndex = 0;
+    var newFilePath;
+    do {
+      fileIndex++;
+      newFilePath = dirpath+'Untitled'+fileIndex;
+      $http
+        .get(
+          '/filebrowser/a/fileutil', {
+            params: {
+              filepath: newFilePath,
+              operation: 'CHECK_EXISTS'
+            }
+          })
+        .success(function(data, status, headers, config) {
+          fileExists = data.result;
+        });
+    } while (fileExists);
+    return newFilePath;
   };
   initializeFiletree();
   return {
@@ -284,15 +277,20 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       updateFiletree();
     },
     createNewFile: function () {
-      var selectedDir = treeData.selectedNodes[0];
+      var selectedDir = treeData.selectedNodes[0].filepath
+      var newFilePath = nextUntitledFile(selectedDir);
       $http({
-        url: '/filebrowser/localfiles'+selectedDir.filepath,
+        url: '/filebrowser/localfiles'+newFilePath,
         method: 'POST',
         // headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
         params: {_xsrf:getCookie('_xsrf')}
         })
         .success(function (data, status, headers, config) {
           $log.debug('POST: ', data);
+        })
+        .then(function (data, status, headers, config) {
+          // updateFiletree();
+          getDirContents(getNodeFromPath(selectedDir,treeData.filetreeContents));
         });
     }
   };
