@@ -81,11 +81,31 @@ class FilesystemUtilHandler(BaseHandler):
     def get(self):
         username = self.get_current_user()
         operation = self.get_argument('operation')
-        filepath = self.get_argument('filepath')
 
         if operation=='CHECK_EXISTS':
+            filepath = self.get_argument('filepath')
             result = common.file_exists(username,filepath)
             self.write({'result':result})
+        if operation=='GET_NEXT_UNTITLED_FILE':
+            dirpath = self.get_argument('dirpath')
+            index = 0
+            fileExists = True
+            while fileExists:
+                index+=1
+                filename = 'Untitled' + str(index)
+                newFilePath = os.path.join(dirpath,filename)
+                fileExists = common.file_exists(username,newFilePath)
+            self.write({'result':newFilePath})
+        if operation=='GET_NEXT_UNTITLED_DIR':
+            dirpath = self.get_argument('dirpath')
+            index = 0
+            dirExists = True
+            while dirExists:
+                index+=1
+                dirname = 'UntitledFolder' + str(index) + '/'
+                newDirPath = os.path.join(dirpath,dirname)
+                dirExists = common.file_exists(username,newDirPath)
+            self.write({'result':newDirPath})
 
     @tornado.web.authenticated
     def post(self):

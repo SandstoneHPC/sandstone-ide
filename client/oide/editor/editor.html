@@ -20,7 +20,8 @@
           tooltip="New Folder"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
-          ng-disabled="sd.noSelections||(sd.multipleSelections||!sd.dirSelected)">
+          ng-disabled="sd.noSelections||(sd.multipleSelections||!sd.dirSelected)"
+          ng-click="createNewDir()">
           <span class="fa fa-folder"></span>
         </button>
       </div>

@@ -149,7 +149,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     }
   };
 }])
-.factory('FiletreeService', ['$http', '$document', '$log', function($http,$document,$log) {
+.factory('FiletreeService', ['$http', '$document', '$q', '$log', function($http,$document,$q,$log) {
   var treeData = {
     filetreeContents: [
       // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
@@ -268,27 +268,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       getDirContents(treeData.expandedNodes[i]);
     }
   };
-  var nextUntitledFile = function (dirpath) {
-    var fileExists = false;
-    var fileIndex = 0;
-    var newFilePath;
-    do {
-      fileIndex++;
-      newFilePath = dirpath+'Untitled'+fileIndex;
-      $http
-        .get(
-          '/filebrowser/a/fileutil', {
-            params: {
-              filepath: newFilePath,
-              operation: 'CHECK_EXISTS'
-            }
-          })
-        .success(function(data, status, headers, config) {
-          fileExists = data.result;
-        });
-    } while (fileExists);
-    return newFilePath;
-  };
   initializeFiletree();
   return {
     treeData: treeData,
@@ -313,18 +292,65 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     },
     createNewFile: function () {
       var selectedDir = treeData.selectedNodes[0].filepath
-      var newFilePath = nextUntitledFile(selectedDir);
-      $http({
-        url: '/filebrowser/localfiles'+newFilePath,
-        method: 'POST',
-        // headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
-        params: {_xsrf:getCookie('_xsrf')}
+      var newFilePath;
+      $http
+        .get(
+          '/filebrowser/a/fileutil', {
+            params: {
+              dirpath: selectedDir,
+              operation: 'GET_NEXT_UNTITLED_FILE'
+            }
         })
         .success(function (data, status, headers, config) {
-          $log.debug('POST: ', data);
+          $log.debug('GET: ', data);
+          newFilePath = data.result;
         })
         .then(function (data, status, headers, config) {
-          updateFiletree();
+          $http({
+            url: '/filebrowser/localfiles'+newFilePath,
+            method: 'POST',
+            // headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
+            params: {_xsrf:getCookie('_xsrf')}
+            })
+            .success(function (data, status, headers, config) {
+              $log.debug('POST: ', data);
+            })
+            .then(function (data, status, headers, config) {
+              updateFiletree();
+            });
+        });
+    },
+    createNewDir: function () {
+      var selectedDir = treeData.selectedNodes[0].filepath
+      var newDirPath;
+      $http
+        .get(
+          '/filebrowser/a/fileutil', {
+            params: {
+              dirpath: selectedDir,
+              operation: 'GET_NEXT_UNTITLED_DIR'
+            }
+        })
+        .success(function (data, status, headers, config) {
+          $log.debug('GET: ', data);
+          newDirPath = data.result;
+        })
+        .then(function (data, status, headers, config) {
+          $http({
+            url: '/filebrowser/localfiles'+newDirPath,
+            method: 'POST',
+            // headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
+            params: {
+              _xsrf:getCookie('_xsrf'),
+              isDir: true
+            }
+            })
+            .success(function (data, status, headers, config) {
+              $log.debug('POST: ', data);
+            })
+            .then(function (data, status, headers, config) {
+              updateFiletree();
+            });
         });
     }
   };
@@ -336,6 +362,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
   $scope.createNewFile = function () {
     FiletreeService.createNewFile();
+  };
+  $scope.createNewDir = function () {
+    FiletreeService.createNewDir();
   };
 }])
 .controller('FiletreeCtrl', ['$scope', '$log', 'FiletreeService', function($scope,$log,FiletreeService) {
