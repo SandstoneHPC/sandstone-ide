@@ -291,7 +291,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       updateFiletree();
     },
     createNewFile: function () {
-      var selectedDir = treeData.selectedNodes[0].filepath
+      var selectedDir = treeData.selectedNodes[0].filepath;
       var newFilePath;
       $http
         .get(
@@ -321,7 +321,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         });
     },
     createNewDir: function () {
-      var selectedDir = treeData.selectedNodes[0].filepath
+      var selectedDir = treeData.selectedNodes[0].filepath;
       var newDirPath;
       $http
         .get(
@@ -352,6 +352,45 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
               updateFiletree();
             });
         });
+    },
+    createDuplicate: function () {
+      var selectedFile = treeData.selectedNodes[0].filepath;
+      var newFilePath;
+      $http
+        .get(
+          '/filebrowser/a/fileutil', {
+            params: {
+              filepath: selectedFile,
+              operation: 'GET_NEXT_DUPLICATE'
+            }
+        })
+        .success(function (data, status, headers, config) {
+          $log.debug('GET: ', data);
+          newFilePath = data.result;
+        })
+        .then(function (data, status, headers, config) {
+          var isDir = newFilePath.substring(-1) === '/';
+          $http({
+            url: '/filebrowser/localfiles'+newFilePath,
+            method: 'POST',
+            // headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
+            params: {
+              _xsrf:getCookie('_xsrf'),
+              isDir: isDir
+            }
+            })
+            .success(function (data, status, headers, config) {
+              $log.debug('POST: ', data);
+            })
+            .then(function (data, status, headers, config) {
+              updateFiletree();
+            });
+        });
+    },
+    deleteFiles: function () {
+      for (var i=0;i<treeData.selectedNodes.length;i++) {
+        //delete files
+      }
     }
   };
 }])
@@ -365,6 +404,12 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
   $scope.createNewDir = function () {
     FiletreeService.createNewDir();
+  };
+  $scope.createDuplicate = function () {
+    FiletreeService.createDuplicate();
+  };
+  $scope.deleteFiles = function () {
+    FiletreeService.deleteFiles();
   };
 }])
 .controller('FiletreeCtrl', ['$scope', '$log', 'FiletreeService', function($scope,$log,FiletreeService) {

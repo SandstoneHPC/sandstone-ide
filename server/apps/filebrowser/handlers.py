@@ -106,6 +106,19 @@ class FilesystemUtilHandler(BaseHandler):
                 newDirPath = os.path.join(dirpath,dirname)
                 dirExists = common.file_exists(username,newDirPath)
             self.write({'result':newDirPath})
+        if operation=='GET_NEXT_DUPLICATE':
+            filepath = self.get_argument('filepath')
+            isDir = os.path.isdir(filepath)
+            index = 0
+            fileExists = True
+            while fileExists:
+                index+=1
+                if isDir:
+                    newFilePath = ''.join([filepath[:-1],'-duplicate%s'%index,'/'])
+                else:
+                    newFilePath = ''.join([filepath,'-duplicate%s'%index])
+                fileExists = common.file_exists(username,newFilePath)
+            self.write({'result':newFilePath})
 
     @tornado.web.authenticated
     def post(self):

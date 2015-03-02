@@ -43,7 +43,8 @@
           tooltip="Duplicate Selected"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
-          ng-disabled="sd.noSelections||sd.multipleSelections">
+          ng-disabled="sd.noSelections||sd.multipleSelections"
+          ng-click="createDuplicate()">
           <span class="fa fa-files-o"></span>
         </button>
       </div>
@@ -65,7 +66,8 @@
           tooltip="Delete Selected"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
-          ng-disabled="sd.noSelections">
+          ng-disabled="sd.noSelections"
+          ng-click="deleteFiles()">
           <span class="fa fa-trash-o"></span>
         </button>
       </div>
