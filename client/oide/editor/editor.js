@@ -164,6 +164,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     $http
       .get('/filebrowser/filetree/a/dir')
       .success(function(data, status, headers, config) {
+        for (var i=0;i<data.length;i++) {
+          data[i].children = [];
+        }
         treeData.filetreeContents = data;
       }).
       error(function(data, status, headers, config) {
@@ -182,6 +185,35 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       }
     }
   };
+  var getFilepathsForDir = function (dirpath) {
+    var children = getNodeFromPath(dirpath,treeData.filetreeContents).children;
+    var filepaths = [];
+    for (var i=0;i<children.length;i++) {
+      filepaths.push(children[i].filepath);
+    }
+    return filepaths;
+  };
+  var removeNodeFromFiletree = function (node){
+    var index;
+    index = treeData.selectedNodes.indexOf(node);
+    if (index >= 0) {
+      treeData.selectedNodes.splice(index, 1);
+    }
+    index = treeData.expandedNodes.indexOf(node);
+    if (index >= 0) {
+      treeData.expandedNodes.splice(index, 1);
+    }
+    var filepath, dirpath, parentNode;
+    if (node.filepath.slice(-1) === '/') {
+      filepath = node.filepath.substring(0,node.filepath.length-1);
+    } else {
+      filepath = node.filepath;
+    }
+    dirpath = filepath.substring(0,filepath.lastIndexOf('/')+1);
+    parentNode = getNodeFromPath(dirpath,treeData.filetreeContents);
+    index = parentNode.children.indexOf(node);
+    parentNode.children.splice(index,1);
+  };
   var isExpanded = function (filepath) {
     for (var i=0;i<treeData.expandedNodes.length;i++) {
       if (treeData.expandedNodes[i].filepath === filepath) {
@@ -197,7 +229,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       }
     }
     return false;
-  }
+  };
   var getDirContents = function (node) {
     $http
       .get('/filebrowser/filetree/a/dir', {
@@ -206,21 +238,24 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         }
       }).
       success(function(data, status, headers, config) {
-        for (var i=0;i<data.length;i++) {
-          if (!data[i].hasOwnProperty('children')) {
-            data[i].children = [];
-          }
-
-        }
-        node.children = data;
         var matchedNode;
+        var currContents = getFilepathsForDir(node.filepath);
         for (var i=0;i<data.length;i++) {
-          if (isExpanded(data[i].filepath)) {
+          if (currContents.indexOf(data[i].filepath) >= 0) {
             matchedNode = getNodeFromPath(data[i].filepath,treeData.filetreeContents);
-            if (!(typeof matchedNode === 'undefined')) {
+            if ((data[i].type === 'dir')&&isExpanded(data[i].filepath)) {
               getDirContents(matchedNode);
             }
+            currContents.splice(currContents.indexOf(data[i].filepath), 1);
+          } else {
+            data[i].children = [];
+            node.children.push(data[i]);
           }
+        }
+        var index;
+        for (var i=0;i<currContents.length;i++) {
+          matchedNode = getNodeFromPath(currContents[i],treeData.filetreeContents);
+          removeNodeFromFiletree(matchedNode);
         }
       }).
       error(function(data, status, headers, config) {
@@ -229,8 +264,8 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
   var updateFiletree = function () {
     var filepath, node;
-    for (var i=0;i<treeData.filetreeContents.length;i++) {
-      getDirContents(treeData.filetreeContents[i]);
+    for (var i=0;i<treeData.expandedNodes.length;i++) {
+      getDirContents(treeData.expandedNodes[i]);
     }
   };
   var nextUntitledFile = function (dirpath) {
@@ -289,8 +324,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
           $log.debug('POST: ', data);
         })
         .then(function (data, status, headers, config) {
-          // updateFiletree();
-          getDirContents(getNodeFromPath(selectedDir,treeData.filetreeContents));
+          updateFiletree();
         });
     }
   };
