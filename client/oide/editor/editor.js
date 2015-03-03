@@ -13,10 +13,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
 }])
 .controller('EditorTabsCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
-  $scope.tabs = [
-    {filename:'coolModule.py', filepath:'/lustre/ProjectDir/modules/coolModule.py', content:'', active:true, unsaved:true},
-    {filename:'outfile.txt', filepath:'/projects/outfile.txt', content:''}
-  ];
+  $scope.tabs = EditorService.openDocuments.tabs;
   $scope.loadEditorContents = function (tab) {
     EditorService.loadSession(tab.filepath);
   };
@@ -69,10 +66,20 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     EditorService.applyEditorSettings();
   };
 }])
-.factory('EditorService', ['$window', '$log', function ($window, $log) {
+.factory('EditorService', ['$window', '$http', '$log', function ($window, $http, $log) {
   var editor = {};
   var currentSession = ''
   var editorSessions = {};
+  var openDocuments = {
+    'tabs':[
+      {
+        filename: 'untitled',
+        filepath: '-',
+        active: true,
+        unsaved: false
+      },
+    ]
+  };
   var clipboard = '';
   var editorSettings = {
     showInvisibles: true,
@@ -95,9 +102,19 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     editor.getSession().setTabSize(editorSettings.tabSize.value);
     editor.setDisplayIndentGuides(editorSettings.showIndentGuides);
   };
+  var switchSession = function (filepath) {
+    editorSessions[currentSession] = editor.getSession();
+    editor.setSession(editorSessions[filepath]);
+    $log.debug('Switching sessions from ', currentSession, ' to ', filepath)
+    currentSession = filepath;
+  };
+  var saveSession = function (filepath) {
+    var contents = editorSessions[filepath].getValue();
+  };
   return {
     findOptions: findOptions,
     editorSettings: editorSettings,
+    openDocuments: openDocuments,
     onAceLoad: function (_ace) {
       editor = _ace;
       applySettings();
@@ -105,13 +122,22 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     },
     loadSession: function (filepath) {
       if (!(filepath in editorSessions)) {
-        $log.debug('Creating new EditSession: ', filepath)
-        editorSessions[filepath] = $window.ace.createEditSession('','text');
+        $log.debug('Creating new EditSession: ', filepath);
+        $http
+          .get('/filebrowser/localfiles'+filepath)
+          .success(function (data, status, headers, config) {
+            editorSessions[filepath] = $window.ace.createEditSession(data,'text');
+            openDocuments.tabs.push({
+              filename: filepath.substring(filepath.lastIndexOf('/')+1),
+              filepath: filepath,
+              active: true,
+              unsaved: false
+            });
+            switchSession(filepath);
+          })
+      } else {
+        switchSession(filepath);
       }
-      editorSessions[currentSession] = editor.getSession();
-      editor.setSession(editorSessions[filepath]);
-      $log.debug('Switching sessions from ', currentSession, ' to ', filepath)
-      currentSession = filepath;
     },
     applyEditorSettings: function () {
       applySettings();
@@ -149,7 +175,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     }
   };
 }])
-.factory('FiletreeService', ['$http', '$document', '$q', '$log', function($http,$document,$q,$log) {
+.factory('FiletreeService', ['$http', '$document', '$q', '$log', 'EditorService', function($http,$document,$q,$log,EditorService) {
   var treeData = {
     filetreeContents: [
       // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
@@ -297,6 +323,12 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     },
     updateFiletree: function () {
       updateFiletree();
+    },
+    openFilesInEditor: function () {
+      for (var i=0;i<treeData.selectedNodes.length;i++) {
+        EditorService.loadSession(treeData.selectedNodes[i].filepath);
+        $log.debug('Opened document: ', treeData.selectedNodes[i].filepath);
+      }
     },
     createNewFile: function () {
       var selectedDir = treeData.selectedNodes[0].filepath;
@@ -477,6 +509,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   $scope.clipboardEmpty = FiletreeService.clipboardEmpty();
   $scope.updateFiletree = function () {
     FiletreeService.updateFiletree();
+  };
+  $scope.openFilesInEditor = function () {
+    FiletreeService.openFilesInEditor();
   };
   $scope.createNewFile = function () {
     FiletreeService.createNewFile();

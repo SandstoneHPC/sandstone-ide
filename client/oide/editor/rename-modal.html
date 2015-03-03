@@ -8,10 +8,12 @@
         {{ file.filepath }}
       </li>
     </ul>
-    <div class="form-group">
-      <label for="new-file-name">New File Name</label>
-      <input type="text" class="form-control" id="new-file-name" ng-model="newFileName">
-  </div>
+    <form class="form">
+      <div class="form-group">
+        <label for="new-file-name">New File Name</label>
+        <input type="text" class="form-control" id="new-file-name" ng-model="newFileName">
+      </div>
+    </form>
 </div>
 <div class="modal-footer">
   <button class="btn btn-success" ng-click="rename()">Rename File</button>

@@ -8,7 +8,8 @@
           tooltip="Edit Selected"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
-          ng-disabled="sd.noSelections||sd.dirSelected">
+          ng-disabled="sd.noSelections||sd.dirSelected"
+          ng-click="openFilesInEditor()">
           <span class="fa fa-pencil"></span>
         </button>
       </div>
@@ -102,7 +103,6 @@
               Rename
             </a>
           </li>
-          <li><a>File Info</a></li>
         </ul>
       </div>
     </div>
