@@ -52,7 +52,7 @@
         class="btn-group btn-group-sm"
         role="group"
         dropdown
-        is-open="fcDropdown.new">
+        is-open="fcDropdown">
         <button
           type="button"
           class="btn btn-default dropdown-toggle filetree-btn"
@@ -78,8 +78,22 @@
               New Folder
             </a>
           </li>
-          <li><a>Copy Selected</a></li>
-          <li><a>Paste</a></li>
+          <li>
+            <a
+              class="btn fc-dropdown-link"
+              ng-disabled="sd.noSelections"
+              ng-click="copyFiles()">
+              Copy
+            </a>
+          </li>
+          <li>
+            <a
+              class="btn fc-dropdown-link"
+              ng-disabled="clipboardEmpty||sd.noSelections||(sd.multipleSelections||!sd.dirSelected)"
+              ng-click="pasteFiles()">
+              Paste
+            </a>
+          </li>
           <li><a>Rename</a></li>
           <li><a>File Info</a></li>
         </ul>

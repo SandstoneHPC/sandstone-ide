@@ -160,6 +160,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     multipleSelections: false,
     dirSelected: false
   };
+  var clipboard = [];
   var initializeFiletree = function () {
     $http
       .get('/filebrowser/filetree/a/dir')
@@ -284,6 +285,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   return {
     treeData: treeData,
     selectionDesc: selectionDesc,
+    clipboardEmpty: function () {
+      return clipboard.length === 0;
+    },
     describeSelection: function (node, selected) {
       describeSelection();
     },
@@ -409,14 +413,50 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
             updateFiletree();
           });
       }
+    },
+    copyFiles: function () {
+      clipboard = [];
+      var node, i;
+      for (i=0;i<treeData.selectedNodes.length;i++) {
+        node = treeData.selectedNodes[i]
+        clipboard.push({
+          'filename': node.filename,
+          'filepath': node.filepath
+        });
+      }
+      $log.debug('Copied ', i, ' files to clipboard: ', clipboard)
+    },
+    pasteFiles: function () {
+      var i;
+      var newDirPath = treeData.selectedNodes[0].filepath;
+      for (i=0;i<clipboard.length;i++) {
+        $http({
+          url: '/filebrowser/a/fileutil',
+          method: 'POST',
+          params: {
+            _xsrf:getCookie('_xsrf'),
+            operation: 'COPY',
+            origpath: clipboard[i].filepath,
+            newpath: newDirPath+clipboard[i].filename
+          }
+          })
+          .success(function (data, status, headers, config) {
+            $log.debug('POST: ', data.result);
+          });
+      }
+      clipboard = [];
+      if (!isExpanded(newDirPath)) {
+        var node = getNodeFromPath(newDirPath,treeData.filetreeContents);
+        treeData.expandedNodes.push(node);
+      }
+      updateFiletree();
     }
   };
 }])
 .controller('FiletreeControlCtrl', ['$scope', '$modal', '$log', 'FiletreeService', function($scope,$modal,$log,FiletreeService) {
   $scope.sd = FiletreeService.selectionDesc;
-  $scope.fcDropdown = {
-    new: false,
-  };
+  $scope.fcDropdown = false;
+  $scope.clipboardEmpty = FiletreeService.clipboardEmpty();
   $scope.updateFiletree = function () {
     FiletreeService.updateFiletree();
   };
@@ -430,7 +470,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     FiletreeService.createDuplicate();
   };
   $scope.deleteFiles = function () {
-    $scope.items = ['item1', 'item2', 'item3'];
     var deleteModalInstance = $modal.open({
       templateUrl: '/static/editor/delete-modal.html',
       backdrop: 'static',
@@ -449,6 +488,12 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     }, function () {
       $log.debug('Modal dismissed at: ' + new Date());
     });
+  };
+  $scope.copyFiles = function () {
+    FiletreeService.copyFiles();
+  };
+  $scope.pasteFiles = function () {
+    FiletreeService.pasteFiles();
   };
 }])
 .controller('DeleteModalCtrl', function ($scope, $modalInstance, files) {
