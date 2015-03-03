@@ -179,7 +179,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       if (filepath.lastIndexOf(nodeList[i].filepath,0) === 0) {
         if (filepath === nodeList[i].filepath) {
           return nodeList[i];
-        } else {
+        } else if (nodeList[i].type === 'dir') {
           return getNodeFromPath(filepath, nodeList[i].children);
         }
       }
@@ -373,7 +373,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
           $http({
             url: '/filebrowser/localfiles'+newFilePath,
             method: 'POST',
-            // headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
             params: {
               _xsrf:getCookie('_xsrf'),
               isDir: isDir
@@ -389,12 +388,27 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     },
     deleteFiles: function () {
       for (var i=0;i<treeData.selectedNodes.length;i++) {
-        //delete files
+        var filepath = treeData.selectedNodes[i].filepath;
+        $http({
+          url: '/filebrowser/localfiles'+filepath,
+          method: 'DELETE',
+          params: {
+            _xsrf:getCookie('_xsrf')
+            }
+          })
+          .success(function (data, status, headers, config) {
+            $log.debug('DELETE: ', data.result);
+            var node = getNodeFromPath(data.filepath,treeData.filetreeContents);
+            removeNodeFromFiletree(node);
+          })
+          .then(function (data, status, headers, config) {
+            updateFiletree();
+          });
       }
     }
   };
 }])
-.controller('FiletreeControlCtrl', ['$scope', 'FiletreeService', function($scope,FiletreeService) {
+.controller('FiletreeControlCtrl', ['$scope', '$modal', '$log', 'FiletreeService', function($scope,$modal,$log,FiletreeService) {
   $scope.sd = FiletreeService.selectionDesc;
   $scope.updateFiletree = function () {
     FiletreeService.updateFiletree();
@@ -409,9 +423,39 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     FiletreeService.createDuplicate();
   };
   $scope.deleteFiles = function () {
-    FiletreeService.deleteFiles();
+    $scope.items = ['item1', 'item2', 'item3'];
+    var deleteModalInstance = $modal.open({
+      templateUrl: '/static/editor/delete-modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: 'DeleteModalCtrl',
+      resolve: {
+        files: function () {
+          return FiletreeService.treeData.selectedNodes;
+        }
+      }
+    });
+
+    deleteModalInstance.result.then(function () {
+      $log.debug('Files deleted at: ' + new Date());
+      FiletreeService.deleteFiles();
+    }, function () {
+      $log.debug('Modal dismissed at: ' + new Date());
+    });
   };
 }])
+.controller('DeleteModalCtrl', function ($scope, $modalInstance, files) {
+
+  $scope.files = files;
+
+  $scope.remove = function () {
+    $modalInstance.close();
+  };
+
+  $scope.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+})
 .controller('FiletreeCtrl', ['$scope', '$log', 'FiletreeService', function($scope,$log,FiletreeService) {
   $scope.treeData= FiletreeService.treeData;
   $scope.treeOptions = {

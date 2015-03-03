@@ -189,6 +189,10 @@
   font-size: 9px;
   color: #C8C8C8;
 }
+.modal-body-message {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
 /*#find-menu .input-group-addon {
   color: #FFFFFF;
   background-color: #3e3f3a;

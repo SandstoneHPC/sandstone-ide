@@ -71,7 +71,10 @@ class LocalFileHandler(BaseHandler, tornado.web.StaticFileHandler):
         username = self.get_current_user()
         try:
             file_path = common.delete_file(username,path)
-            self.write(file_path+', deleted')
+            self.write({
+                'result':file_path+', deleted',
+                'filepath':file_path
+            })
         except:
             raise tornado.web.HTTPError(404, "Insufficient permission for specified path")
 
