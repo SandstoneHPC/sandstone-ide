@@ -94,7 +94,14 @@
               Paste
             </a>
           </li>
-          <li><a>Rename</a></li>
+          <li>
+            <a
+              class="btn fc-dropdown-link"
+              ng-disabled="sd.noSelections||sd.multipleSelections"
+              ng-click="renameFile()">
+              Rename
+            </a>
+          </li>
           <li><a>File Info</a></li>
         </ul>
       </div>

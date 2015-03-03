@@ -450,6 +450,24 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         treeData.expandedNodes.push(node);
       }
       updateFiletree();
+    },
+    renameFile: function (newFileName) {
+      var node = treeData.selectedNodes[0];
+      $http({
+        url: '/filebrowser/a/fileutil',
+        method: 'POST',
+        params: {
+          _xsrf:getCookie('_xsrf'),
+          operation: 'RENAME',
+          filepath: node.filepath,
+          newFileName: newFileName
+        }
+        })
+        .success(function (data, status, headers, config) {
+          $log.debug('POST: ', data.result);
+        });
+        removeNodeFromFiletree(node);
+        updateFiletree();
     }
   };
 }])
@@ -495,6 +513,26 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   $scope.pasteFiles = function () {
     FiletreeService.pasteFiles();
   };
+  $scope.renameFile = function () {
+    var renameModalInstance = $modal.open({
+      templateUrl: '/static/editor/rename-modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: 'RenameModalCtrl',
+      resolve: {
+        files: function () {
+          return FiletreeService.treeData.selectedNodes;
+        }
+      }
+    });
+
+    renameModalInstance.result.then(function (newFileName) {
+      $log.debug('Files renamed at: ' + new Date());
+      FiletreeService.renameFile(newFileName);
+    }, function () {
+      $log.debug('Modal dismissed at: ' + new Date());
+    });
+  };
 }])
 .controller('DeleteModalCtrl', function ($scope, $modalInstance, files) {
 
@@ -502,6 +540,19 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
 
   $scope.remove = function () {
     $modalInstance.close();
+  };
+
+  $scope.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+})
+.controller('RenameModalCtrl', function ($scope, $modalInstance, files) {
+
+  $scope.files = files;
+  $scope.newFileName = files[0].filename;
+
+  $scope.rename = function () {
+    $modalInstance.close($scope.newFileName);
   };
 
   $scope.cancel = function () {
