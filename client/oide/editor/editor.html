@@ -5,30 +5,6 @@
         <button
           type="button"
           class="btn btn-default filetree-btn"
-          tooltip="New File"
-          tooltip-trigger="mouseenter"
-          tooltip-placement="bottom"
-          ng-disabled="sd.noSelections||(sd.multipleSelections||!sd.dirSelected)"
-          ng-click="createNewFile()">
-          <span class="fa fa-file"></span>
-        </button>
-      </div>
-      <div class="btn-group btn-group-sm" role="group">
-        <button
-          type="button"
-          class="btn btn-default filetree-btn"
-          tooltip="New Folder"
-          tooltip-trigger="mouseenter"
-          tooltip-placement="bottom"
-          ng-disabled="sd.noSelections||(sd.multipleSelections||!sd.dirSelected)"
-          ng-click="createNewDir()">
-          <span class="fa fa-folder"></span>
-        </button>
-      </div>
-      <div class="btn-group btn-group-sm" role="group">
-        <button
-          type="button"
-          class="btn btn-default filetree-btn"
           tooltip="Edit Selected"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
@@ -52,17 +28,6 @@
         <button
           type="button"
           class="btn btn-default filetree-btn"
-          tooltip="Move Selected"
-          tooltip-trigger="mouseenter"
-          tooltip-placement="bottom"
-          ng-disabled="sd.noSelections">
-          <span class="fa fa-file-o"></span>
-        </button>
-      </div>
-      <div class="btn-group btn-group-sm" role="group">
-        <button
-          type="button"
-          class="btn btn-default filetree-btn"
           tooltip="Delete Selected"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
@@ -75,23 +40,49 @@
         <button
           type="button"
           class="btn btn-default filetree-btn"
-          tooltip="File Info"
-          tooltip-trigger="mouseenter"
-          tooltip-placement="bottom"
-          ng-disabled="sd.noSelections||sd.multipleSelections">
-          <span class="fa fa-info"></span>
-        </button>
-      </div>
-      <div class="btn-group btn-group-sm" role="group">
-        <button
-          type="button"
-          class="btn btn-default filetree-btn"
           tooltip="Refresh Filetree"
           tooltip-trigger="mouseenter"
           tooltip-placement="bottom"
           ng-click="updateFiletree()">
           <span class="fa fa-refresh"></span>
         </button>
+      </div>
+      <div
+        id="fc-more-btn"
+        class="btn-group btn-group-sm"
+        role="group"
+        dropdown
+        is-open="fcDropdown.new">
+        <button
+          type="button"
+          class="btn btn-default dropdown-toggle filetree-btn"
+          ng-disabled="sd.noSelections"
+          dropdown-toggle>
+          <span class="filetree-control-label">More </span>
+          <span class="fa fa-caret-down"></span>
+        </button>
+        <ul class="dropdown-menu filetree-dropdown" role="menu">
+          <li>
+            <a
+              class="btn fc-dropdown-link"
+              ng-disabled="sd.noSelections||(sd.multipleSelections||!sd.dirSelected)"
+              ng-click="createNewFile()">
+              New File
+            </a>
+          </li>
+          <li>
+            <a
+              class="btn fc-dropdown-link"
+              ng-disabled="sd.noSelections||(sd.multipleSelections||!sd.dirSelected)"
+              ng-click="createNewDir()">
+              New Folder
+            </a>
+          </li>
+          <li><a>Copy Selected</a></li>
+          <li><a>Paste</a></li>
+          <li><a>Rename</a></li>
+          <li><a>File Info</a></li>
+        </ul>
       </div>
     </div>
     <div ng-controller="FiletreeCtrl">

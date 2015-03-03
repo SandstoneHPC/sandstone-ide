@@ -414,6 +414,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
 }])
 .controller('FiletreeControlCtrl', ['$scope', '$modal', '$log', 'FiletreeService', function($scope,$modal,$log,FiletreeService) {
   $scope.sd = FiletreeService.selectionDesc;
+  $scope.fcDropdown = {
+    new: false,
+  };
   $scope.updateFiletree = function () {
     FiletreeService.updateFiletree();
   };

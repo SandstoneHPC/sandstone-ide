@@ -140,11 +140,37 @@
   margin-left: auto;
   margin-right: auto;
   max-width: 300px;
+  width: 100%;
 }
 .filetree-btn {
   /*border-top: 1px solid #93c54b;*/
   border-bottom: 2px solid #93c54b;
   /*color: inherit;*/
+}
+.filetree-control-label {
+  font-size: 10px;
+  margin-right: 5px;
+}
+.filetree-dropdown {
+  color: white;
+  background-color: #3e3f3a;
+  border: 1px solid #3e3f3a;
+}
+.filetree-dropdown > li > a:hover {
+  color: white;
+  background-color: #3e3f3a;
+}
+#fc-more-btn {
+  width: 3px;
+}
+#fc-more-btn .dropdown-menu {
+  margin: 2px -88px 0 !important;
+}
+.fc-dropdown-link {
+  text-align: left;
+}
+.btn.fc-dropdown-link:disabled {
+  color: #5E5E5E;
 }
 #editor-nav-tabs li.active {
   z-index: 1029;
