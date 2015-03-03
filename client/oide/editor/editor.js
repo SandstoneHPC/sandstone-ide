@@ -213,6 +213,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     parentNode = getNodeFromPath(dirpath,treeData.filetreeContents);
     index = parentNode.children.indexOf(node);
     parentNode.children.splice(index,1);
+    describeSelection();
   };
   var isExpanded = function (filepath) {
     for (var i=0;i<treeData.expandedNodes.length;i++) {
@@ -268,20 +269,23 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       getDirContents(treeData.expandedNodes[i]);
     }
   };
+  var describeSelection = function () {
+    selectionDesc.multipleSelections = treeData.selectedNodes.length > 1;
+    selectionDesc.noSelections = treeData.selectedNodes.length === 0;
+    var dirSelected = false;
+    for (var i in treeData.selectedNodes) {
+      if (treeData.selectedNodes[i].type==='dir') {
+        dirSelected = true;
+      }
+    }
+    selectionDesc.dirSelected = dirSelected;
+  };
   initializeFiletree();
   return {
     treeData: treeData,
     selectionDesc: selectionDesc,
     describeSelection: function (node, selected) {
-      selectionDesc.multipleSelections = treeData.selectedNodes.length > 1;
-      selectionDesc.noSelections = treeData.selectedNodes.length === 0;
-      var dirSelected = false;
-      for (var i in treeData.selectedNodes) {
-        if (treeData.selectedNodes[i].type==='dir') {
-          dirSelected = true;
-        }
-      }
-      selectionDesc.dirSelected = dirSelected;
+      describeSelection();
     },
     getDirContents: function (node) {
       getDirContents(node);
