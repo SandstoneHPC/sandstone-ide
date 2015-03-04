@@ -195,7 +195,8 @@
               class="fa fa-lg tab-icon"
               ng-class="{'fa-times':!tab.unsaved||hoverClose,'fa-circle-o':tab.unsaved&&!hoverClose,'tab-icon-selected':hoverClose}"
               ng-mouseenter="hoverClose=true"
-              ng-mouseleave="hoverClose=false">
+              ng-mouseleave="hoverClose=false"
+              ng-click="closeDocument($event,tab)">
             </span>
           </tab-heading>
         </tab>

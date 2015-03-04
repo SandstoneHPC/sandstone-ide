@@ -12,10 +12,39 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     EditorService.onAceLoad(_ace);
   };
 }])
-.controller('EditorTabsCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
+.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', function ($scope, $modal, $log, EditorService) {
   $scope.tabs = EditorService.openDocuments.tabs;
   $scope.loadEditorContents = function (tab) {
     EditorService.loadSession(tab.filepath);
+  };
+  $scope.closeDocument = function ($event, tab) {
+    $event.preventDefault();
+    if (tab.unsaved) {
+      var unsavedModalInstance = $modal.open({
+        templateUrl: '/static/editor/close-unsaved-modal.html',
+        backdrop: 'static',
+        keyboard: false,
+        controller: 'UnsavedModalCtrl',
+        resolve: {
+          file: function () {
+            return tab;
+          }
+        }
+      });
+
+      unsavedModalInstance.result.then(function (file) {
+        if (file.saveFile) {
+          $log.debug('Saved files at: ' + new Date());
+        } else {
+          $log.debug('Closed without saving at: ' + new Date());
+          EditorService.closeDocument(file.filepath);
+        }
+      }, function () {
+        $log.debug('Modal dismissed at: ' + new Date());
+      });
+    } else {
+      EditorService.closeDocument(tab);
+    }
   };
   $scope.undoChanges = function (tab) {
     EditorService.undoChanges(tab.filepath);
@@ -36,6 +65,24 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     EditorService.commentSelection();
   };
 }])
+.controller('UnsavedModalCtrl', function ($scope, $modalInstance, file) {
+
+  $scope.file = file;
+
+  $scope.save = function () {
+    $scope.file.saveFile = true;
+    $modalInstance.close($scope.file);
+  };
+
+  $scope.close = function () {
+    $scope.file.saveFile = false;
+    $modalInstance.close($scope.file);
+  }
+
+  $scope.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+})
 .controller('EditorFindCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
   $scope.findOptions = EditorService.findOptions;
   $scope.findString = function () {
@@ -139,6 +186,13 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       } else {
         switchSession(filepath);
       }
+    },
+    closeDocument: function (tab) {
+      $log.debug('Closing editor session: ', tab.filepath);
+      openDocuments.tabs.splice(openDocuments.tabs.lastIndexOf(tab),1);
+      delete editorSessions[tab.filepath];
+      $log.debug('Closed session.');
+      switchSession(openDocuments.tabs[openDocuments.tabs.length-1].filepath);
     },
     applyEditorSettings: function () {
       applySettings();
