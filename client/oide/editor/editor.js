@@ -46,6 +46,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       EditorService.closeDocument(tab);
     }
   };
+  $scope.saveDocument = function (tab) {
+    EditorService.saveDocument(tab);
+  };
   $scope.undoChanges = function (tab) {
     EditorService.undoChanges(tab.filepath);
   };
@@ -193,6 +196,21 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       delete editorSessions[tab.filepath];
       $log.debug('Closed session.');
       switchSession(openDocuments.tabs[openDocuments.tabs.length-1].filepath);
+    },
+    saveDocument: function (tab) {
+      var content = editorSessions[tab.filepath].getValue();
+      $http({
+        url: '/filebrowser/localfiles'+tab.filepath,
+        method: 'PUT',
+        params: {
+          _xsrf: getCookie('_xsrf'),
+          content: content
+        }
+      })
+      .success(function (data,status, headers, config) {
+        $log.debug('Saved file: ', tab.filepath);
+        openDocuments.tabs[openDocuments.tabs.indexOf(tab)].unsaved = false;
+      });
     },
     applyEditorSettings: function () {
       applySettings();
