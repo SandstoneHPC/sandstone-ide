@@ -66,7 +66,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     EditorService.applyEditorSettings();
   };
 }])
-.factory('EditorService', ['$window', '$http', '$log', function ($window, $http, $log) {
+.factory('EditorService', ['$window', '$http', '$log', 'AceModeService', function ($window, $http,$log,AceModeService) {
   var editor = {};
   var currentSession = ''
   var editorSessions = {};
@@ -126,7 +126,8 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         $http
           .get('/filebrowser/localfiles'+filepath)
           .success(function (data, status, headers, config) {
-            editorSessions[filepath] = $window.ace.createEditSession(data,'text');
+            var mode = AceModeService.getModeForPath(filepath);
+            editorSessions[filepath] = $window.ace.createEditSession(data,mode.mode);
             openDocuments.tabs.push({
               filename: filepath.substring(filepath.lastIndexOf('/')+1),
               filepath: filepath,
