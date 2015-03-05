@@ -17,6 +17,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   $scope.loadEditorContents = function (tab) {
     EditorService.loadSession(tab.filepath);
   };
+  $scope.createDocument = function () {
+    EditorService.createDocument();
+  };
   $scope.closeDocument = function ($event, tab) {
     $event.preventDefault();
     if (tab.unsaved) {
@@ -121,14 +124,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   var currentSession = ''
   var editorSessions = {};
   var openDocuments = {
-    'tabs':[
-      {
-        filename: 'untitled',
-        filepath: '-',
-        active: true,
-        unsaved: false
-      },
-    ]
+    'tabs':[]
   };
   var clipboard = '';
   var editorSettings = {
@@ -161,6 +157,28 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   var saveSession = function (filepath) {
     var contents = editorSessions[filepath].getValue();
   };
+  var createDocument = function () {
+    $log.debug('Creating new Document');
+    var docExists = true;
+    var docEnum = 0;
+    var filepath;
+    while (docExists) {
+      filepath = '-/untitled'+docEnum;
+      if (filepath in editorSessions) {
+        docEnum++;
+      } else {
+        docExists = false;
+      }
+    }
+    editorSessions[filepath] = $window.ace.createEditSession('','text');
+    openDocuments.tabs.push({
+      filename: 'untitled',
+      filepath: filepath,
+      active: true,
+      unsaved: false
+    });
+    switchSession(filepath);
+  };
   return {
     findOptions: findOptions,
     editorSettings: editorSettings,
@@ -169,6 +187,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       editor = _ace;
       applySettings();
       $log.debug('Loaded Ace instance: ', editor);
+      createDocument();
     },
     loadSession: function (filepath) {
       if (!(filepath in editorSessions)) {
@@ -190,12 +209,17 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         switchSession(filepath);
       }
     },
+    createDocument: function () {
+      createDocument();
+    },
     closeDocument: function (tab) {
       $log.debug('Closing editor session: ', tab.filepath);
       openDocuments.tabs.splice(openDocuments.tabs.lastIndexOf(tab),1);
       delete editorSessions[tab.filepath];
       $log.debug('Closed session.');
-      switchSession(openDocuments.tabs[openDocuments.tabs.length-1].filepath);
+      if (Object.keys(editorSessions).length !== 0) {
+        switchSession(openDocuments.tabs[openDocuments.tabs.length-1].filepath);
+      }
     },
     saveDocument: function (tab) {
       var content = editorSessions[tab.filepath].getValue();
