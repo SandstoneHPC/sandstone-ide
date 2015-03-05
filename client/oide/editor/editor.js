@@ -177,7 +177,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
           .get('/filebrowser/localfiles'+filepath)
           .success(function (data, status, headers, config) {
             var mode = AceModeService.getModeForPath(filepath);
-            editorSessions[filepath] = $window.ace.createEditSession(data,mode.mode);
+            editorSessions[filepath] = $window.ace.createEditSession(data.content,mode.mode);
             openDocuments.tabs.push({
               filename: filepath.substring(filepath.lastIndexOf('/')+1),
               filepath: filepath,
@@ -482,17 +482,18 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
           newFilePath = data.result;
         })
         .then(function (data, status, headers, config) {
-          var isDir = newFilePath.substring(-1) === '/';
           $http({
-            url: '/filebrowser/localfiles'+newFilePath,
+            url: '/filebrowser/a/fileutil',
             method: 'POST',
             params: {
               _xsrf:getCookie('_xsrf'),
-              isDir: isDir
+              operation: 'COPY',
+              origpath: selectedFile,
+              newpath: newFilePath
             }
             })
             .success(function (data, status, headers, config) {
-              $log.debug('POST: ', data);
+              $log.debug('Copied: ', data.result);
             })
             .then(function (data, status, headers, config) {
               updateFiletree();

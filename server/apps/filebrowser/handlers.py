@@ -16,24 +16,19 @@ from apps.filebrowser.filesystem import common
 
 
 
-class LocalFileHandler(BaseHandler, tornado.web.StaticFileHandler):
-
-    def initialize(self):
-        pass
+class LocalFileHandler(BaseHandler):
 
     @tornado.web.authenticated
-    def get(self, path, include_body=True):
+    def get(self, path):
         username = self.get_current_user()
         root_paths = common.list_root_paths(username)
-        self.path = self.parse_url_path(path)
-        self.root = None
-
-        for p in root_paths:
-            if self.path.startswith(p):
-                self.root = p
-
-        if self.root:
-            super(LocalFileHandler, self).get(path)
+        abspath = os.path.abspath(path)
+        if common.valid_root(username,abspath):
+            with open(abspath, 'r') as f:
+                content = f.read()
+            self.write({
+                'content':content
+            })
         else:
             self.set_status(404)
             return
@@ -49,7 +44,10 @@ class LocalFileHandler(BaseHandler, tornado.web.StaticFileHandler):
             else:
                 file_path = common.create_file(username,path)
                 logging.info('Created file {} for user {}'.format(path,username))
-            self.write(file_path+', created')
+            self.write({
+                'result':file_path+', created',
+                'filepath':file_path
+            })
         except:
             logging.error('Error creating file at {} for user {}'.format(path,username))
             raise tornado.web.HTTPError(404, "Insufficient permission for specified path")
@@ -61,7 +59,10 @@ class LocalFileHandler(BaseHandler, tornado.web.StaticFileHandler):
         try:
             file_path = common.update_file(username,path,content)
             logging.info('Updated file {} for user {}, adding the following content:\n{}...'.format(path,username,content[:80]))
-            self.write(file_path+', updated')
+            self.write({
+                'result':file_path+', updated',
+                'filepath':file_path
+            })
         except:
             logging.error('Failed to update file {} for user {}, adding the following content:\n{}...'.format(path,username,content[:80]))
             raise tornado.web.HTTPError(404, "Insufficient permission for specified path")
