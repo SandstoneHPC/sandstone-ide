@@ -50,6 +50,29 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       EditorService.closeDocument(tab);
     }
   };
+  $scope.saveDocumentAs = function (tab) {
+    var saveAsModalInstance = $modal.open({
+      templateUrl: '/static/editor/saveas-modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: 'SaveAsModalCtrl',
+      resolve: {
+        file: function () {
+          return tab;
+        }
+      }
+    });
+
+    saveAsModalInstance.result.then(function (tab) {
+      // TODO: Rename editorSession prior to saving.
+      // TODO: Rename editorSession, if applicable, after
+      //       renaming a file in the filetree.
+      EditorService.saveDocument(tab);
+      $log.debug('Saved files at: ' + new Date());
+    }, function () {
+      $log.debug('Modal dismissed at: ' + new Date());
+    });
+  };
   $scope.saveDocument = function (tab) {
     EditorService.saveDocument(tab);
   };
@@ -72,6 +95,79 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     EditorService.commentSelection();
   };
 }])
+.controller('SaveAsModalCtrl', function ($scope, $modalInstance, $http, file) {
+  $scope.treeData = {};
+  var initialContents = $http
+    .get('/filebrowser/filetree/a/dir')
+    .success(function(data, status, headers, config) {
+      for (var i=0;i<data.length;i++) {
+        data[i].children = [];
+      }
+      $scope.treeData.filetreeContents = data;
+    }).
+    error(function(data, status, headers, config) {
+      $log.error('Failed to initialize filetree.');
+    });
+    $scope.getDirContents = function (node,expanded) {
+      $http
+        .get('/filebrowser/filetree/a/dir', {
+          params: {
+            dirpath: node.filepath
+          }
+        }).
+        success(function(data, status, headers, config) {
+          for (var i=0;i<data.length;i++) {
+            if (!data[i].hasOwnProperty('children')) {
+              data[i].children = [];
+            }
+          }
+          node.children = data;
+        }).
+        error(function(data, status, headers, config) {
+          $log.error('Failed to grab dir contents from ',node.filepath);
+        });
+  };
+  if (file.filepath.substring(0,1) === '-') {
+    $scope.newFilePath = '-/';
+  } else {
+    $scope.newFilePath = file.filepath;
+  }
+  $scope.file = file;
+  $scope.file.oldFileName = $scope.file.filename;
+  $scope.file.oldFilePath = $scope.file.filepath;
+  $scope.updateSaveName = function (node, selected) {
+    if (node.type === 'dir') {
+      $scope.newFilePath = node.filepath;
+    } else {
+      var index = node.filepath.lastIndexOf('/')+1;
+      var filepath = node.filepath.substring(0,index);
+      var filename = node.filepath.substring(index,node.filepath.length);
+      $scope.newFilePath = filepath;
+      $scope.file.filename = filename;
+    }
+  };
+  $scope.file = file;
+  $scope.treeOptions = {
+    multiSelection: false,
+    isLeaf: function(node) {
+      return node.type !== 'dir';
+    },
+    injectClasses: {
+      iExpanded: "filetree-icon fa fa-folder-open",
+      iCollapsed: "filetree-icon fa fa-folder",
+      iLeaf: "filetree-icon fa fa-file",
+    }
+  };
+
+  $scope.saveAs = function () {
+    $scope.file.filepath = $scope.newFilePath+$scope.file.filename;
+    $modalInstance.close(file);
+  };
+
+  $scope.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+})
 .controller('UnsavedModalCtrl', function ($scope, $modalInstance, file) {
 
   $scope.file = file;
