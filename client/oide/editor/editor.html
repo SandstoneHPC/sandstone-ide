@@ -192,7 +192,11 @@
                   Save
                 </a></li>
                 <li><a href="#">Save As...</a></li>
-                <li><a href="#">Close File</a></li>
+                <li><a
+                  href="#"
+                  ng-click="closeDocument($event,tab)">
+                  Close File
+                </a></li>
               </ul>
             </span>
             <span
@@ -284,13 +288,15 @@
         id="aceplace"
         ui-ace="{onLoad:onAceLoad}"
         ng-model="editorModel"
-        ng-controller="EditorCtrl">
+        ng-controller="EditorCtrl"
+        ng-hide="noOpenSessions()">
       </div>
 
       <form
         id="find-menu"
         class="form-horizontal"
-        ng-controller="EditorFindCtrl">
+        ng-controller="EditorFindCtrl"
+        ng-hide="noOpenSessions()">
         <div class="form-group form-group-sm">
           <div class="input-group input-group-sm" >
             <span

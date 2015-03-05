@@ -11,6 +11,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   $scope.onAceLoad = function(_ace) {
     EditorService.onAceLoad(_ace);
   };
+  $scope.noOpenSessions =  EditorService.noOpenSessions;
 }])
 .controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', function ($scope, $modal, $log, EditorService) {
   $scope.tabs = EditorService.openDocuments.tabs;
@@ -91,6 +92,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
 })
 .controller('EditorFindCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
   $scope.findOptions = EditorService.findOptions;
+  $scope.noOpenSessions =  EditorService.noOpenSessions;
   $scope.findString = function () {
     EditorService.findString($scope.findNeedle);
   };
@@ -189,6 +191,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       $log.debug('Loaded Ace instance: ', editor);
       createDocument();
     },
+    noOpenSessions: function () {
+      return openDocuments.tabs.length === 0;
+    },
     loadSession: function (filepath) {
       if (!(filepath in editorSessions)) {
         $log.debug('Creating new EditSession: ', filepath);
@@ -217,7 +222,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       openDocuments.tabs.splice(openDocuments.tabs.lastIndexOf(tab),1);
       delete editorSessions[tab.filepath];
       $log.debug('Closed session.');
-      if (Object.keys(editorSessions).length !== 0) {
+      if (openDocuments.tabs.length !== 0) {
         switchSession(openDocuments.tabs[openDocuments.tabs.length-1].filepath);
       }
     },
