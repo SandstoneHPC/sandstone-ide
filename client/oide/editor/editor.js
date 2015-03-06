@@ -38,6 +38,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
 
       unsavedModalInstance.result.then(function (file) {
         if (file.saveFile) {
+          EditorService.saveDocument(file);
           $log.debug('Saved files at: ' + new Date());
         } else {
           $log.debug('Closed without saving at: ' + new Date());
@@ -263,6 +264,11 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     editor.setSession(editorSessions[filepath]);
     $log.debug('Switching sessions from ', currentSession, ' to ', filepath)
     currentSession = filepath;
+    for (var i=0;i<openDocuments.tabs.length;i++) {
+      if (openDocuments.tabs[i].filepath === currentSession) {
+        openDocuments.tabs[i].active = true;
+      }
+    }
   };
   var saveSession = function (filepath) {
     var contents = editorSessions[filepath].getValue();
