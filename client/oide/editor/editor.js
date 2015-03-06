@@ -244,6 +244,13 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     wholeWord: false,
     regExp: false
   };
+  var onAceChanged = function (e) {
+    for (var i=0;i<openDocuments.tabs.length;i++) {
+      if (openDocuments.tabs[i].filepath === currentSession) {
+        openDocuments.tabs[i].unsaved = true;
+      }
+    }
+  };
   var applySettings = function () {
     editor.setShowInvisibles(editorSettings.showInvisibles);
     editor.getSession().setUseSoftTabs(editorSettings.useSoftTabs);
@@ -290,6 +297,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       editor = _ace;
       applySettings();
       $log.debug('Loaded Ace instance: ', editor);
+      editor.on('change', onAceChanged);
       createDocument();
     },
     noOpenSessions: function () {
