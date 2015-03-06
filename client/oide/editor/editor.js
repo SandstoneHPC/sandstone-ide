@@ -13,7 +13,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
   $scope.noOpenSessions =  EditorService.noOpenSessions;
 }])
-.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', function ($scope, $modal, $log, EditorService) {
+.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', 'FiletreeService', function ($scope, $modal, $log, EditorService, FiletreeService) {
   $scope.tabs = EditorService.openDocuments.tabs;
   $scope.loadEditorContents = function (tab) {
     EditorService.loadSession(tab.filepath);
@@ -63,11 +63,16 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       }
     });
 
-    saveAsModalInstance.result.then(function (tab) {
-      // TODO: Rename editorSession prior to saving.
-      // TODO: Rename editorSession, if applicable, after
-      //       renaming a file in the filetree.
+    saveAsModalInstance.result.then(function (newFile) {
+      EditorService.fileRenamed(newFile.oldFilepath,newFile.filepath);
+      var tab;
+      for (var i=0;i<EditorService.openDocuments.tabs.length;i++) {
+        if (EditorService.openDocuments.tabs[i].filepath === newFile.filepath) {
+          tab = EditorService.openDocuments.tabs[i];
+        }
+      }
       EditorService.saveDocument(tab);
+      FiletreeService.updateFiletree();
       $log.debug('Saved files at: ' + new Date());
     }, function () {
       $log.debug('Modal dismissed at: ' + new Date());
@@ -127,26 +132,26 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
           $log.error('Failed to grab dir contents from ',node.filepath);
         });
   };
+  $scope.newFile = {};
   if (file.filepath.substring(0,1) === '-') {
-    $scope.newFilePath = '-/';
+    $scope.newFile.filepath = '-/';
   } else {
-    $scope.newFilePath = file.filepath;
+    $scope.newFile.filepath = file.filepath;
   }
-  $scope.file = file;
-  $scope.file.oldFileName = $scope.file.filename;
-  $scope.file.oldFilePath = $scope.file.filepath;
+  $scope.newFile.filename = file.filename;
+  $scope.newFile.oldFilename = file.filename;
+  $scope.newFile.oldFilepath = file.filepath;
   $scope.updateSaveName = function (node, selected) {
     if (node.type === 'dir') {
-      $scope.newFilePath = node.filepath;
+      $scope.newFile.filepath = node.filepath;
     } else {
       var index = node.filepath.lastIndexOf('/')+1;
       var filepath = node.filepath.substring(0,index);
       var filename = node.filepath.substring(index,node.filepath.length);
-      $scope.newFilePath = filepath;
-      $scope.file.filename = filename;
+      $scope.newFile.filepath = filepath;
+      $scope.newFile.filename = filename;
     }
   };
-  $scope.file = file;
   $scope.treeOptions = {
     multiSelection: false,
     isLeaf: function(node) {
@@ -160,8 +165,8 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
 
   $scope.saveAs = function () {
-    $scope.file.filepath = $scope.newFilePath+$scope.file.filename;
-    $modalInstance.close(file);
+    $scope.newFile.filepath = $scope.newFile.filepath+$scope.newFile.filename;
+    $modalInstance.close($scope.newFile);
   };
 
   $scope.cancel = function () {
@@ -290,6 +295,25 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     noOpenSessions: function () {
       return openDocuments.tabs.length === 0;
     },
+    fileRenamed: function (oldFilepath, newFilepath) {
+      var tab, session;
+      for (var i=0;i<openDocuments.tabs.length;i++) {
+        if (openDocuments.tabs[i].filepath === oldFilepath) {
+          tab = openDocuments.tabs[i];
+        }
+      }
+      if (!(typeof tab === 'undefined')) {
+        tab.filepath = newFilepath;
+        tab.filename = newFilepath.substring(
+          newFilepath.lastIndexOf('/')+1,
+          newFilepath.length
+        );
+      }
+      if (oldFilepath in editorSessions) {
+        editorSessions[newFilepath] = editorSessions[oldFilepath];
+        delete editorSessions[oldFilepath];
+      }
+    },
     loadSession: function (filepath) {
       if (!(filepath in editorSessions)) {
         $log.debug('Creating new EditSession: ', filepath);
@@ -324,18 +348,54 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     },
     saveDocument: function (tab) {
       var content = editorSessions[tab.filepath].getValue();
-      $http({
-        url: '/filebrowser/localfiles'+tab.filepath,
-        method: 'PUT',
-        params: {
-          _xsrf: getCookie('_xsrf'),
-          content: content
-        }
-      })
-      .success(function (data,status, headers, config) {
-        $log.debug('Saved file: ', tab.filepath);
-        openDocuments.tabs[openDocuments.tabs.indexOf(tab)].unsaved = false;
-      });
+      $http
+        .get(
+          '/filebrowser/a/fileutil',
+          {
+            params: {
+              operation: 'CHECK_EXISTS',
+              filepath: tab.filepath
+            }
+          }
+        )
+        .success(function (data, status, headers, config) {
+          if (data.result) {
+            $http({
+              url: '/filebrowser/localfiles'+tab.filepath,
+              method: 'PUT',
+              params: {
+                _xsrf: getCookie('_xsrf'),
+                content: content
+              }
+            })
+            .success(function (data,status, headers, config) {
+              $log.debug('Saved file: ', tab.filepath);
+              openDocuments.tabs[openDocuments.tabs.indexOf(tab)].unsaved = false;
+            });
+          } else {
+            $http({
+              url: '/filebrowser/localfiles'+tab.filepath,
+              method: 'POST',
+              params: {
+                _xsrf: getCookie('_xsrf')
+              }
+            })
+            .success(function (data,status, headers, config) {
+              $http({
+                url: '/filebrowser/localfiles'+tab.filepath,
+                method: 'PUT',
+                params: {
+                  _xsrf: getCookie('_xsrf'),
+                  content: content
+                }
+              })
+              .success(function (data,status, headers, config) {
+                $log.debug('Saved file: ', tab.filepath);
+                openDocuments.tabs[openDocuments.tabs.indexOf(tab)].unsaved = false;
+              });
+            });
+          }
+        });
     },
     applyEditorSettings: function () {
       applySettings();
@@ -695,10 +755,13 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         }
         })
         .success(function (data, status, headers, config) {
+          EditorService.fileRenamed(node.filepath,data.result);
+          removeNodeFromFiletree(node);
+          updateFiletree();
           $log.debug('POST: ', data.result);
         });
-        removeNodeFromFiletree(node);
-        updateFiletree();
+        // removeNodeFromFiletree(node);
+        // updateFiletree();
     }
   };
 }])
