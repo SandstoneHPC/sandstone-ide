@@ -40,6 +40,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         if (file.saveFile) {
           EditorService.saveDocument(file);
           $log.debug('Saved files at: ' + new Date());
+          EditorService.closeDocument(file.filepath);
         } else {
           $log.debug('Closed without saving at: ' + new Date());
           EditorService.closeDocument(file.filepath);
@@ -353,8 +354,8 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     },
     closeDocument: function (tab) {
       $log.debug('Closing editor session: ', tab.filepath);
-      openDocuments.tabs.splice(openDocuments.tabs.lastIndexOf(tab),1);
       delete editorSessions[tab.filepath];
+      openDocuments.tabs.splice(openDocuments.tabs.lastIndexOf(tab),1);
       $log.debug('Closed session.');
       if (openDocuments.tabs.length !== 0) {
         switchSession(openDocuments.tabs[openDocuments.tabs.length-1].filepath);
