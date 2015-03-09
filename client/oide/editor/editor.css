@@ -160,9 +160,9 @@
   color: white;
   background-color: #3e3f3a;
 }
-#fc-more-btn {
+/*#fc-more-btn {
   width: 3px;
-}
+}*/
 #fc-more-btn .dropdown-menu {
   margin: 2px -88px 0 !important;
 }
