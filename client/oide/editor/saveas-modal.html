@@ -35,6 +35,11 @@
   </div>
 </div>
 <div class="modal-footer">
-  <button class="btn btn-success" ng-click="saveAs()">Save File As</button>
+  <button
+    class="btn btn-success"
+    ng-click="saveAs()"
+    ng-disabled="invalidFilepath">
+    Save File As
+  </button>
   <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
 </div>

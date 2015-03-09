@@ -135,15 +135,20 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         });
   };
   $scope.newFile = {};
+  $scope.invalidFilepath = false;
   if (file.filepath.substring(0,1) === '-') {
     $scope.newFile.filepath = '-/';
+    $scope.invalidFilepath = true;
   } else {
-    $scope.newFile.filepath = file.filepath;
+    var index = file.filepath.lastIndexOf('/')+1;
+    var filepath = file.filepath.substring(0,index);
+    $scope.newFile.filepath = filepath;
   }
   $scope.newFile.filename = file.filename;
   $scope.newFile.oldFilename = file.filename;
   $scope.newFile.oldFilepath = file.filepath;
   $scope.updateSaveName = function (node, selected) {
+    $scope.invalidFilepath = false;
     if (node.type === 'dir') {
       $scope.newFile.filepath = node.filepath;
     } else {
@@ -329,6 +334,8 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       if (oldFilepath in editorSessions) {
         editorSessions[newFilepath] = editorSessions[oldFilepath];
         delete editorSessions[oldFilepath];
+        var mode = AceModeService.getModeForPath(newFilepath);
+        editorSessions[newFilepath].setMode(mode.mode);
       }
     },
     loadSession: function (filepath) {
