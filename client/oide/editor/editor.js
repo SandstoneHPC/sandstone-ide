@@ -261,15 +261,17 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     editor.setDisplayIndentGuides(editorSettings.showIndentGuides);
   };
   var switchSession = function (filepath) {
-    editorSessions[currentSession] = editor.getSession();
-    editor.setSession(editorSessions[filepath]);
-    $log.debug('Switching sessions from ', currentSession, ' to ', filepath)
-    currentSession = filepath;
-    for (var i=0;i<openDocuments.tabs.length;i++) {
-      if (openDocuments.tabs[i].filepath === currentSession) {
-        openDocuments.tabs[i].active = true;
-      }
+    if (!(currentSession === filepath)) {
+      editorSessions[currentSession] = editor.getSession();
+      editor.setSession(editorSessions[filepath]);
+      $log.debug('Switching sessions from ', currentSession, ' to ', filepath)
+      currentSession = filepath;
     }
+    // for (var i=0;i<openDocuments.tabs.length;i++) {
+    //   if (openDocuments.tabs[i].filepath === currentSession) {
+    //     openDocuments.tabs[i].active = true;
+    //   }
+    // }
   };
   var saveSession = function (filepath) {
     var contents = editorSessions[filepath].getValue();
@@ -354,12 +356,13 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     },
     closeDocument: function (tab) {
       $log.debug('Closing editor session: ', tab.filepath);
-      delete editorSessions[tab.filepath];
       openDocuments.tabs.splice(openDocuments.tabs.lastIndexOf(tab),1);
-      $log.debug('Closed session.');
       if (openDocuments.tabs.length !== 0) {
         switchSession(openDocuments.tabs[openDocuments.tabs.length-1].filepath);
       }
+      editorSessions[tab.filepath].$stopWorker();
+      delete editorSessions[tab.filepath];
+      $log.debug('Closed session.');
     },
     saveDocument: function (tab) {
       var content = editorSessions[tab.filepath].getValue();
