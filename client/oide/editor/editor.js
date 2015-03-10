@@ -236,31 +236,53 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     EditorService.applyEditorSettings();
   };
 }])
-.factory('EditorService', ['$window', '$http', '$log', 'AceModeService', function ($window, $http,$log,AceModeService) {
+.factory('EditorService', ['$window', '$http', '$log', 'AceModeService', 'StateService', function ($window, $http,$log,AceModeService,StateService) {
+  var state = StateService.state;
   var editor = {};
-  var currentSession = ''
-  var editorSessions = {};
-  var openDocuments = {
-    'tabs':[]
-  };
   var clipboard = '';
-  var editorSettings = {
-    showInvisibles: true,
-    useSoftTabs: true,
-    fontSize: {label:12, value:12},
-    tabSize: {label:4, value:4},
-    showIndentGuides: true
-  };
-  var findOptions = {
-    backwards: false,
-    wrap: true,
-    caseSensitive: false,
-    wholeWord: false,
-    regExp: false
-  };
+  var openDocuments, editorSessions, editorSettings, findOptions;
+  if ('openDocuments' in state.editor) {
+    openDocuments = state.editor.openDocuments;
+  } else {
+    openDocuments = {
+      currentSession: '',
+      tabs:[]
+    };
+    state.editor.openDocuments = openDocuments;
+  }
+  if ('editorSessions' in state.editor) {
+    editorSessions = state.editor.editorSessions;
+  } else {
+    editorSessions = {};
+    state.editor.editorSessions = editorSessions;
+  }
+  if ('editorSettings' in state.editor) {
+    editorSettings = state.editor.editorSettings;
+  } else {
+    editorSettings = {
+      showInvisibles: true,
+      useSoftTabs: true,
+      fontSize: {label:12, value:12},
+      tabSize: {label:4, value:4},
+      showIndentGuides: true
+    };
+    state.editor.editorSettings = editorSettings;
+  }
+  if ('findOptions' in state.editor) {
+    findOptions = state.editor.findOptions;
+  } else {
+    findOptions = {
+      backwards: false,
+      wrap: true,
+      caseSensitive: false,
+      wholeWord: false,
+      regExp: false
+    };
+    state.editor.findOptions = findOptions;
+  }
   var onAceChanged = function (e) {
     for (var i=0;i<openDocuments.tabs.length;i++) {
-      if (openDocuments.tabs[i].filepath === currentSession) {
+      if (openDocuments.tabs[i].filepath === openDocuments.currentSession) {
         openDocuments.tabs[i].unsaved = true;
       }
     }
@@ -273,14 +295,14 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     editor.setDisplayIndentGuides(editorSettings.showIndentGuides);
   };
   var switchSession = function (filepath) {
-    if (!(currentSession === filepath)) {
-      editorSessions[currentSession] = editor.getSession();
+    if (!(openDocuments.currentSession === filepath)) {
+      editorSessions[openDocuments.currentSession] = editor.getSession();
       editor.setSession(editorSessions[filepath]);
-      $log.debug('Switching sessions from ', currentSession, ' to ', filepath)
-      currentSession = filepath;
+      $log.debug('Switching sessions from ', openDocuments.currentSession, ' to ', filepath)
+      openDocuments.currentSession = filepath;
     }
     // for (var i=0;i<openDocuments.tabs.length;i++) {
-    //   if (openDocuments.tabs[i].filepath === currentSession) {
+    //   if (openDocuments.tabs[i].filepath === openDocuments.currentSession) {
     //     openDocuments.tabs[i].active = true;
     //   }
     // }
@@ -924,5 +946,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
 .controller('StateTestCtrl',function($scope,StateService,$log){
   $scope.getState = function () {
     $log.debug('Read state: ', StateService.state);
-  }
+  };
+  $scope.postState = function () {
+    StateService.storeState();
+    $log.debug('State POSTed');
+  };
 });
