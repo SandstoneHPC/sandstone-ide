@@ -20,7 +20,7 @@ angular.module('oide.states', [])
   };
   var getState = function () {
     return $http
-    .get('/codeeditor/a/editorstate')
+    .get('/a/state')
     .success(function (data, status, headers, config) {
       $log.debug('Retrieved state for user: ', data);
       return data;

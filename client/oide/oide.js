@@ -12,4 +12,9 @@ angular.module('oide', [
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/editor'});
-}]);
+}])
+.run(
+  function (StateService,$log) {
+    $log.debug('StateService initialized.');
+  }
+);
