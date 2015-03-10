@@ -5,7 +5,8 @@ angular.module('oide', [
   'ngRoute',
   'ui.bootstrap',
   'oide.editor',
-  'oide.acemodes'
+  'oide.acemodes',
+  'oide.states'
   // 'oide.terminal',
   // 'oide.version'
 ]).
