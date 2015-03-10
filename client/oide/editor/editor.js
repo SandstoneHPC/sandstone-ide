@@ -7,6 +7,13 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     templateUrl: '/static/editor/editor.html'
   });
 }])
+.run(
+  function (StateService,$log) {
+    if (!('editor' in StateService.state)) {
+      StateService.state.editor = {};
+    }
+  }
+)
 .controller('EditorCtrl', ['$scope', 'EditorService', function($scope, EditorService) {
   $scope.onAceLoad = function(_ace) {
     EditorService.onAceLoad(_ace);
@@ -458,17 +465,25 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     }
   };
 }])
-.factory('FiletreeService', ['$http', '$document', '$q', '$log', 'EditorService', function($http,$document,$q,$log,EditorService) {
-  var treeData = {
-    filetreeContents: [
-      // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
-    ]
-  };
-  var selectionDesc = {
-    noSelections: true,
-    multipleSelections: false,
-    dirSelected: false
-  };
+.factory('FiletreeService', ['$http', '$document', '$q', '$log', 'EditorService', 'StateService', function($http,$document,$q,$log,EditorService,StateService) {
+  var state = StateService.state;
+  var treeData, selectionDesc;
+  if ('treeData' in state.editor) {
+    treeData = state.editor.treeData;
+    describeSelection();
+  } else {
+    treeData = {
+      filetreeContents: [
+        // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
+      ]
+    };
+    state.editor.treeData = treeData;
+    selectionDesc = {
+      noSelections: true,
+      multipleSelections: false,
+      dirSelected: false
+    };
+  }
   var clipboard = [];
   var initializeFiletree = function () {
     $http
@@ -905,4 +920,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     console.log(selected);
       // $scope.selectedNodes = selected;
   };
-}]);
+}])
+.controller('StateTestCtrl',function($scope,StateService,$log){
+  $scope.getState = function () {
+    $log.debug('Read state: ', StateService.state);
+  }
+});
