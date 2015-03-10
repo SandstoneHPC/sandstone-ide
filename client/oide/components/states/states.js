@@ -4,7 +4,7 @@ angular.module('oide.states', [])
 .factory('StateService', ['$http', '$log', function($http,$log) {
   var storeState = function () {
     $http({
-      url: '/codeeditor/a/editorstate',
+      url: '/a/state',
       method: 'POST',
       params: {
         _xsrf: getCookie('_xsrf'),
