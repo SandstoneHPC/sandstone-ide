@@ -948,7 +948,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     $log.debug('Read state: ', StateService.state);
   };
   $scope.postState = function () {
-    StateService.storeState();
+    StateService.storeState(StateService.state);
     $log.debug('State POSTed');
   };
 });

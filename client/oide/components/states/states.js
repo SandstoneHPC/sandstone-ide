@@ -3,14 +3,14 @@
 angular.module('oide.states', [])
 .factory('StateService', ['$http', '$log', function($http,$log) {
   var state = {'state': {}};
-  var storeState = function () {
+  var storeState = function (currState) {
     $http({
       url: '/a/state',
       method: 'POST',
       params: {
-        _xsrf: getCookie('_xsrf'),
-        state: JSON.stringify(state.state)
-      }
+        _xsrf: getCookie('_xsrf')
+      },
+      data: JSON.stringify(currState)
     })
     .success(function (data, status, headers, config) {
       $log.debug('Stored state for user.');
@@ -44,8 +44,8 @@ angular.module('oide.states', [])
   initializeState();
   return {
     state: state.state,
-    storeState: function () {
-      storeState();
+    storeState: function (currState) {
+      storeState(currState);
     },
     getState: function () {
       getState();

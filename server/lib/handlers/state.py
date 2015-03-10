@@ -15,15 +15,17 @@ class StateHandler(BaseHandler,DBMixin):
         )
         if state:
             del state['_id']
-            self.write(state)
+            self.write(state['state'])
         else:
             self.write({})
 
     @tornado.web.authenticated
     def post(self):
-        state = self.get_argument('state')
-        state = tornado.escape.json_decode(state)
+        state = self.request.body
         # import pdb; pdb.set_trace()
         key = {'username':self.current_user}
-        data = state
+        data = {
+            'username': self.current_user,
+            'state': state
+        }
         self.db.states.update(key, data, upsert=True);
