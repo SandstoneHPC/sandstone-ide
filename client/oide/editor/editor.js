@@ -9,9 +9,12 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
 }])
 .run(
   function (StateService,$log) {
-    if (!('editor' in StateService.state)) {
-      StateService.state.editor = {};
-    }
+    StateService.statePromise.then(function () {
+      var state = StateService.getState();
+      if (!('editor' in state)) {
+        state.editor = {};
+      }
+    });
   }
 )
 .controller('EditorCtrl', ['$scope', 'EditorService', function($scope, EditorService) {
@@ -237,49 +240,60 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
 }])
 .factory('EditorService', ['$window', '$http', '$log', 'AceModeService', 'StateService', function ($window, $http,$log,AceModeService,StateService) {
-  var state = StateService.state;
   var editor = {};
   var clipboard = '';
-  var openDocuments, editorSessions, editorSettings, findOptions;
-  if ('openDocuments' in state.editor) {
-    openDocuments = state.editor.openDocuments;
-  } else {
-    openDocuments = {
-      currentSession: '',
-      tabs:[]
-    };
-    state.editor.openDocuments = openDocuments;
-  }
-  if ('editorSessions' in state.editor) {
-    editorSessions = state.editor.editorSessions;
-  } else {
-    editorSessions = {};
-    state.editor.editorSessions = editorSessions;
-  }
-  if ('editorSettings' in state.editor) {
-    editorSettings = state.editor.editorSettings;
-  } else {
-    editorSettings = {
-      showInvisibles: true,
-      useSoftTabs: true,
-      fontSize: {label:12, value:12},
-      tabSize: {label:4, value:4},
-      showIndentGuides: true
-    };
-    state.editor.editorSettings = editorSettings;
-  }
-  if ('findOptions' in state.editor) {
-    findOptions = state.editor.findOptions;
-  } else {
-    findOptions = {
-      backwards: false,
-      wrap: true,
-      caseSensitive: false,
-      wholeWord: false,
-      regExp: false
-    };
-    state.editor.findOptions = findOptions;
-  }
+  var state, openDocuments, editorSessions, editorSettings, findOptions;
+  openDocuments = {
+    currentSession: '',
+    tabs:[]
+  };
+  editorSessions = {};
+  editorSettings = {
+    showInvisibles: true,
+    useSoftTabs: true,
+    fontSize: {label:12, value:12},
+    tabSize: {label:4, value:4},
+    showIndentGuides: true
+  };
+  findOptions = {
+    backwards: false,
+    wrap: true,
+    caseSensitive: false,
+    wholeWord: false,
+    regExp: false
+  };
+  var onAceLoad = function (_ace) {
+    StateService.statePromise.then(function () {
+      state = StateService.getState();
+      if ('openDocuments' in state.editor) {
+        openDocuments = state.editor.openDocuments;
+      } else {
+        state.editor.openDocuments = openDocuments;
+      }
+      if ('editorSessions' in state.editor) {
+        editorSessions = state.editor.editorSessions;
+      } else {
+        state.editor.editorSessions = editorSessions;
+      }
+      if ('editorSettings' in state.editor) {
+        editorSettings = state.editor.editorSettings;
+      } else {
+        state.editor.editorSettings = editorSettings;
+      }
+      if ('findOptions' in state.editor) {
+        findOptions = state.editor.findOptions;
+      } else {
+        state.editor.findOptions = findOptions;
+      }
+      editor = _ace;
+      applySettings();
+      $log.debug('Loaded Ace instance: ', editor);
+      editor.on('change', onAceChanged);
+      if (openDocuments.tabs.length === 0) {
+        createDocument();
+      }
+    });
+  };
   var onAceChanged = function (e) {
     for (var i=0;i<openDocuments.tabs.length;i++) {
       if (openDocuments.tabs[i].filepath === openDocuments.currentSession) {
@@ -337,11 +351,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     editorSettings: editorSettings,
     openDocuments: openDocuments,
     onAceLoad: function (_ace) {
-      editor = _ace;
-      applySettings();
-      $log.debug('Loaded Ace instance: ', editor);
-      editor.on('change', onAceChanged);
-      createDocument();
+      onAceLoad(_ace);
     },
     noOpenSessions: function () {
       return openDocuments.tabs.length === 0;
@@ -488,24 +498,28 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
 }])
 .factory('FiletreeService', ['$http', '$document', '$q', '$log', 'EditorService', 'StateService', function($http,$document,$q,$log,EditorService,StateService) {
-  var state = StateService.state;
-  var treeData, selectionDesc;
-  if ('treeData' in state.editor) {
-    treeData = state.editor.treeData;
-    describeSelection();
-  } else {
-    treeData = {
-      filetreeContents: [
-        // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
-      ]
-    };
-    state.editor.treeData = treeData;
-    selectionDesc = {
-      noSelections: true,
-      multipleSelections: false,
-      dirSelected: false
-    };
-  }
+  // var state = StateService.state;
+  var state, treeData, selectionDesc;
+  treeData = {
+    filetreeContents: [
+      // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
+    ]
+  };
+  selectionDesc = {
+    noSelections: true,
+    multipleSelections: false,
+    dirSelected: false
+  };
+  StateService.statePromise.then(function () {
+    state = StateService.getState();
+    if ('treeData' in state.editor) {
+      treeData = state.editor.treeData;
+      describeSelection();
+    } else {
+      state.editor.treeData = treeData;
+    }
+    initializeFiletree();
+  });
   var clipboard = [];
   var initializeFiletree = function () {
     $http
@@ -627,7 +641,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     }
     selectionDesc.dirSelected = dirSelected;
   };
-  initializeFiletree();
   return {
     treeData: treeData,
     selectionDesc: selectionDesc,
@@ -945,10 +958,10 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
 }])
 .controller('StateTestCtrl',function($scope,StateService,$log){
   $scope.getState = function () {
-    $log.debug('Read state: ', StateService.state);
+    $log.debug('Read state: ', StateService.getState());
   };
   $scope.postState = function () {
-    StateService.storeState(StateService.state);
+    StateService.storeState();
     $log.debug('State POSTed');
   };
 });

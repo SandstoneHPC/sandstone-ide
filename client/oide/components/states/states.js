@@ -3,14 +3,14 @@
 angular.module('oide.states', [])
 .factory('StateService', ['$http', '$log', function($http,$log) {
   var state = {'state': {}};
-  var storeState = function (currState) {
+  var storeState = function () {
     $http({
       url: '/a/state',
       method: 'POST',
       params: {
         _xsrf: getCookie('_xsrf')
       },
-      data: JSON.stringify(currState)
+      data: JSON.stringify(state.state)
     })
     .success(function (data, status, headers, config) {
       $log.debug('Stored state for user.');
@@ -41,14 +41,21 @@ angular.module('oide.states', [])
       $log.error('Failed to retrieve state for user.');
     });
   };
-  initializeState();
+  var statePromise = initializeState();
   return {
     state: state.state,
-    storeState: function (currState) {
-      storeState(currState);
+    // state: function () {
+    //   return state.state;
+    // },
+    statePromise: statePromise,
+    storeState: function () {
+      storeState();
     },
     getState: function () {
-      getState();
+      return state.state;
     }
+    // getState: function () {
+    //   getState();
+    // }
   };
 }]);
