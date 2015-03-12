@@ -24,7 +24,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   $scope.noOpenSessions =  EditorService.noOpenSessions;
 }])
 .controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', 'FiletreeService', function ($scope, $modal, $log, EditorService, FiletreeService) {
-  $scope.tabs = EditorService.openDocuments.tabs;
+  $scope.openDocs = EditorService.openDocuments;
   $scope.loadEditorContents = function (tab) {
     EditorService.loadSession(tab.filepath);
   };
@@ -263,18 +263,35 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     regExp: false
   };
   var onAceLoad = function (_ace) {
+    editor = _ace;
     StateService.statePromise.then(function () {
+      StateService.registerUnloadFunc(function (state) {
+        var currSess;
+        var editorSessions = {};
+        for (var k in state.editor.editorSessions) {
+          currSess = state.editor.editorSessions[k];
+          editorSessions[k] = {
+            content: currSess.getValue(),
+            mode: currSess.$modeId
+          };
+        }
+        state.editor.editorSessions = editorSessions;
+      });
       state = StateService.getState();
       if ('openDocuments' in state.editor) {
-        openDocuments = state.editor.openDocuments;
+        openDocuments.tabs = state.editor.openDocuments.tabs;
+        openDocuments.currentSession = state.editor.openDocuments.currentSession;
       } else {
         state.editor.openDocuments = openDocuments;
       }
       if ('editorSessions' in state.editor) {
-        editorSessions = state.editor.editorSessions;
-      } else {
-        state.editor.editorSessions = editorSessions;
+        var s;
+        for (var k in state.editor.editorSessions) {
+          s = state.editor.editorSessions[k];
+          editorSessions[k] = $window.ace.createEditSession(s.content,s.mode);
+        }
       }
+      state.editor.editorSessions = editorSessions;
       if ('editorSettings' in state.editor) {
         editorSettings = state.editor.editorSettings;
       } else {
@@ -285,12 +302,13 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       } else {
         state.editor.findOptions = findOptions;
       }
-      editor = _ace;
       applySettings();
       $log.debug('Loaded Ace instance: ', editor);
       editor.on('change', onAceChanged);
       if (openDocuments.tabs.length === 0) {
         createDocument();
+      } else {
+        editor.setSession(editorSessions[openDocuments.currentSession]);
       }
     });
   };

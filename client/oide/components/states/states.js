@@ -3,7 +3,11 @@
 angular.module('oide.states', [])
 .factory('StateService', ['$http', '$log', function($http,$log) {
   var state = {'state': {}};
+  var unloadFuncs = [];
   var storeState = function () {
+    for (var i=0;i<unloadFuncs.length;i++) {
+      unloadFuncs[i](state.state);
+    }
     $http({
       url: '/a/state',
       method: 'POST',
@@ -53,6 +57,9 @@ angular.module('oide.states', [])
     },
     getState: function () {
       return state.state;
+    },
+    registerUnloadFunc: function (f) {
+      unloadFuncs.push(f);
     }
     // getState: function () {
     //   getState();
