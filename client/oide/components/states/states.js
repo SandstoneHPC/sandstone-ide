@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('oide.states', [])
-.factory('StateService', ['$http', '$log', function($http,$log) {
+.factory('StateService', ['$http', '$window', '$log', function($http,$window,$log) {
   var state = {'state': {}};
   var unloadFuncs = [];
   var storeState = function () {
@@ -46,6 +46,7 @@ angular.module('oide.states', [])
     });
   };
   var statePromise = initializeState();
+  $window.onbeforeunload = storeState;
   return {
     state: state.state,
     // state: function () {
