@@ -50,10 +50,10 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         if (file.saveFile) {
           EditorService.saveDocument(file);
           $log.debug('Saved files at: ' + new Date());
-          EditorService.closeDocument(file.filepath);
+          EditorService.closeDocument(file);
         } else {
           $log.debug('Closed without saving at: ' + new Date());
-          EditorService.closeDocument(file.filepath);
+          EditorService.closeDocument(file);
         }
       }, function () {
         $log.debug('Modal dismissed at: ' + new Date());
@@ -335,11 +335,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       $log.debug('Switching sessions from ', openDocuments.currentSession, ' to ', filepath)
       openDocuments.currentSession = filepath;
     }
-    // for (var i=0;i<openDocuments.tabs.length;i++) {
-    //   if (openDocuments.tabs[i].filepath === openDocuments.currentSession) {
-    //     openDocuments.tabs[i].active = true;
-    //   }
-    // }
   };
   var saveSession = function (filepath) {
     var contents = editorSessions[filepath].getValue();
@@ -372,7 +367,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     if (openDocuments.tabs.length !== 0) {
       switchSession(openDocuments.tabs[openDocuments.tabs.length-1].filepath);
     }
-    editorSessions[tab.filepath].$stopWorker();
+    // editorSessions[tab.filepath].$stopWorker();
     delete editorSessions[tab.filepath];
     $log.debug('Closed session.');
   };
