@@ -366,6 +366,16 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     });
     switchSession(filepath);
   };
+  var closeDocument = function (tab) {
+    $log.debug('Closing editor session: ', tab.filepath);
+    openDocuments.tabs.splice(openDocuments.tabs.lastIndexOf(tab),1);
+    if (openDocuments.tabs.length !== 0) {
+      switchSession(openDocuments.tabs[openDocuments.tabs.length-1].filepath);
+    }
+    editorSessions[tab.filepath].$stopWorker();
+    delete editorSessions[tab.filepath];
+    $log.debug('Closed session.');
+  };
   return {
     findOptions: findOptions,
     editorSettings: editorSettings,
@@ -397,6 +407,15 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         editorSessions[newFilepath].setMode(mode.mode);
       }
     },
+    fileDeleted: function (filepath) {
+      var i, tab;
+      for (i=0;i<openDocuments.tabs.length;i++) {
+        if (openDocuments.tabs[i].filepath === filepath) {
+          tab = openDocuments.tabs[i];
+          closeDocument(tab);
+        }
+      }
+    },
     loadSession: function (filepath) {
       if (!(filepath in editorSessions)) {
         $log.debug('Creating new EditSession: ', filepath);
@@ -421,14 +440,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       createDocument();
     },
     closeDocument: function (tab) {
-      $log.debug('Closing editor session: ', tab.filepath);
-      openDocuments.tabs.splice(openDocuments.tabs.lastIndexOf(tab),1);
-      if (openDocuments.tabs.length !== 0) {
-        switchSession(openDocuments.tabs[openDocuments.tabs.length-1].filepath);
-      }
-      editorSessions[tab.filepath].$stopWorker();
-      delete editorSessions[tab.filepath];
-      $log.debug('Closed session.');
+      closeDocument(tab);
     },
     saveDocument: function (tab) {
       var content = editorSessions[tab.filepath].getValue();
@@ -794,6 +806,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
             $log.debug('DELETE: ', data.result);
             var node = getNodeFromPath(data.filepath,treeData.filetreeContents);
             removeNodeFromFiletree(node);
+            EditorService.fileDeleted(data.filepath);
           })
           .then(function (data, status, headers, config) {
             updateFiletree();
