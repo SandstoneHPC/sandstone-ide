@@ -529,13 +529,13 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     dirSelected: false
   };
   StateService.statePromise.then(function () {
-    state = StateService.getState();
-    if ('treeData' in state.editor) {
-      treeData = state.editor.treeData;
-      describeSelection();
-    } else {
-      state.editor.treeData = treeData;
-    }
+    // state = StateService.getState();
+    // if ('treeData' in state.editor) {
+    //   treeData = state.editor.treeData;
+    //   describeSelection();
+    // } else {
+    //   state.editor.treeData = treeData;
+    // }
     initializeFiletree();
   });
   var clipboard = [];
