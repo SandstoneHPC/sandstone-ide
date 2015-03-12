@@ -122,10 +122,6 @@
         <span class="filetree-permissions">{{node.permissions}}</span>
       </treecontrol>
     </div>
-    <div ng-controller="StateTestCtrl">
-      <button ng-click="getState()">Read State</button>
-      <button ng-click="postState()">Store State</button>
-    </div>
   </div>
   <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main fill">
     <!-- <h2 class="sub-header">Section title</h2> -->
@@ -270,7 +266,7 @@
                 class="form-control input-sm"
                 ng-model="editorSettings.tabSize"
                 ng-change="applyEditorSettings()"
-                ng-options="opt as opt.label for opt in tabOptions">
+                ng-options="opt for opt in tabOptions">
               </select>
             </div>
             <div class="checkbox">
@@ -289,7 +285,7 @@
                 class="form-control input-sm"
                 ng-model="editorSettings.fontSize"
                 ng-change="applyEditorSettings()"
-                ng-options="opt as opt.label for opt in fontOptions">
+                ng-options="opt for opt in fontOptions">
               </select>
             </div>
           </form>

@@ -225,16 +225,16 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
 }])
 .controller('EditorSettingsCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
-  // $scope.editorSettings.fontSize = { label:12, value:12 };
-  // $scope.editorSettings.tabSize = { label:4, value:4 };
+  $scope.editorSettings = EditorService.editorSettings;
+  // $scope.editorSettings.fontSize = 12;
+  // $scope.editorSettings.tabSize = 4;
   var fontSizes = [];
   var tabSizes = [];
-  for (var i=1;i<9;i++) { tabSizes.push({ label:i, value:i }) }
-  for (var i=8;i<21;i+=2) { fontSizes.push({ label:i, value:i }) }
+  for (var i=1;i<9;i++) { tabSizes.push(i); }
+  for (var i=8;i<21;i+=2) { fontSizes.push(i); }
   $scope.fontOptions = fontSizes;
   $scope.tabOptions = tabSizes;
 
-  $scope.editorSettings = EditorService.editorSettings;
   $scope.applyEditorSettings = function () {
     EditorService.applyEditorSettings();
   };
@@ -251,8 +251,8 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   editorSettings = {
     showInvisibles: true,
     useSoftTabs: true,
-    fontSize: {label:12, value:12},
-    tabSize: {label:4, value:4},
+    fontSize: 12,
+    tabSize: 4,
     showIndentGuides: true
   };
   findOptions = {
@@ -293,15 +293,17 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       }
       state.editor.editorSessions = editorSessions;
       if ('editorSettings' in state.editor) {
-        editorSettings = state.editor.editorSettings;
-      } else {
-        state.editor.editorSettings = editorSettings;
+        for (var k in state.editor.editorSettings) {
+          editorSettings[k] = state.editor.editorSettings[k];
+        }
       }
+      state.editor.editorSettings = editorSettings;
       if ('findOptions' in state.editor) {
-        findOptions = state.editor.findOptions;
-      } else {
-        state.editor.findOptions = findOptions;
+        for (var k in state.editor.findOptions) {
+          findOptions[k] = state.editor.findOptions[k];
+        }
       }
+      state.editor.findOptions = findOptions;
       applySettings();
       $log.debug('Loaded Ace instance: ', editor);
       editor.on('change', onAceChanged);
@@ -322,8 +324,8 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   var applySettings = function () {
     editor.setShowInvisibles(editorSettings.showInvisibles);
     editor.getSession().setUseSoftTabs(editorSettings.useSoftTabs);
-    editor.setFontSize(editorSettings.fontSize.value);
-    editor.getSession().setTabSize(editorSettings.tabSize.value);
+    editor.setFontSize(editorSettings.fontSize);
+    editor.getSession().setTabSize(editorSettings.tabSize);
     editor.setDisplayIndentGuides(editorSettings.showIndentGuides);
   };
   var switchSession = function (filepath) {
