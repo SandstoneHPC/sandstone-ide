@@ -23,4 +23,5 @@ URL_SCHEMA = [
             (r"/filebrowser/a/fileutil", FilesystemUtilHandler),
             (r"/filebrowser/a/upload", FilesystemUploadHandler),
             (r"/filebrowser/filetree/a/dir", FileTreeHandler),
+            (r"/terminal/a/embed", EmbedTerminalHandler),
         ]

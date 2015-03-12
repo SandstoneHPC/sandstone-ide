@@ -9,6 +9,14 @@ angular.module('oide.terminal', ['ngRoute','ui.bootstrap'])
   });
 }])
 
-.controller('TerminalCtrl', [function() {
-
+.controller('TerminalCtrl', ['$scope', '$window', '$http', '$log', function($scope,$window,$http,$log) {
+  var embedConfig;
+  $http
+    .get('/terminal/a/embed')
+    .success(function (data, status, headers, config) {
+      embedConfig = data;
+    })
+    .then(function () {
+      
+    });
 }]);
