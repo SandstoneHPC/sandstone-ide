@@ -43,10 +43,9 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse" collapse="navbarCollapsed">
           <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="#/editor">Editor</a></li>
-            <li><a href="#">File Browser</a></li>
-            <li><a href="#/terminal">Terminal</a></li>
-            <li><a href="#">Scheduler</a></li>
+            {% for module in get_module_list() %}
+            <li class="active"><a href="{{module['link']}}" role="button">{{module['name']}}</a></li>
+            {% end %}
           </ul>
         </div>
       </div>
@@ -74,5 +73,6 @@
     <script src="/static/components/states/states.js"></script>
     <script src="/static/editor/editor.js"></script>
     <script src="/static/terminal/terminal.js"></script>
+    <script src="{{ gateone_static_url }}"></script>
   </body>
 </html>

@@ -33,8 +33,7 @@ class EmbedTerminalHandler(BaseHandler):
             ctx = {
                 'json_authobj': authobj,
                 'gateone_url': global_settings.GATEONE_URL,
-                'gateone_origins_url': global_settings.GATEONE_ORIGINS_URL,
-                'gateone_static_url': global_settings.GATEONE_STATIC_URL
+                'gateone_origins_url': global_settings.GATEONE_ORIGINS_URL
                 }
             self.write(ctx)
 

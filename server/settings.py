@@ -18,8 +18,8 @@ MONGO_PORT = 27017
 
 INSTALLED_MODULES = (
         {
-            'name': 'Code Editor',
-            'link': '/#/codeeditor',
+            'name': 'Editor',
+            'link': '/#/editor',
             'description': 'A simple online editor for your code and other files.'
         },
         {
@@ -28,14 +28,9 @@ INSTALLED_MODULES = (
             'description': 'A powerful online file browser.'
         },
         {
-            'name': 'Web Terminal',
+            'name': 'Terminal',
             'link': '/#/terminal',
             'description': 'The GateOne web terminal.'
-        },
-        {
-            'name': 'Testing Grounds',
-            'link': '/test',
-            'description': 'Open space for testing new features.'
         },
     )
 
@@ -50,4 +45,3 @@ try:
     from local_settings import *
 except:
     pass
-
