@@ -4,8 +4,7 @@ angular.module('oide.terminal', ['ngRoute','ui.bootstrap'])
 
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/terminal', {
-    templateUrl: '/static/terminal/terminal.html',
-    controller: 'TerminalCtrl'
+    templateUrl: '/static/terminal/terminal.html'
   });
 }])
 
@@ -21,6 +20,7 @@ angular.module('oide.terminal', ['ngRoute','ui.bootstrap'])
           url: embedConfig.gateone_url,
           auth: embedConfig.authobj,
           origins: embedConfig.gateone_origins_url,
+          theme: 'white',
           showTitle: false,
           showToolbar: true
       });
