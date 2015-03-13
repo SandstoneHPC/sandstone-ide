@@ -17,6 +17,12 @@ angular.module('oide.terminal', ['ngRoute','ui.bootstrap'])
       embedConfig = data;
     })
     .then(function () {
-      
+      GateOne.init({
+          url: embedConfig.gateone_url,
+          auth: embedConfig.authobj,
+          origins: embedConfig.gateone_origins_url,
+          showTitle: false,
+          showToolbar: true
+      });
     });
 }]);
