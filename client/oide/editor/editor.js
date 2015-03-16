@@ -17,7 +17,10 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     });
   }
 )
-.controller('EditorCtrl', ['$scope', 'EditorService', function($scope, EditorService) {
+.controller('EditorCtrl', ['$scope', 'EditorService', '$location', 'StateService', function($scope, EditorService, $location, StateService) {
+  $scope.$on('$locationChangeStart', function (event) {
+    StateService.storeState();
+  });
   $scope.onAceLoad = function(_ace) {
     EditorService.onAceLoad(_ace);
   };
