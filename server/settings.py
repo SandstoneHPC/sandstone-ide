@@ -7,11 +7,7 @@ DEBUG = True
 LOGIN_URL = '/auth/login'
 COOKIE_SECRET = 'YouShouldProbablyChangeThisValueForYourProject'
 
-TERMINAL_API_KEY = 'GateOneAPIKey'
-TERMINAL_SECRET = 'GateOneServerSecret'
-GATEONE_URL = 'https://localhost:10443'
-GATEONE_ORIGINS_URL = 'http://localhost:8888'
-GATEONE_STATIC_URL = 'https://remotehost:10443'
+SHELLINABOX_URL = 'http://localhost:10443'
 
 MONGO_URI = 'localhost'
 MONGO_PORT = 27017
@@ -35,7 +31,7 @@ INSTALLED_MODULES = (
         {
             'name': 'Terminal',
             'link': '/#/terminal',
-            'description': 'The GateOne web terminal.'
+            'description': 'The ShellInABox web terminal.'
         },
     )
 

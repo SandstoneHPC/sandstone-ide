@@ -5,25 +5,26 @@ angular.module('oide.terminal', ['ngRoute','ui.bootstrap'])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/terminal', {
     templateUrl: '/static/terminal/terminal.html',
-    controller: 'TerminalCtrl'
+    controller: 'TerminalCtrl',
+    resolve: {
+      embedConfig: function (TerminalService) {
+        return TerminalService.getEmbedConfig();
+      }
+    }
   });
 }])
 
-.controller('TerminalCtrl', ['$scope', '$window', '$http', '$log', function($scope,$window,$http,$log) {
-  var embedConfig;
-  $http
-    .get('/terminal/a/embed')
-    .success(function (data, status, headers, config) {
-      embedConfig = data;
-    })
-    .then(function () {
-      GateOne.init({
-          url: embedConfig.gateone_url,
-          auth: embedConfig.authobj,
-          origins: embedConfig.gateone_origins_url,
-          theme: 'white',
-          showTitle: false,
-          showToolbar: true
-      });
-    });
+.factory('TerminalService', ['$http', function ($http) {
+  return {
+    getEmbedConfig: function () {
+      return $http
+        .get('/terminal/a/embed')
+        .success(function (data, status, headers, config) {
+          return data;
+        });
+    }
+  };
+}])
+.controller('TerminalCtrl', ['$scope', 'embedConfig', '$sce', '$log', function($scope,embedConfig,$sce,$log) {
+  $scope.embedUrl = $sce.trustAsResourceUrl(embedConfig.data.shellinabox_url);
 }]);
