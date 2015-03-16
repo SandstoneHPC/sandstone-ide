@@ -22,7 +22,7 @@ class EmbedTerminalHandler(BaseHandler):
             authobj = {
                 'api_key': global_settings.TERMINAL_API_KEY,
                 'upn': self.get_current_user(),
-                'timestamp': str(int(time.time())),
+                'timestamp': str(int(time.time() * 1000)),
                 'signature': "",
                 'signature_method': 'HMAC-SHA1',
                 'api_version': '1.0'
