@@ -19,11 +19,6 @@ INSTALLED_MODULES = (
             'description': 'A simple online editor for your code and other files.'
         },
         {
-            'name': 'File Browser',
-            'link': '/#/filebrowser',
-            'description': 'A powerful online file browser.'
-        },
-        {
             'name': 'Terminal',
             'link': '/#/terminal',
             'description': 'The ShellInABox web terminal.'
