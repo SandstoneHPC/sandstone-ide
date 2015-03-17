@@ -233,7 +233,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
 .factory('EditorService', ['$window', '$http', '$log', 'AceModeService', 'StateService', function ($window, $http,$log,AceModeService,StateService) {
   var editor = {};
   var clipboard = '';
-  var state, openDocuments, editorSessions, editorSettings, findOptions;
+  var state, openDocuments, editorSessions, editorSettings;
   openDocuments = {
     currentSession: '',
     tabs:[]
@@ -245,13 +245,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     fontSize: 12,
     tabSize: 4,
     showIndentGuides: true
-  };
-  findOptions = {
-    backwards: false,
-    wrap: true,
-    caseSensitive: false,
-    wholeWord: false,
-    regExp: false
   };
   var onAceLoad = function (_ace) {
     editor = _ace;
@@ -289,12 +282,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         }
       }
       state.editor.editorSettings = editorSettings;
-      if ('findOptions' in state.editor) {
-        for (var k in state.editor.findOptions) {
-          findOptions[k] = state.editor.findOptions[k];
-        }
-      }
-      state.editor.findOptions = findOptions;
       applySettings();
       $log.debug('Loaded Ace instance: ', editor);
       editor.on('change', onAceChanged);
@@ -363,7 +350,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     $log.debug('Closed session.');
   };
   return {
-    findOptions: findOptions,
     editorSettings: editorSettings,
     openDocuments: openDocuments,
     onAceLoad: function (_ace) {
@@ -484,18 +470,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     },
     openSearchBox: function () {
       editor.execCommand("replace");
-    },
-    findString: function (needle) {
-      editor.find(needle, findOptions);
-    },
-    findPreviousString: function (needle) {
-      editor.findPrevious(needle, findOptions);
-    },
-    replaceCurrentString: function (replaceNeedle) {
-      editor.replace(replaceNeedle);
-    },
-    replaceAllStrings: function (replaceNeedle) {
-      editor.replaceAll(replaceNeedle);
     },
     undoChanges: function (filepath) {
       editorSessions[filepath].getUndoManager().undo();
