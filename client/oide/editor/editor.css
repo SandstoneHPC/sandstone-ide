@@ -128,7 +128,7 @@
 .ace_search {
   background-color: #3E3F3A !important;
   border: 1px solid #3E3F3A !important;
-  font: 12px/normal "Roboto", "Helvetica Neue" , Helvetica, Arial, monospace;
+  font: 12px/normal "Helvetica Neue" , Helvetica, Arial, monospace;
 }
 .ace_search_options {
   margin-top: 5px;
@@ -144,7 +144,10 @@
   width: 230px;
 }
 .ace_replace_form input {
-  width: 252px;
+  width: 235px;
+}
+.ace_replace_form button {
+  padding: 4px;
 }
 .filetree-container {
   /*padding-top: 55px;*/
