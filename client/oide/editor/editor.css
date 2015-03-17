@@ -84,9 +84,9 @@
   /*color: white;*/
   position: absolute;
   top: 60px;
-  bottom: 90px;
-  right: 6px;
-  left: 6px;
+  bottom: 0px;
+  right: 5px;
+  left: 5px;
   margin: 10px;
   margin-top: -4px;
   margin-bottom: 15px;
@@ -97,7 +97,7 @@
 #editor-settings-icon {
   color: #3e3f3a;
   position: absolute;
-  bottom: 120px;
+  bottom: 30px;
   right: 30px;
   z-index: 1029;
 }
@@ -129,6 +129,22 @@
   background-color: #3E3F3A !important;
   border: 1px solid #3E3F3A !important;
   font: 12px/normal "Roboto", "Helvetica Neue" , Helvetica, Arial, monospace;
+}
+.ace_search_options {
+  margin-top: 5px;
+}
+.ace_search_options .ace_button {
+  color: white;
+  border: none;
+}
+.ace_search_options .ace_button:hover {
+  background-color: #3e3a3f;
+}
+.ace_search_form input {
+  width: 230px;
+}
+.ace_replace_form input {
+  width: 252px;
 }
 .filetree-container {
   /*padding-top: 55px;*/
@@ -194,7 +210,7 @@
   border-radius: 4px;
   position: absolute;
   top: 60px;
-  bottom: 90px;
+  bottom: 0px;
   right: 6px;
   color: white;
   margin: 10px;

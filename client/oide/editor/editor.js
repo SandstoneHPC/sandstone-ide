@@ -115,6 +115,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   $scope.commentSelection = function () {
     EditorService.commentSelection();
   };
+  $scope.openSearchBox = function () {
+    EditorService.openSearchBox();
+  };
 }])
 .controller('SaveAsModalCtrl', function ($scope, $modalInstance, $http, file) {
   $scope.treeData = {};
@@ -212,22 +215,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     $modalInstance.dismiss('cancel');
   };
 })
-.controller('EditorFindCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
-  $scope.findOptions = EditorService.findOptions;
-  $scope.noOpenSessions =  EditorService.noOpenSessions;
-  $scope.findString = function () {
-    EditorService.findString($scope.findNeedle);
-  };
-  $scope.findPreviousString = function () {
-    EditorService.findPreviousString($scope.findNeedle);
-  };
-  $scope.replaceCurrentString = function () {
-    EditorService.replaceCurrentString($scope.replaceNeedle);
-  };
-  $scope.replaceAllStrings = function () {
-    EditorService.replaceAllStrings($scope.replaceNeedle);
-  };
-}])
 .controller('EditorSettingsCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
   $scope.editorSettings = EditorService.editorSettings;
   // $scope.editorSettings.fontSize = 12;
@@ -494,6 +481,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     },
     applyEditorSettings: function () {
       applySettings();
+    },
+    openSearchBox: function () {
+      editor.execCommand("replace");
     },
     findString: function (needle) {
       editor.find(needle, findOptions);
