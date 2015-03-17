@@ -70,6 +70,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       templateUrl: '/static/editor/saveas-modal.html',
       backdrop: 'static',
       keyboard: false,
+      size: 'lg',
       controller: 'SaveAsModalCtrl',
       resolve: {
         file: function () {
