@@ -940,7 +940,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     }
   }));
   $scope.treeOptions = {
-    multiSelection: $scope.ctrlKeyDown,
+    multiSelection: false,
     isLeaf: function(node) {
       return node.type !== 'dir';
     },
@@ -951,6 +951,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     }
   };
   $scope.describeSelection = function (node, selected) {
+    if ($scope.treeOptions.multiSelection === false) {
+      $scope.treeData.selectedNodes = [node];
+    }
     FiletreeService.describeSelection(node, selected);
   };
   $scope.getDirContents = function (node, expanded) {
