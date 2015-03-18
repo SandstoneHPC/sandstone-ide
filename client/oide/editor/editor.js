@@ -927,10 +927,20 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     $modalInstance.dismiss('cancel');
   };
 })
-.controller('FiletreeCtrl', ['$scope', '$log', 'FiletreeService', function($scope,$log,FiletreeService) {
+.controller('FiletreeCtrl', ['$scope', '$document', '$log', 'FiletreeService', function($scope,$document,$log,FiletreeService) {
   $scope.treeData= FiletreeService.treeData;
+  $document.on('keydown', (function (e) {
+    if (e.keyCode === 17) {
+      $scope.treeOptions.multiSelection = true;
+    }
+  }));
+  $document.on('keyup', (function (e) {
+    if (e.keyCode === 17) {
+      $scope.treeOptions.multiSelection = false;
+    }
+  }));
   $scope.treeOptions = {
-    multiSelection: true,
+    multiSelection: $scope.ctrlKeyDown,
     isLeaf: function(node) {
       return node.type !== 'dir';
     },
