@@ -110,6 +110,12 @@
   margin-left: 6px;
   top: -1px;
 }
+.tab-icon ul {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+.tab-icon li > a {
+  white-space:nowrap;
+}
 .tab-icon-selected {
   color: #3e3f3a;
 }
@@ -233,6 +239,9 @@
 .menu-shortcut {
   font-size: 9px;
   color: #C8C8C8;
+  float: right;
+  margin-top: 2px;
+  margin-right: -6px;
 }
 .modal-body-message {
   margin-bottom: 10px;
