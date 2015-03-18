@@ -952,7 +952,11 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
   $scope.describeSelection = function (node, selected) {
     if ($scope.treeOptions.multiSelection === false) {
-      $scope.treeData.selectedNodes = [node];
+      if (selected) {
+        $scope.treeData.selectedNodes = [node];
+      } else {
+        $scope.treeData.selectedNodes = [];
+      }
     }
     FiletreeService.describeSelection(node, selected);
   };
