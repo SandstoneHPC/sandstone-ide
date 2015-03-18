@@ -16,7 +16,7 @@
     display: block;
     padding: 20px;
     overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    overflow-y: hidden; /* Scrollable contents if viewport is shorter than content. */
     background-color: #f5f5f5;
     border-right: 1px solid #eee;
   }
@@ -155,8 +155,19 @@
 .ace_replace_form button {
   padding: 4px;
 }
-.filetree-container {
-  /*padding-top: 55px;*/
+#filetree-container {
+  margin-top: 70px;
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  bottom: 30px;
+  top: 20px;
+  /* max-height: 80%; */
+  overflow-x: scroll;
+  overflow-y: scroll;
+}
+#filetree-container li {
+  white-space: nowrap;
 }
 .filetree-controls {
   color: #93c54b;
@@ -166,6 +177,9 @@
   margin-right: auto;
   max-width: 300px;
   width: 100%;
+  position: absolute;
+  left: 30px;
+  right: 30px;
 }
 .filetree-btn {
   /*border-top: 1px solid #93c54b;*/
