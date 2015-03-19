@@ -14,6 +14,7 @@
     "angular-ui-bootstrap": "",
     "angular-tree-control": "",
     "angular-ui-ace": "",
-    "ng-context-menu": ""
+    "ng-context-menu": "",
+    "angular-no-vnc": ""
   }
 }
