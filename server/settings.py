@@ -27,6 +27,11 @@ INSTALLED_MODULES = (
             'link': '/#/terminal',
             'description': 'The ShellInABox web terminal.'
         },
+        {
+            'name': 'Remote Desktop',
+            'link': '/#/vnc',
+            'description': 'noVNC remote desktop.'
+        },
     )
 
 FILESYSTEM_ROOT_DIRECTORIES = (
