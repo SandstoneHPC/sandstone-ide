@@ -26,5 +26,5 @@ angular.module('oide.vnc', ['ngRoute','ui.bootstrap','noVNC'])
   };
 }])
 .controller('VncCtrl', ['$scope', 'vncConfig', '$log', function($scope,vncConfig,$log) {
-  $scope.vncConfig = vncConfig.config;
+  $scope.vncConfig = vncConfig.data;
 }]);
