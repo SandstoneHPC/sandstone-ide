@@ -13,6 +13,5 @@ class VncConfigHandler(BaseHandler):
             ctx = {
                 'host': global_settings.VNC_HOST,
                 'port': global_settings.VNC_PORT,
-                'password': global_settings.VNC_TEST_PASSWD
                 }
             self.write(ctx)
