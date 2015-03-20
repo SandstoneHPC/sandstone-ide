@@ -11,7 +11,6 @@ SHELLINABOX_URL = 'http://localhost:10443'
 
 VNC_HOST = 'localhost'
 VNC_PORT = '59002'
-VNC_TEST_PASSWD = 'oide_testpasswd'
 
 MONGO_URI = 'localhost'
 MONGO_PORT = 27017
