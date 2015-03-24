@@ -55,7 +55,7 @@ class LocalFileHandler(BaseHandler):
     @tornado.web.authenticated
     def put(self, path):
         username = self.get_current_user()
-        content = self.get_argument('content')
+        content = json.loads(self.request.body)['content']
         try:
             file_path = common.update_file(username,path,content)
             logging.info('Updated file {} for user {}, adding the following content:\n{}...'.format(path,username,content[:80]))
