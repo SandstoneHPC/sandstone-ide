@@ -1,18 +1,22 @@
 import os
-from simplepam import authenticate
+import Pyro4
 from lib.handlers.base import BaseHandler
+
+import settings as global_settings
 
 
 
 class PAMLoginHandler(BaseHandler):
-    
+
     def get(self):
         self.render('lib/templates/login.html')
-        
+
     def post(self):
         un = self.get_argument('username')
         pw = str(self.get_argument('password'))
-        if authenticate(un, pw, service='login'):
+        auth_pam = Pyro4.Proxy('PYRONAME:%s'%global_settings.PYRO_AUTHPAM_URI)
+
+        if auth_pam.authenticate(un, pw):
             self.set_secure_cookie('user', un)
             self.redirect("/")
         else:
@@ -24,4 +28,3 @@ class PAMLoginHandler(BaseHandler):
                 'lib/templates/login.html',
                 error='Username or Password incorrect!'
                 )
-

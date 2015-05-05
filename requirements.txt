@@ -1,5 +1,8 @@
+Pyro4==4.35
+argparse==1.2.1
 backports.ssl-match-hostname==3.4.0.2
 pymongo==2.7.1
+serpent==1.10
 simplepam==0.1.5
 tornado==3.2.2
 wsgiref==0.1.2
