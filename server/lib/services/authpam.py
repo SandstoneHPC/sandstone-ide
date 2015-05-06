@@ -5,4 +5,4 @@ from simplepam import authenticate
 
 class AuthPam():
     def authenticate(self, un, pw):
-        return authenticate(un, pw, service='login')
+        return authenticate(un, str(pw), service='login')
