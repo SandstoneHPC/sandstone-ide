@@ -16,8 +16,8 @@ GATEONE_STATIC_URL = 'https://remotehost:10443'
 MONGO_URI = 'localhost'
 MONGO_PORT = 27017
 
-PYRO_AUTHPAM_URI = 'auth.pam'
-PYRO_COMMONFS_URI = 'filesystem.common'
+PYRO_AUTHMODULE_URI = 'auth.pam'
+PYRO_FSMODULE_URI = 'fs.userd.%(username)s'
 
 INSTALLED_MODULES = (
         {
