@@ -23,9 +23,9 @@ class MissingFileError(Exception):
         return 'File {} does not exist.'.format(self.filepath)
 
 
-class CommonFS():
+class PosixFS():
     @staticmethod
-    def file_exists(username, filepath):
+    def file_exists(filepath):
         filepath = os.path.abspath(filepath)
         exists = os.path.exists(filepath)
         return exists

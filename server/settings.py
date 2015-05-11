@@ -1,6 +1,6 @@
 import os
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-
+PYTHON_BIN="/usr/bin/python"
 
 
 DEBUG = True
