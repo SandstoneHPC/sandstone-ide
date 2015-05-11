@@ -14,7 +14,12 @@ class PAMLoginHandler(BaseHandler):
     def post(self):
         un = self.get_argument('username')
         pw = str(self.get_argument('password'))
-        auth_pam = Pyro4.Proxy('PYRONAME:%s'%global_settings.PYRO_AUTHMODULE_URI)
+        auth_pam = Pyro4.Proxy('PYRONAME:%s@%s:%d'%(
+            global_settings.PYRO_AUTHMODULE_URI,
+            global_settings.PYRO_NAMESERVER_HOST,
+            global_settings.PYRO_NAMESERVER_PORT
+            )
+        )
 
         if auth_pam.authenticate(un, pw):
             self.set_secure_cookie('user', un)
