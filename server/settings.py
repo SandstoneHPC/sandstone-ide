@@ -1,6 +1,6 @@
 import os
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-
+PYTHON_BIN="/usr/bin/python"
 
 
 DEBUG = True
@@ -15,6 +15,9 @@ GATEONE_STATIC_URL = 'https://remotehost:10443'
 
 MONGO_URI = 'localhost'
 MONGO_PORT = 27017
+
+PYRO_AUTHMODULE_URI = 'auth.pam'
+PYRO_FSMODULE_URI = 'fs.userd.%(username)s'
 
 INSTALLED_MODULES = (
         {

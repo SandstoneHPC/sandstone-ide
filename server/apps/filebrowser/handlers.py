@@ -12,83 +12,74 @@ from tornado import gen
 
 import settings as global_settings
 from lib.handlers.base import BaseHandler
-from apps.filebrowser.filesystem import common
+from lib.mixins.fs_mixin import FSMixin
 
 
 
-class LocalFileHandler(BaseHandler):
+class LocalFileHandler(BaseHandler,FSMixin):
 
     @tornado.web.authenticated
     def get(self, path):
-        username = self.get_current_user()
-        root_paths = common.list_root_paths(username)
         abspath = os.path.abspath(path)
-        if common.valid_root(username,abspath):
-            with open(abspath, 'r') as f:
-                content = f.read()
+        try:
+            content = self.fs.read_file(abspath)
             self.write({
                 'content':content
             })
-        else:
+        except:
             self.set_status(404)
             return
 
     @tornado.web.authenticated
     def post(self, path):
-        username = self.get_current_user()
         is_dir = self.get_argument('isDir',False) == 'true'
         try:
             if is_dir:
-                file_path = common.create_directory(username,path)
-                logging.info('Created directory {} for user {}'.format(path,username))
+                file_path = self.fs.create_directory(path)
             else:
-                file_path = common.create_file(username,path)
-                logging.info('Created file {} for user {}'.format(path,username))
+                file_path = self.fs.create_file(path)
             self.write({
                 'result':file_path+', created',
                 'filepath':file_path
             })
         except:
-            logging.error('Error creating file at {} for user {}'.format(path,username))
-            raise tornado.web.HTTPError(404, "Insufficient permission for specified path")
+            self.set_status(404)
+            return
 
     @tornado.web.authenticated
     def put(self, path):
-        username = self.get_current_user()
         content = self.get_argument('content')
         try:
-            file_path = common.update_file(username,path,content)
-            logging.info('Updated file {} for user {}, adding the following content:\n{}...'.format(path,username,content[:80]))
+            file_path = self.fs.update_file(path,content)
             self.write({
                 'result':file_path+', updated',
                 'filepath':file_path
             })
         except:
-            logging.error('Failed to update file {} for user {}, adding the following content:\n{}...'.format(path,username,content[:80]))
-            raise tornado.web.HTTPError(404, "Insufficient permission for specified path")
+            self.set_status(404)
+            return
 
     @tornado.web.authenticated
     def delete(self, path):
-        username = self.get_current_user()
         try:
-            file_path = common.delete_file(username,path)
+            file_path = self.fs.delete_file(path)
             self.write({
                 'result':file_path+', deleted',
                 'filepath':file_path
             })
         except:
-            raise tornado.web.HTTPError(404, "Insufficient permission for specified path")
+            self.set_status(404)
+            return
 
-class FilesystemUtilHandler(BaseHandler):
+class FilesystemUtilHandler(BaseHandler,FSMixin):
 
     @tornado.web.authenticated
     def get(self):
-        username = self.get_current_user()
         operation = self.get_argument('operation')
 
         if operation=='CHECK_EXISTS':
             filepath = self.get_argument('filepath')
-            result = common.file_exists(username,filepath)
+            result = self.fs.file_exists(filepath)
             self.write({'result':result})
         if operation=='GET_NEXT_UNTITLED_FILE':
             dirpath = self.get_argument('dirpath')
@@ -98,7 +89,7 @@ class FilesystemUtilHandler(BaseHandler):
                 index+=1
                 filename = 'Untitled' + str(index)
                 newFilePath = os.path.join(dirpath,filename)
-                fileExists = common.file_exists(username,newFilePath)
+                fileExists = self.fs.file_exists(newFilePath)
             self.write({'result':newFilePath})
         if operation=='GET_NEXT_UNTITLED_DIR':
             dirpath = self.get_argument('dirpath')
@@ -108,7 +99,7 @@ class FilesystemUtilHandler(BaseHandler):
                 index+=1
                 dirname = 'UntitledFolder' + str(index) + '/'
                 newDirPath = os.path.join(dirpath,dirname)
-                dirExists = common.file_exists(username,newDirPath)
+                dirExists = self.fs.file_exists(newDirPath)
             self.write({'result':newDirPath})
         if operation=='GET_NEXT_DUPLICATE':
             filepath = self.get_argument('filepath')
@@ -121,12 +112,11 @@ class FilesystemUtilHandler(BaseHandler):
                     newFilePath = ''.join([filepath[:-1],'-duplicate%s'%index,'/'])
                 else:
                     newFilePath = ''.join([filepath,'-duplicate%s'%index])
-                fileExists = common.file_exists(username,newFilePath)
+                fileExists = self.fs.file_exists(newFilePath)
             self.write({'result':newFilePath})
 
     @tornado.web.authenticated
     def post(self):
-        username = self.get_current_user()
         operation = self.get_argument('operation')
 
         if operation=='RENAME':
@@ -138,23 +128,21 @@ class FilesystemUtilHandler(BaseHandler):
             else:
                 basepath = os.path.dirname(filepath)
                 newpath = os.path.join(basepath,new_name)
-            result = common.rename_file(username,filepath,newpath)
+            result = self.fs.rename_file(filepath,newpath)
         elif operation=='COPY':
             origpath = self.get_argument('origpath')
             newpath = self.get_argument('newpath')
-            result = common.copy_file(username,origpath,newpath)
+            result = self.fs.copy_file(origpath,newpath)
         elif operation=='MAKE_EXEC':
             filepath = self.get_argument('filepath')
-            result = common.make_executable(username,filepath)
+            result = self.fs.make_executable(filepath)
 
         self.write({'result':result})
 
-class FilesystemUploadHandler(BaseHandler):
+class FilesystemUploadHandler(BaseHandler,FSMixin):
 
     @tornado.web.authenticated
     def post(self):
-        username = self.get_current_user()
-
         basepath = self.request.headers['basepath']
         mgrp = re.search(
             r'filename="(?P<filename>.*)"',
@@ -170,23 +158,23 @@ class FilesystemUploadHandler(BaseHandler):
             session_id
             )
 
-        common.move_file(username,currpath,destpath)
+        self.fs.move_file(currpath,destpath)
         self.write(dict(path=destpath))
 
-class FileTreeHandler(BaseHandler):
+class FileTreeHandler(BaseHandler,FSMixin):
 
     @tornado.web.authenticated
     def get(self):
         dirpath = self.get_argument('dirpath','')
         dir_contents = []
         if dirpath == '':
-            for r in common.list_root_paths(self.current_user):
+            for r in self.fs.list_root_paths(self.current_user):
                 dir_contents.append({
                     'type':'dir',
                     'filename':r,
                     'filepath':r})
         else:
-            for i in common.get_dir_contents(self.current_user, dirpath):
+            for i in self.fs.get_dir_contents(dirpath):
                 curr_file = {}
                 if i[0].startswith('.'):
                     continue
