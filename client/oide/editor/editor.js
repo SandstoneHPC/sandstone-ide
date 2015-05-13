@@ -17,7 +17,10 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     });
   }
 )
-.controller('EditorCtrl', ['$scope', 'EditorService', function($scope, EditorService) {
+.controller('EditorCtrl', ['$scope', 'EditorService', '$location', 'StateService', function($scope, EditorService, $location, StateService) {
+  $scope.$on('$locationChangeStart', function (event) {
+    StateService.storeState();
+  });
   $scope.onAceLoad = function(_ace) {
     EditorService.onAceLoad(_ace);
   };
@@ -67,6 +70,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
       templateUrl: '/static/editor/saveas-modal.html',
       backdrop: 'static',
       keyboard: false,
+      size: 'lg',
       controller: 'SaveAsModalCtrl',
       resolve: {
         file: function () {
@@ -110,6 +114,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
   $scope.commentSelection = function () {
     EditorService.commentSelection();
+  };
+  $scope.openSearchBox = function () {
+    EditorService.openSearchBox();
   };
 }])
 .controller('SaveAsModalCtrl', function ($scope, $modalInstance, $http, file) {
@@ -208,22 +215,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     $modalInstance.dismiss('cancel');
   };
 })
-.controller('EditorFindCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
-  $scope.findOptions = EditorService.findOptions;
-  $scope.noOpenSessions =  EditorService.noOpenSessions;
-  $scope.findString = function () {
-    EditorService.findString($scope.findNeedle);
-  };
-  $scope.findPreviousString = function () {
-    EditorService.findPreviousString($scope.findNeedle);
-  };
-  $scope.replaceCurrentString = function () {
-    EditorService.replaceCurrentString($scope.replaceNeedle);
-  };
-  $scope.replaceAllStrings = function () {
-    EditorService.replaceAllStrings($scope.replaceNeedle);
-  };
-}])
 .controller('EditorSettingsCtrl', ['$scope', 'EditorService', function ($scope, EditorService) {
   $scope.editorSettings = EditorService.editorSettings;
   // $scope.editorSettings.fontSize = 12;
@@ -242,7 +233,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
 .factory('EditorService', ['$window', '$http', '$log', 'AceModeService', 'StateService', function ($window, $http,$log,AceModeService,StateService) {
   var editor = {};
   var clipboard = '';
-  var state, openDocuments, editorSessions, editorSettings, findOptions;
+  var state, openDocuments, editorSessions, editorSettings;
   openDocuments = {
     currentSession: '',
     tabs:[]
@@ -254,13 +245,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     fontSize: 12,
     tabSize: 4,
     showIndentGuides: true
-  };
-  findOptions = {
-    backwards: false,
-    wrap: true,
-    caseSensitive: false,
-    wholeWord: false,
-    regExp: false
   };
   var onAceLoad = function (_ace) {
     editor = _ace;
@@ -298,12 +282,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         }
       }
       state.editor.editorSettings = editorSettings;
-      if ('findOptions' in state.editor) {
-        for (var k in state.editor.findOptions) {
-          findOptions[k] = state.editor.findOptions[k];
-        }
-      }
-      state.editor.findOptions = findOptions;
       applySettings();
       $log.debug('Loaded Ace instance: ', editor);
       editor.on('change', onAceChanged);
@@ -372,7 +350,6 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     $log.debug('Closed session.');
   };
   return {
-    findOptions: findOptions,
     editorSettings: editorSettings,
     openDocuments: openDocuments,
     onAceLoad: function (_ace) {
@@ -455,9 +432,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
               url: '/filebrowser/localfiles'+tab.filepath,
               method: 'PUT',
               params: {
-                _xsrf: getCookie('_xsrf'),
-                content: content
-              }
+                _xsrf: getCookie('_xsrf')
+              },
+              data: {'content': content}
             })
             .success(function (data,status, headers, config) {
               $log.debug('Saved file: ', tab.filepath);
@@ -476,9 +453,9 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
                 url: '/filebrowser/localfiles'+tab.filepath,
                 method: 'PUT',
                 params: {
-                  _xsrf: getCookie('_xsrf'),
-                  content: content
-                }
+                  _xsrf: getCookie('_xsrf')
+                },
+                data: {'content': content}
               })
               .success(function (data,status, headers, config) {
                 $log.debug('Saved file: ', tab.filepath);
@@ -491,17 +468,8 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     applyEditorSettings: function () {
       applySettings();
     },
-    findString: function (needle) {
-      editor.find(needle, findOptions);
-    },
-    findPreviousString: function (needle) {
-      editor.findPrevious(needle, findOptions);
-    },
-    replaceCurrentString: function (replaceNeedle) {
-      editor.replace(replaceNeedle);
-    },
-    replaceAllStrings: function (replaceNeedle) {
-      editor.replaceAll(replaceNeedle);
+    openSearchBox: function () {
+      editor.execCommand("replace");
     },
     undoChanges: function (filepath) {
       editorSessions[filepath].getUndoManager().undo();
@@ -959,10 +927,20 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     $modalInstance.dismiss('cancel');
   };
 })
-.controller('FiletreeCtrl', ['$scope', '$log', 'FiletreeService', function($scope,$log,FiletreeService) {
+.controller('FiletreeCtrl', ['$scope', '$document', '$log', 'FiletreeService', function($scope,$document,$log,FiletreeService) {
   $scope.treeData= FiletreeService.treeData;
+  $document.on('keydown', (function (e) {
+    if (e.keyCode === 17) {
+      $scope.treeOptions.multiSelection = true;
+    }
+  }));
+  $document.on('keyup', (function (e) {
+    if (e.keyCode === 17) {
+      $scope.treeOptions.multiSelection = false;
+    }
+  }));
   $scope.treeOptions = {
-    multiSelection: true,
+    multiSelection: false,
     isLeaf: function(node) {
       return node.type !== 'dir';
     },
@@ -973,6 +951,13 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     }
   };
   $scope.describeSelection = function (node, selected) {
+    if ($scope.treeOptions.multiSelection === false) {
+      if (selected) {
+        $scope.treeData.selectedNodes = [node];
+      } else {
+        $scope.treeData.selectedNodes = [];
+      }
+    }
     FiletreeService.describeSelection(node, selected);
   };
   $scope.getDirContents = function (node, expanded) {

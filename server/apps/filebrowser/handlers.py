@@ -48,7 +48,7 @@ class LocalFileHandler(BaseHandler,FSMixin):
 
     @tornado.web.authenticated
     def put(self, path):
-        content = self.get_argument('content')
+        content = json.loads(self.request.body)['content']
         try:
             file_path = self.fs.update_file(path,content)
             self.write({

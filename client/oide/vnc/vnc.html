@@ -1,0 +1,79 @@
+<div class="row fill">
+  <div class="col-md-12 main fill">
+    <div
+      id="vnc-container"
+      class="thumbnail"
+      ng-init="connected=false">
+      <vnc
+        ng-init = "display = { width:800, fitTo:'width' }; viewOnly=false; trueColor=true; states=[];"
+        host="{{vncConfig.host}}"
+        port="{{vncConfig.port}}"
+        password="{{password}}"
+        display = "display"
+        style = "{ margin: '5px 20px' }"
+        view-only = "viewOnly"
+        true-color = "trueColor"
+        states="states"
+        is-connected="connected">
+      </vnc>
+
+      <div class="caption">
+        <form role="form">
+          <div class="form-group">
+            <label for="password">VNC Password</label>
+            <input
+              type="password"
+              id="password-input"
+              class="form-control"
+              placeholder="password"
+              ng-model="password">
+          </div>
+
+          <div class="form-group">
+            <button
+              type="button"
+              class="btn btn-success"
+              ng-hide="connected"
+              ng-click="connected=true">
+              Connect
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              ng-hide="!connected"
+              ng-click="connected=false">
+              Disconnect
+            </button>
+            <button
+              type="button"
+              class="btn btn-default"
+              ng-click="display.fullScreen=true">
+              Full screen
+            </button>
+
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" ng-model="viewOnly"> View only
+              </label>
+            </div>
+
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" ng-model="trueColor"> True color
+              </label>
+            </div>
+
+            <details>
+              <summary>states</summary>
+              <div ng-repeat="state in states">
+                <strong>{{state.status}}</strong>:<span>{{state.msg}}</span>
+              </div>
+            </details>
+
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

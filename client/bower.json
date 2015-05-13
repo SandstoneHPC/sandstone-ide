@@ -11,9 +11,10 @@
     "angular-mocks": "~1.2.x",
     "html5-boilerplate": "~4.3.0",
     "bootstrap": "",
-    "angular-ui-bootstrap": "",
+    "angular-ui-bootstrap": "0.12.0",
     "angular-tree-control": "",
     "angular-ui-ace": "",
-    "ng-context-menu": ""
+    "ng-context-menu": "",
+    "angular-no-vnc": ""
   }
 }

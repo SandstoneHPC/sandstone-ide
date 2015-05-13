@@ -10,6 +10,7 @@ from apps.filebrowser.handlers import FilesystemUtilHandler
 from apps.filebrowser.handlers import FilesystemUploadHandler
 from apps.filebrowser.handlers import FileTreeHandler
 from apps.webterminal.handlers import EmbedTerminalHandler
+from apps.vnc.handlers import VncConfigHandler
 #import handlers here
 
 
@@ -24,4 +25,5 @@ URL_SCHEMA = [
             (r"/filebrowser/a/upload", FilesystemUploadHandler),
             (r"/filebrowser/filetree/a/dir", FileTreeHandler),
             (r"/terminal/a/embed", EmbedTerminalHandler),
+            (r"/vnc/a/config", VncConfigHandler),
         ]

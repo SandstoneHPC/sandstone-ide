@@ -7,11 +7,10 @@ DEBUG = True
 LOGIN_URL = '/auth/login'
 COOKIE_SECRET = 'YouShouldProbablyChangeThisValueForYourProject'
 
-TERMINAL_API_KEY = 'GateOneAPIKey'
-TERMINAL_SECRET = 'GateOneServerSecret'
-GATEONE_URL = 'https://localhost:10443'
-GATEONE_ORIGINS_URL = 'http://localhost:8888'
-GATEONE_STATIC_URL = 'https://remotehost:10443'
+SHELLINABOX_URL = 'http://localhost:10443'
+
+VNC_HOST = 'localhost'
+VNC_PORT = '59002'
 
 MONGO_URI = 'localhost'
 MONGO_PORT = 27017
@@ -28,14 +27,14 @@ INSTALLED_MODULES = (
             'description': 'A simple online editor for your code and other files.'
         },
         {
-            'name': 'File Browser',
-            'link': '/#/filebrowser',
-            'description': 'A powerful online file browser.'
-        },
-        {
             'name': 'Terminal',
             'link': '/#/terminal',
-            'description': 'The GateOne web terminal.'
+            'description': 'The ShellInABox web terminal.'
+        },
+        {
+            'name': 'Remote Desktop',
+            'link': '/#/vnc',
+            'description': 'noVNC remote desktop.'
         },
     )
 

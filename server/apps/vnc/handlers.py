@@ -6,11 +6,12 @@ from lib.handlers.base import BaseHandler
 
 
 
-class EmbedTerminalHandler(BaseHandler):
+class VncConfigHandler(BaseHandler):
 
     @tornado.web.authenticated
     def get(self):
             ctx = {
-                'shellinabox_url': global_settings.SHELLINABOX_URL
+                'host': global_settings.VNC_HOST,
+                'port': global_settings.VNC_PORT,
                 }
             self.write(ctx)

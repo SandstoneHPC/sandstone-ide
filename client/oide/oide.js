@@ -7,7 +7,8 @@ angular.module('oide', [
   'oide.editor',
   'oide.acemodes',
   'oide.states',
-  'oide.terminal'
+  'oide.terminal',
+  'oide.vnc'
   // 'oide.version'
 ]).
 config(['$routeProvider', function($routeProvider) {

@@ -108,7 +108,9 @@
         </ul>
       </div>
     </div>
-    <div ng-controller="FiletreeCtrl">
+    <div
+      ng-controller="FiletreeCtrl"
+      id="filetree-container">
       <treecontrol
         class="tree-oide"
         tree-model="treeData.filetreeContents"
@@ -187,6 +189,11 @@
                   Comment
                   <span class="menu-shortcut pull-right">ctrl+/</span>
                 </a></li>
+                <li><a
+                  href="#"
+                  ng-click="openSearchBox()">
+                  Find &amp; Replace
+                </a></li>
                 <li class="divider"></li>
                 <li><a
                   href="#"
@@ -231,7 +238,7 @@
         </tab>
       </tabset>
     </div>
-    <div class="partial-fill">
+    <div class="container-fluid">
       <!-- <span id="editor-settings-icon" class="glyphicon glyphicon-cog" popover="Editor Settings" popover-placement="bottom" popover-trigger="mouseenter"></span> -->
       <span id="editor-settings-icon"
         class="fa fa-cog fa-2x"
@@ -297,100 +304,6 @@
         ng-controller="EditorCtrl"
         ng-hide="noOpenSessions()">
       </div>
-
-      <form
-        id="find-menu"
-        class="form-horizontal"
-        ng-controller="EditorFindCtrl"
-        ng-hide="noOpenSessions()">
-        <div class="form-group form-group-sm">
-          <div class="input-group input-group-sm" >
-            <span
-              class="input-group-addon"
-              tooltip="Case Sensitive"
-              tooltip-trigger="mouseenter"
-              tooltip-placement="top">
-              <input
-                type="checkbox"
-                ng-model="findOptions.caseSensitive">
-              Aa
-            </span>
-            <span
-              class="input-group-addon"
-              tooltip="Match Whole Word"
-              tooltip-trigger="mouseenter"
-              tooltip-placement="top">
-              <input
-                type="checkbox"
-                ng-model="findOptions.wholeWord">
-              \b
-            </span>
-            <span
-              class="input-group-addon"
-              tooltip="Use Regular Expressions"
-              tooltip-trigger="mouseenter"
-              tooltip-placement="top">
-              <input
-                type="checkbox"
-                ng-model="findOptions.regExp">
-              [.*]
-            </span>
-            <span
-              class="input-group-addon"
-              tooltip="Wrap Around"
-              tooltip-trigger="mouseenter"
-              tooltip-placement="top">
-              <input
-                type="checkbox"
-                ng-model="findOptions.wrap">
-              Wrap
-            </span>
-            <input
-              type="text"
-              placeholder="Find string in current document..."
-              class="form-control"
-              ng-model="findNeedle">
-            <div class="input-group-btn">
-              <button
-                type="button"
-                class="btn btn-default"
-                ng-click="findPreviousString()">
-                &laquo; Find Previous
-              </button>
-              <button
-                type="button"
-                class="btn btn-default"
-                ng-click="findString()">
-                Find Next &raquo;
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="form-group form-group-sm">
-          <div class="input-group input-group-sm" >
-            <input
-              type="text"
-              placeholder="Replace selected string with..."
-              class="form-control"
-              ng-model="replaceNeedle">
-            <div class="input-group-btn">
-              <button
-                type="button"
-                class="btn btn-default"
-                ng-click="replaceCurrentString()">
-                Replace
-              </button>
-              <button
-                type="button"
-                class="btn btn-default"
-                ng-click="replaceAllStrings()">
-                Replace All
-              </button>
-            </div>
-          </div>
-        </div>
-
-      </form>
 
     </div>
 
