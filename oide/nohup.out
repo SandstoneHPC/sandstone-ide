@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/sampedro/Documents/Dev/env/oide-env/local/lib/python2.7/site-packages/oide/apps/filebrowser/oidefsd.py", line 2, in <module>
+    import Pyro4
+ImportError: No module named Pyro4
+Traceback (most recent call last):
+  File "/home/sampedro/Documents/Dev/env/oide-env/local/lib/python2.7/site-packages/oide/apps/filebrowser/oidefsd.py", line 2, in <module>
+    import Pyro4
+ImportError: No module named Pyro4

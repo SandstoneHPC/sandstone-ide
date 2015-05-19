@@ -1,0 +1,10 @@
+{
+  "name": "OIDE Core - VNC",
+  "description": "Online Integrated Development Environment Core Component - VNC",
+  "homepage": "https://github.com/ResearchComputing/OIDE.git",
+  "license": "AGPLv3",
+  "private": true,
+  "dependencies": {
+    "angular-no-vnc": ""
+  }
+}

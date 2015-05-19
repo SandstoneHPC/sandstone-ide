@@ -1,4 +1,6 @@
 __pycache__/
 *.py[cod]
 *.log
-
+bower_components/
+node_modules/
+tmp/
