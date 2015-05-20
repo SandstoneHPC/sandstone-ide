@@ -16,7 +16,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'Pyro4',
-        'pymongo>=2.7.1',
+        'pymongo==2.7.1',
         'simplepam',
         'tornado==3.2.2',
     ],
@@ -33,9 +33,11 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: JavaScript',
     ],
-    # entry_points={
-    #     'console_scripts': [
-    #         'oide=oide:start_oide',
-    #     ],
-    # },
+    entry_points={
+        'console_scripts': [
+            'oide=oide:run_all',
+            'oide_server=oide:run_server',
+            'oide_daemons=oide:run_daemons'
+        ],
+    },
 )

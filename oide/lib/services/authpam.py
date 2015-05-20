@@ -1,5 +1,6 @@
 import os
 import pwd
+import signal
 import subprocess
 import logging
 from simplepam import authenticate
@@ -14,7 +15,6 @@ class AuthPam():
         self.user_pids = {}
 
     def authenticate(self, un, pw):
-        import pdb; pdb.set_trace()
         authenticated = authenticate(un, str(pw), service='login')
         if authenticated:
             pw_record = pwd.getpwnam(un)
@@ -68,3 +68,11 @@ class AuthPam():
             del self.user_pids[pw_record.pw_name]
         except KeyError:
             pass
+
+    def shutdown(self):
+        for user,pids in self.user_pids.iteritems():
+            for pid in pids:
+                try:
+                    os.kill(pid, signal.SIGKILL)
+                except OSError:
+                    logging.error('Failed to kill process {} for user {}'.format(pid,un))
