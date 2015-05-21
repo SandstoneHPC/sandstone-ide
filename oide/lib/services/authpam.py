@@ -20,11 +20,10 @@ class AuthPam():
             pw_record = pwd.getpwnam(un)
 
             for cmd in get_installed_app_cmds():
-                formatted_cmd = cmd%{'username':pw_record.pw_name}
                 if self.auth_user != pw_record.pw_name:
                     formatted_cmd = 'su -m {0} -c "{1}"'.format(
                         pw_record.pw_name,
-                        formatted_cmd
+                        cmd
                     )
 
                 try:

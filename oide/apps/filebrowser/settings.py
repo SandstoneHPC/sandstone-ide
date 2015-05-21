@@ -13,7 +13,5 @@ FILESYSTEM_ROOT_DIRECTORIES = (
 NGINX_UPLOAD_DIR = '/tmp/oide-upload'
 
 POST_AUTH_COMMANDS = (
-    "(nohup " + global_settings.PYTHON_BIN +
-        " " + os.path.join(APP_DIRECTORY,"oidefsd.py") +
-        " %(username)s &)",
+    "(python -m oide.apps.filebrowser.oidefsd &)",
 )
