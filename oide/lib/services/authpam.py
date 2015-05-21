@@ -25,7 +25,8 @@ class AuthPam():
                         pw_record.pw_name,
                         cmd
                     )
-
+                else:
+                    formatted_cmd = cmd
                 try:
                     user_d = subprocess.Popen(
                         formatted_cmd,

@@ -23,7 +23,6 @@ INSTALLED_APPS = (
     'oide.apps.codeeditor',
     'oide.apps.filebrowser',
     'oide.apps.webterminal',
-    'oide.apps.vnc',
 )
 
 try:
