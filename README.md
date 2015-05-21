@@ -26,3 +26,4 @@ The OIDE can now be run with the following command:
 ```
 oide
 ```
+To use the OIDE, point your browser to `localhost:8888`.
