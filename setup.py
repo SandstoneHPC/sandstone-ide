@@ -18,7 +18,7 @@ setup(
         'Pyro4',
         'pymongo==2.7.1',
         'simplepam',
-        'tornado==3.2.2',
+        'tornado>=4',
     ],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
