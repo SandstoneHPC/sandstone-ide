@@ -15,7 +15,6 @@ setup(
     long_description=open('README.md').read(),
     zip_safe=False,
     install_requires=[
-        'Pyro4',
         'pymongo==2.7.1',
         'simplepam',
         'tornado>=4',
@@ -35,9 +34,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'oide=oide:run_all',
-            'oide_server=oide:run_server',
-            'oide_daemons=oide:run_daemons'
+            'oide=oide:run_server',
         ],
     },
 )

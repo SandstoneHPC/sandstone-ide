@@ -10,8 +10,6 @@ from pymongo.connection import Connection
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(PROJECT_DIR,'client/oide')
-# sys.path.insert(0, os.path.dirname(PROJECT_DIR))
-# sys.path.insert(0, STATIC_DIR)
 
 from oide.lib import ui_methods
 import oide.settings as global_settings
@@ -31,7 +29,7 @@ class OIDEApplication(tornado.web.Application):
             app_static_handlers.append(
                 (s_url, tornado.web.StaticFileHandler, {'path': s_dir})
             )
-        
+
         handlers = [
                 (r"/static/core/(.*)", tornado.web.StaticFileHandler, {'path': STATIC_DIR}),
             ] + app_static_handlers + URL_SCHEMA
