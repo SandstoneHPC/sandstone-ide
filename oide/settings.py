@@ -14,10 +14,6 @@ COOKIE_SECRET = 'YouShouldProbablyChangeThisValueForYourProject'
 MONGO_URI = 'localhost'
 MONGO_PORT = 27017
 
-PYRO_NAMESERVER_HOST = 'localhost'
-PYRO_NAMESERVER_PORT = 9090
-PYRO_AUTHMODULE_URI = 'auth.pam'
-
 # App-Wide settings
 INSTALLED_APPS = (
     'oide.apps.codeeditor',
