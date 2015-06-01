@@ -1,5 +1,6 @@
 import tornado.web
 import tornado.escape
+import oide.lib.decorators
 from oide.lib.handlers.base import BaseHandler
 from oide.lib.mixins.db_mixin import DBMixin
 
@@ -7,7 +8,7 @@ from oide.lib.mixins.db_mixin import DBMixin
 
 class StateHandler(BaseHandler,DBMixin):
 
-    @tornado.web.authenticated
+    @oide.lib.decorators.authenticated
     def get(self):
         # import pdb; pdb.set_trace()
         state = self.db.states.find_one(
@@ -19,7 +20,7 @@ class StateHandler(BaseHandler,DBMixin):
         else:
             self.write({})
 
-    @tornado.web.authenticated
+    @oide.lib.decorators.authenticated
     def post(self):
         state = self.request.body
         # import pdb; pdb.set_trace()

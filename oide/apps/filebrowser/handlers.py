@@ -10,6 +10,7 @@ import tornado.ioloop
 from tornado.concurrent import Future
 from tornado import gen
 
+import oide.lib.decorators
 import oide.settings as global_settings
 import oide.apps.filebrowser.settings as app_settings
 from oide.lib.handlers.base import BaseHandler
@@ -19,7 +20,7 @@ from oide.apps.filebrowser.mixins.fs_mixin import FSMixin
 
 class LocalFileHandler(BaseHandler,FSMixin):
 
-    @tornado.web.authenticated
+    @oide.lib.decorators.authenticated
     def get(self, path):
         abspath = os.path.abspath(path)
         try:
@@ -31,7 +32,7 @@ class LocalFileHandler(BaseHandler,FSMixin):
             self.set_status(404)
             return
 
-    @tornado.web.authenticated
+    @oide.lib.decorators.authenticated
     def post(self, path):
         is_dir = self.get_argument('isDir',False) == 'true'
         try:
@@ -47,7 +48,7 @@ class LocalFileHandler(BaseHandler,FSMixin):
             self.set_status(404)
             return
 
-    @tornado.web.authenticated
+    @oide.lib.decorators.authenticated
     def put(self, path):
         content = json.loads(self.request.body)['content']
         try:
@@ -60,7 +61,7 @@ class LocalFileHandler(BaseHandler,FSMixin):
             self.set_status(404)
             return
 
-    @tornado.web.authenticated
+    @oide.lib.decorators.authenticated
     def delete(self, path):
         try:
             file_path = self.fs.delete_file(path)
@@ -74,7 +75,7 @@ class LocalFileHandler(BaseHandler,FSMixin):
 
 class FilesystemUtilHandler(BaseHandler,FSMixin):
 
-    @tornado.web.authenticated
+    @oide.lib.decorators.authenticated
     def get(self):
         operation = self.get_argument('operation')
 
@@ -116,7 +117,7 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
                 fileExists = self.fs.file_exists(newFilePath)
             self.write({'result':newFilePath})
 
-    @tornado.web.authenticated
+    @oide.lib.decorators.authenticated
     def post(self):
         operation = self.get_argument('operation')
 
@@ -142,7 +143,7 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
 
 class FilesystemUploadHandler(BaseHandler,FSMixin):
 
-    @tornado.web.authenticated
+    @oide.lib.decorators.authenticated
     def post(self):
         basepath = self.request.headers['basepath']
         mgrp = re.search(
@@ -164,7 +165,7 @@ class FilesystemUploadHandler(BaseHandler,FSMixin):
 
 class FileTreeHandler(BaseHandler,FSMixin):
 
-    @tornado.web.authenticated
+    @oide.lib.decorators.authenticated
     def get(self):
         dirpath = self.get_argument('dirpath','')
         dir_contents = []
