@@ -12,11 +12,11 @@
     "shelljs": "^0.2.6",
     "karma-junit-reporter": "^0.2.2",
     "phantomjs": "",
-    "karma-phantomjs-launcher": "",
+    "karma-phantomjs-launcher": "~0.1.0",
     "websockify": ""
   },
   "scripts": {
-    "postinstall": "bower install",
+    "postinstall": "bower --allow-root install",
 
     "prestart": "npm install",
     "start": "http-server -a localhost -p 8000 -c-1",
