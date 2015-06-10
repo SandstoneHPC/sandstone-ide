@@ -8,7 +8,7 @@ def authenticated(method):
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
         exec_user = pwd.getpwuid(os.getuid())[0]
-        if (not self.current_user) || (self.current_user != exec_user):
+        if (not self.current_user) or (self.current_user != exec_user):
             if self.request.method in ("GET", "HEAD"):
                 url = self.get_login_url()
                 if "?" not in url:
