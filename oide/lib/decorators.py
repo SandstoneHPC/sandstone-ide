@@ -2,6 +2,7 @@ import functools
 import urlparse
 import os
 import pwd
+from urllib import urlencode
 
 
 
