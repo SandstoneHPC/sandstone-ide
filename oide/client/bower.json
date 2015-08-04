@@ -5,13 +5,13 @@
   "license": "GPLv2",
   "private": true,
   "dependencies": {
-    "angular": "1.2.x",
+    "angular": "1.4.x",
     "angular-route": "1.2.x",
     "angular-loader": "1.2.x",
     "angular-mocks": "~1.2.x",
     "html5-boilerplate": "~4.3.0",
     "bootstrap": "",
-    "angular-ui-bootstrap": "0.12.0",
+    "angular-bootstrap": "0.13.x",
     "angular-ui-ace": "",
     "ng-context-menu": "",
     "angular-tree-control": ""
