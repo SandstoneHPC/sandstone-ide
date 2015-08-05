@@ -13,6 +13,7 @@ APP_SPECIFICATION = {
         'terminal.css',
     ),
     'NG_MODULE_SCRIPTS': (
+        'terminado.js',
         'terminal.js',
     ),
 }

@@ -7,6 +7,8 @@ import tornado.web
 
 from datetime import date
 from pymongo.connection import Connection
+from terminado import TermSocket
+from terminado import NamedTermManager
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(PROJECT_DIR,'client/oide')
@@ -30,9 +32,14 @@ class OIDEApplication(tornado.web.Application):
                 (s_url, tornado.web.StaticFileHandler, {'path': s_dir})
             )
 
+        term_manager = NamedTermManager(shell_command=['bash'],max_terminals=100)
+        self.term_manager = term_manager
+        term_url = [(r"/terminal/a/_websocket/(\w+)", TermSocket,
+                     {'term_manager': term_manager})]
+
         handlers = [
                 (r"/static/core/(.*)", tornado.web.StaticFileHandler, {'path': STATIC_DIR}),
-            ] + app_static_handlers + URL_SCHEMA
+            ] + app_static_handlers + URL_SCHEMA + term_url
 
         settings = dict(
             project_dir=PROJECT_DIR,

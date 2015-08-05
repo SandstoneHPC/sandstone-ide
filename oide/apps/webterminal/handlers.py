@@ -7,11 +7,14 @@ from oide.lib.handlers.base import BaseHandler
 
 
 
-class EmbedTerminalHandler(BaseHandler):
+class TerminalPageHandler(tornado.web.RequestHandler):
+    def get(self, term_name):
+        return None
 
-    @oide.lib.decorators.authenticated
+class NewTerminalHandler(tornado.web.RequestHandler):
     def get(self):
-            ctx = {
-                'shellinabox_url': app_settings.SHELLINABOX_URL
-                }
-            self.write(ctx)
+        name, terminal = self.application.settings['term_manager'].new_named_terminal()
+        ctx = {
+            'term_name': name
+            }
+        self.write(ctx)
