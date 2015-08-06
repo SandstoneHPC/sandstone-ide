@@ -17,7 +17,7 @@ angular.module('oide.terminal', ['ngRoute','ui.bootstrap'])
     var termColWidth = 0.0 + (1.02*document.getElementById("dummy-screen-rows").offsetWidth / 80);
     document.getElementById("dummy-screen").setAttribute("style", "display: none");
     var protocol = (window.location.protocol.indexOf("https") === 0) ? "wss" : "ws";
-    var ws_url = protocol+"://"+window.location.host+ "/terminal/a/_websocket/1";
+    var ws_url = protocol+"://"+window.location.host+ "/terminal/a/term";
 
     function calculate_size(element) {
         var rows = Math.max(2, Math.floor(element.innerHeight/termRowHeight)-1);
