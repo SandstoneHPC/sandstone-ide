@@ -18,6 +18,7 @@ setup(
         'pymongo==2.7.1',
         'simplepam',
         'tornado>=4',
+        'terminado',
     ],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',

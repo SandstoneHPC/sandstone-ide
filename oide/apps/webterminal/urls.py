@@ -1,7 +1,10 @@
-from oide.apps.webterminal.handlers import EmbedTerminalHandler
+from terminado import TermSocket
+from terminado import SingleTermManager
 
 
+term_manager = SingleTermManager(shell_command=['bash'])
 
 URL_SCHEMA = [
-            (r"/terminal/a/embed", EmbedTerminalHandler),
+            (r"/terminal/a/term", TermSocket,
+                    {'term_manager': term_manager})
         ]

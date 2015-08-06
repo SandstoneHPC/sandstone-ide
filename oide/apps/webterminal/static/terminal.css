@@ -1,3 +1,27 @@
 #terminal-pane {
   margin-top: 10px;
 }
+
+#terminal-pane {
+  position: absolute;
+  top: 20px;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+}
+
+.terminal {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: black !important;
+  background-color: white !important;
+  border: none !important;
+}
+
+.terminal-cursor {
+  color: #93c54b;
+  background-color: #93c54b;
+}
