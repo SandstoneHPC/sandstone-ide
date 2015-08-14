@@ -1,32 +1,36 @@
+import os
 import tornado.web
 import tornado.escape
 import oide.lib.decorators
 from oide.lib.handlers.base import BaseHandler
-from oide.lib.mixins.db_mixin import DBMixin
 
 
 
-class StateHandler(BaseHandler,DBMixin):
+class StateHandler(BaseHandler):
+
+    def verify_statefile(self):
+        state_dir = os.path.expandvars('$HOME/.oide/')
+        if not os.path.exists(state_dir):
+            os.makedirs(state_dir)
+        state_path = os.path.join(state_dir,'state.json')
+        if not os.path.exists(state_path):
+            sf = open(state_path,'w')
+            sf.write('{}')
+            sf.close()
+        self.state_path = state_path
 
     @oide.lib.decorators.authenticated
     def get(self):
-        # import pdb; pdb.set_trace()
-        state = self.db.states.find_one(
-            {'username':self.current_user}
-        )
-        if state:
-            del state['_id']
-            self.write(state['state'])
-        else:
-            self.write({})
+        self.verify_statefile()
+        with open(self.state_path,'r') as sf:
+            state = sf.read()
+            if state[-1] == '\n':
+                state = state[:-1]
+            self.write(state)
 
     @oide.lib.decorators.authenticated
     def post(self):
         state = self.request.body
-        # import pdb; pdb.set_trace()
-        key = {'username':self.current_user}
-        data = {
-            'username': self.current_user,
-            'state': state
-        }
-        self.db.states.update(key, data, upsert=True);
+        self.verify_statefile()
+        with open(self.state_path,'w') as sf:
+            sf.write(state)

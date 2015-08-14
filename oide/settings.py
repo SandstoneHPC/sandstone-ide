@@ -9,10 +9,7 @@ PYTHON_BIN="/usr/bin/python"
 # OIDE Core settings
 DEBUG = True
 LOGIN_URL = '/auth/login'
-COOKIE_SECRET = 'YouShouldProbablyChangeThisValueForYourProject'
-
-MONGO_URI = 'localhost'
-MONGO_PORT = 27017
+COOKIE_SECRET = 'YouShouldProbablyChangeThisValueForYourProject' 
 
 # App-Wide settings
 INSTALLED_APPS = (

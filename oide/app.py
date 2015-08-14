@@ -6,7 +6,6 @@ import tornado.options
 import tornado.web
 
 from datetime import date
-from pymongo.connection import Connection
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(PROJECT_DIR,'client/oide')
@@ -45,12 +44,6 @@ class OIDEApplication(tornado.web.Application):
             )
 
         tornado.web.Application.__init__(self, handlers, **settings)
-
-        self.conn = Connection(
-            global_settings.MONGO_URI,
-            global_settings.MONGO_PORT,
-            )
-        self.database = self.conn['oide']
 
 
 def main():
