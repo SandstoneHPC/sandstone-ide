@@ -4,6 +4,7 @@ import logging
 import tornado.ioloop
 import tornado.options
 import tornado.web
+import tornado.httpserver
 
 from datetime import date
 
@@ -47,9 +48,15 @@ class OIDEApplication(tornado.web.Application):
 
 
 def main():
-    # tornado.options.parse_command_line()
     application = OIDEApplication()
-    application.listen(int(os.environ.get('OIDEPORT', 8888)))
+    if global_settings.USE_SSL:
+        ssl_server = tornado.httpserver.HTTPServer(application, ssl_options={
+            "certfile": global_settings.SSL_CERT,
+            "keyfile": global_settings.SSL_KEY,
+        })
+        ssl_server.listen(int(os.environ.get('OIDEPORT', 8888)))
+    else:
+        application.listen(int(os.environ.get('OIDEPORT', 8888)))
     tornado.ioloop.IOLoop.instance().start()
 
 
