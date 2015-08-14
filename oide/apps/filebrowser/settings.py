@@ -7,3 +7,8 @@ FILESYSTEM_ROOT_DIRECTORIES = (
     '/home/%(username)s/',
     '/tmp/',
     )
+    
+try:
+    from local_settings import *
+except:
+    pass
