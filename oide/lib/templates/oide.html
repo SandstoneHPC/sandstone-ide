@@ -27,7 +27,7 @@
 
   </head>
 
-  <body>
+  <body ng-controller="PageCtrl as pageCtrl">
 
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
@@ -47,7 +47,7 @@
         <div id="navbar" class="navbar-collapse collapse" collapse="navbarCollapsed">
           <ul class="nav navbar-nav navbar-right">
             {% for app in get_app_descriptions() %}
-            <li class="active"><a href="{{app['link']}}" role="button">{{app['name']}}</a></li>
+            <li ng-class="{'active':pageCtrl.currentUrl()==='{{app['link']}}'}"><a href="{{app['link']}}" role="button">{{app['name']}}</a></li>
             {% end %}
           </ul>
         </div>
@@ -93,7 +93,18 @@
       function (StateService,$log) {
         $log.debug('StateService initialized.');
       }
-    );
+    )
+    .controller('PageCtrl', ['$location','PageService',function($location,PageService) {
+      var self = this;
+      self.currentUrl = PageService.getCurrentUrl;
+    }])
+    .factory('PageService', ['$location',function($location) {
+      return {
+        getCurrentUrl: function () {
+          return '/#'+$location.path();
+        }
+      };
+    }]);
     </script>
     <script src="/static/core/components/acemodes/acemodes.js"></script>
     <script src="/static/core/components/states/states.js"></script>
