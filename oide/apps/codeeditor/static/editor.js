@@ -1,11 +1,16 @@
 'use strict';
 
-angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
+angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl', 'ui.router'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/editor', {
-    templateUrl: '/static/editor/editor.html'
-  });
+.config(['$stateProvider', '$urlRouterProvider' ,function($stateProvider, $urlRouterProvider){
+  $urlRouterProvider.otherwise('/editor');
+  $stateProvider
+    .state('editor', {
+      url: '/editor',
+      templateUrl: '/static/editor/editor.html',
+      controller: 'EditorCtrl',
+      controllerAs: 'ctrl'
+    });
 }])
 .run(
   function (StateService,$log) {

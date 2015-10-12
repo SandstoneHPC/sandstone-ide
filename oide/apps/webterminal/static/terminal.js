@@ -1,12 +1,14 @@
 'use strict';
 
-angular.module('oide.terminal', ['ngRoute','ui.bootstrap'])
+angular.module('oide.terminal', ['ngRoute','ui.bootstrap', 'ui.router'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/terminal', {
-    templateUrl: '/static/terminal/terminal.html',
-    controller: 'TerminalCtrl'
-  });
+.config(['$stateProvider', '$urlRouterProvider' ,function($stateProvider, $urlRouterProvider){
+  $stateProvider
+    .state('terminal', {
+      url: '/terminal',
+      templateUrl: '/static/terminal/terminal.html',
+      controller: 'TerminalCtrl'
+    });
 }])
 
 .factory('TerminalService', ['$http', function ($http) {
