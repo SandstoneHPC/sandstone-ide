@@ -21,6 +21,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   $scope.$on('$locationChangeStart', function (event) {
     StateService.storeState();
   });
+  $scope.aceModel = EditorService.aceModel;
   $scope.onAceLoad = function(_ace) {
     EditorService.onAceLoad(_ace);
   };
@@ -234,6 +235,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   var editor = {};
   var clipboard = '';
   var state, openDocuments, editorSessions, editorSettings;
+  var aceModel = {content:''};
   openDocuments = {
     currentSession: '',
     tabs:[]
@@ -289,6 +291,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
         createDocument();
       } else {
         editor.setSession(editorSessions[openDocuments.currentSession]);
+        aceModel.content = editor.getSession().getValue();
       }
     });
   };
@@ -350,6 +353,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     $log.debug('Closed session.');
   };
   return {
+    aceModel: aceModel,
     editorSettings: editorSettings,
     openDocuments: openDocuments,
     onAceLoad: function (_ace) {
@@ -365,7 +369,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
           tab = openDocuments.tabs[i];
         }
       }
-      if (!(typeof tab === 'undefined')) {
+      if (typeof tab !== 'undefined') {
         tab.filepath = newFilepath;
         tab.filename = newFilepath.substring(
           newFilepath.lastIndexOf('/')+1,
@@ -403,7 +407,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
               unsaved: false
             });
             switchSession(filepath);
-          })
+          });
       } else {
         switchSession(filepath);
       }
