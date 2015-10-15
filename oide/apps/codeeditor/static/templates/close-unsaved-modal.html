@@ -1,0 +1,16 @@
+<div class="modal-header">
+    <h3 class="modal-title"><i class="fa fa-exclamation fa-border"></i> File Not Saved</h3>
+</div>
+<div class="modal-body">
+  <span class="modal-body-message">Are you sure you want to close this file without saving?</span>
+    <ul>
+      <li>
+        {{ file.filename }}
+      </li>
+    </ul>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-success" ng-click="save()">Save File</button>
+  <button class="btn btn-danger" ng-click="close()">Close Without Saving</button>
+  <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

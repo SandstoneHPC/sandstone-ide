@@ -65,7 +65,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl', 
     $event.preventDefault();
     if (tab.unsaved) {
       var unsavedModalInstance = $modal.open({
-        templateUrl: '/static/editor/close-unsaved-modal.html',
+        templateUrl: '/static/editor/templates/close-unsaved-modal.html',
         backdrop: 'static',
         keyboard: false,
         controller: 'UnsavedModalCtrl',
@@ -94,7 +94,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl', 
   };
   $scope.saveDocumentAs = function (tab) {
     var saveAsModalInstance = $modal.open({
-      templateUrl: '/static/editor/saveas-modal.html',
+      templateUrl: '/static/editor/templates/saveas-modal.html',
       backdrop: 'static',
       keyboard: false,
       size: 'lg',
@@ -884,7 +884,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl', 
   };
   $scope.deleteFiles = function () {
     var deleteModalInstance = $modal.open({
-      templateUrl: '/static/editor/delete-modal.html',
+      templateUrl: '/static/editor/templates/delete-modal.html',
       backdrop: 'static',
       keyboard: false,
       controller: 'DeleteModalCtrl',
@@ -910,7 +910,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl', 
   };
   $scope.renameFile = function () {
     var renameModalInstance = $modal.open({
-      templateUrl: '/static/editor/rename-modal.html',
+      templateUrl: '/static/editor/templates/rename-modal.html',
       backdrop: 'static',
       keyboard: false,
       controller: 'RenameModalCtrl',
