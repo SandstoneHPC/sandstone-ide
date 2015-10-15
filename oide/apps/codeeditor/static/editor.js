@@ -7,9 +7,31 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl', 
   $stateProvider
     .state('editor', {
       url: '/editor',
-      templateUrl: '/static/editor/editor.html',
-      controller: 'EditorCtrl',
-      controllerAs: 'ctrl'
+      views: {
+        '': {
+          templateUrl: '/static/editor/editor.html'
+        },
+        'ace@editor': {
+          templateUrl: '/static/editor/templates/ace.html',
+          controller: 'AceCtrl'
+        },
+        'tabs@editor': {
+          templateUrl: '/static/editor/templates/tabs.html',
+          controller: 'EditorTabsCtrl'
+        },
+        'settings@editor': {
+          templateUrl: '/static/editor/templates/settings.html',
+          controller: 'EditorSettingsCtrl'
+        },
+        'filetree@editor': {
+          templateUrl: '/static/editor/templates/filetree.html',
+          controller: 'FiletreeCtrl'
+        },
+        'filetreeControls@editor': {
+          templateUrl: '/static/editor/templates/filetree-controls.html',
+          controller: 'FiletreeControlCtrl'
+        }
+      }
     });
 }])
 .run(
@@ -22,7 +44,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl', 
     });
   }
 )
-.controller('EditorCtrl', ['$scope', 'EditorService', '$location', 'StateService', function($scope, EditorService, $location, StateService) {
+.controller('AceCtrl', ['$scope', 'EditorService', '$location', 'StateService', function($scope, EditorService, $location, StateService) {
   $scope.$on('$locationChangeStart', function (event) {
     StateService.storeState();
   });
@@ -973,13 +995,4 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl', 
     console.log(selected);
       // $scope.selectedNodes = selected;
   };
-}])
-.controller('StateTestCtrl',function($scope,StateService,$log){
-  $scope.getState = function () {
-    $log.debug('Read state: ', StateService.getState());
-  };
-  $scope.postState = function () {
-    StateService.storeState();
-    $log.debug('State POSTed');
-  };
-});
+}]);
