@@ -1,11 +1,38 @@
 'use strict';
 
-angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
+angular.module('oide.editor', ['ui.ace','treeControl'])
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/editor', {
-    templateUrl: '/static/editor/editor.html'
-  });
+.config(['$stateProvider', '$urlRouterProvider' ,function($stateProvider, $urlRouterProvider){
+  // $urlRouterProvider.otherwise('/editor');
+  $stateProvider
+    .state('editor', {
+      url: '/editor',
+      views: {
+        '': {
+          templateUrl: '/static/editor/editor.html'
+        },
+        'ace@editor': {
+          templateUrl: '/static/editor/templates/ace.html',
+          controller: 'AceCtrl'
+        },
+        'tabs@editor': {
+          templateUrl: '/static/editor/templates/tabs.html',
+          controller: 'EditorTabsCtrl'
+        },
+        'settings@editor': {
+          templateUrl: '/static/editor/templates/settings.html',
+          controller: 'EditorSettingsCtrl'
+        },
+        'filetree@editor': {
+          templateUrl: '/static/editor/templates/filetree.html',
+          controller: 'FiletreeCtrl'
+        },
+        'filetreeControls@editor': {
+          templateUrl: '/static/editor/templates/filetree-controls.html',
+          controller: 'FiletreeControlCtrl'
+        }
+      }
+    });
 }])
 .run(
   function (StateService,$log) {
@@ -17,7 +44,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     });
   }
 )
-.controller('EditorCtrl', ['$scope', 'EditorService', '$location', 'StateService', function($scope, EditorService, $location, StateService) {
+.controller('AceCtrl', ['$scope', 'EditorService', '$location', 'StateService', function($scope, EditorService, $location, StateService) {
   $scope.$on('$locationChangeStart', function (event) {
     StateService.storeState();
   });
@@ -39,7 +66,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     $event.preventDefault();
     if (tab.unsaved) {
       var unsavedModalInstance = $modal.open({
-        templateUrl: '/static/editor/close-unsaved-modal.html',
+        templateUrl: '/static/editor/templates/close-unsaved-modal.html',
         backdrop: 'static',
         keyboard: false,
         controller: 'UnsavedModalCtrl',
@@ -68,7 +95,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
   $scope.saveDocumentAs = function (tab) {
     var saveAsModalInstance = $modal.open({
-      templateUrl: '/static/editor/saveas-modal.html',
+      templateUrl: '/static/editor/templates/saveas-modal.html',
       backdrop: 'static',
       keyboard: false,
       size: 'lg',
@@ -861,7 +888,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
   $scope.deleteFiles = function () {
     var deleteModalInstance = $modal.open({
-      templateUrl: '/static/editor/delete-modal.html',
+      templateUrl: '/static/editor/templates/delete-modal.html',
       backdrop: 'static',
       keyboard: false,
       controller: 'DeleteModalCtrl',
@@ -887,7 +914,7 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
   };
   $scope.renameFile = function () {
     var renameModalInstance = $modal.open({
-      templateUrl: '/static/editor/rename-modal.html',
+      templateUrl: '/static/editor/templates/rename-modal.html',
       backdrop: 'static',
       keyboard: false,
       controller: 'RenameModalCtrl',
@@ -972,13 +999,4 @@ angular.module('oide.editor', ['ngRoute','ui.bootstrap','ui.ace','treeControl'])
     console.log(selected);
       // $scope.selectedNodes = selected;
   };
-}])
-.controller('StateTestCtrl',function($scope,StateService,$log){
-  $scope.getState = function () {
-    $log.debug('Read state: ', StateService.getState());
-  };
-  $scope.postState = function () {
-    StateService.storeState();
-    $log.debug('State POSTed');
-  };
-});
+}]);
