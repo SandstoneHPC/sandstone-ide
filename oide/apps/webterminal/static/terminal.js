@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('oide.terminal', ['ngRoute','ui.bootstrap', 'ui.router'])
+angular.module('oide.terminal', [])
 
 .config(['$stateProvider', '$urlRouterProvider' ,function($stateProvider, $urlRouterProvider){
   $stateProvider
