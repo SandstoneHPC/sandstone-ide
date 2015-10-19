@@ -2,7 +2,7 @@
   <tabset>
     <tab
       ng-repeat="tab in openDocs.tabs"
-      active="tab.active"
+      active="tab.filepath===openDocs.currentSession"
       ng-click="loadEditorContents(tab)">
       <tab-heading>
         <span
