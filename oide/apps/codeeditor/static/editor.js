@@ -255,6 +255,7 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
   var clipboard = '';
   var state, openDocuments, editorSessions, editorSettings;
   var aceModel = {content:'',mode:'text'};
+  var loadLock = false;
   openDocuments = {
     currentSession: '',
     tabs:[]
@@ -304,16 +305,19 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
     }
   };
   var onAceLoad = function (_ace) {
-    editor = _ace;
-    // loadState();
-    applySettings();
-    editor.on('change', onAceChanged);
-    $log.debug('Loaded Ace instance: ', editor);
-    if (openDocuments.tabs.length === 0) {
-      createDocument();
-    } else {
-      switchSession(openDocuments.currentSession);
-      aceModel.content = editorSessions[openDocuments.currentSession].getValue();
+    if (!loadLock) {
+      editor = _ace;
+      // loadState();
+      applySettings();
+      editor.on('change', onAceChanged);
+      $log.debug('Loaded Ace instance: ', editor);
+      if (openDocuments.tabs.length === 0) {
+        createDocument();
+      } else {
+        switchSession(openDocuments.currentSession);
+        aceModel.content = editorSessions[openDocuments.currentSession].getValue();
+      }
+      loadLock = true;
     }
   };
   var onAceChanged = function (e) {
@@ -338,6 +342,7 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
       editor.setSession(editorSessions[filepath]);
       $log.debug('Switching sessions from ', openDocuments.currentSession, ' to ', filepath);
       openDocuments.currentSession = filepath;
+      aceModel.content = editorSessions[openDocuments.currentSession].getValue();
       aceModel.mode = editorSessions[openDocuments.currentSession].$modeId.split("/").slice(-1)[0];
     }
   };
