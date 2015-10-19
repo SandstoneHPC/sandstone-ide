@@ -89,11 +89,9 @@
     config(['$urlRouterProvider', function($urlRouterProvider) {
       $urlRouterProvider.otherwise('/editor');
     }])
-    .run(
-      function (StateService,$log) {
-        $log.debug('StateService initialized.');
-      }
-    )
+    .run(function(StateService,$log) {
+      $log.debug('StateService initialized.');
+    })
     .controller('PageCtrl', ['$location','PageService',function($location,PageService) {
       var self = this;
       self.currentUrl = PageService.getCurrentUrl;

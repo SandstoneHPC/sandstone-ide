@@ -13,7 +13,12 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
         },
         'ace@editor': {
           templateUrl: '/static/editor/templates/ace.html',
-          controller: 'AceCtrl'
+          controller: 'AceCtrl',
+          resolve: {
+            stateLoaded: function(StateService) {
+              return StateService.stateLoaded;
+            }
+          }
         },
         'tabs@editor': {
           templateUrl: '/static/editor/templates/tabs.html',
@@ -34,20 +39,7 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
       }
     });
 }])
-.run(
-  function (StateService,$log) {
-    StateService.statePromise.then(function () {
-      var state = StateService.getState();
-      if (!('editor' in state)) {
-        state.editor = {};
-      }
-    });
-  }
-)
-.controller('AceCtrl', ['$scope', 'EditorService', '$location', 'StateService', function($scope, EditorService, $location, StateService) {
-  $scope.$on('$locationChangeStart', function (event) {
-    StateService.storeState();
-  });
+.controller('AceCtrl', ['$scope', 'EditorService', '$location', 'StateService', 'stateLoaded', function($scope, EditorService, $location, StateService, stateLoaded) {
   $scope.aceModel = EditorService.aceModel;
   $scope.onAceLoad = function(_ace) {
     EditorService.onAceLoad(_ace);
@@ -237,7 +229,7 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
   $scope.close = function () {
     $scope.file.saveFile = false;
     $modalInstance.close($scope.file);
-  }
+  };
 
   $scope.cancel = function () {
     $modalInstance.dismiss('cancel');
@@ -262,7 +254,7 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
   var editor = {};
   var clipboard = '';
   var state, openDocuments, editorSessions, editorSettings;
-  var aceModel = {content:''};
+  var aceModel = {content:'',mode:'text'};
   openDocuments = {
     currentSession: '',
     tabs:[]
@@ -275,52 +267,54 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
     tabSize: 4,
     showIndentGuides: true
   };
-  var onAceLoad = function (_ace) {
-    editor = _ace;
-    StateService.statePromise.then(function () {
-      StateService.registerUnloadFunc(function (state) {
-        var currSess;
-        var editorSessions = {};
-        for (var k in state.editor.editorSessions) {
-          currSess = state.editor.editorSessions[k];
-          editorSessions[k] = {
-            content: currSess.getValue(),
-            mode: currSess.$modeId
-          };
-        }
-        state.editor.editorSessions = editorSessions;
-      });
-      state = StateService.getState();
-      if ('openDocuments' in state.editor) {
-        openDocuments.tabs = state.editor.openDocuments.tabs;
-        openDocuments.currentSession = state.editor.openDocuments.currentSession;
-      } else {
-        state.editor.openDocuments = openDocuments;
+  var loadState = function() {
+    if (openDocuments.currentSession==='') {
+      // StateService.registerUnloadFunc(function (state) {
+      //   var currSess;
+      //   var editorSessions = {};
+      //   for (var k in state.editor.editorSessions) {
+      //     currSess = state.editor.editorSessions[k];
+      //     editorSessions[k] = {
+      //       content: currSess.getValue(),
+      //       mode: currSess.$modeId
+      //     };
+      //   }
+      //   state.editor.editorSessions = editorSessions;
+      // });
+      var k;
+      var od = StateService.getKey('editor_openDocuments');
+      if (od) {
+        openDocuments.tabs = od.tabs;
+        openDocuments.currentSession = od.currentSession;
       }
-      if ('editorSessions' in state.editor) {
+      var ed = StateService.getKey('editor_editorSessions');
+      if (ed) {
         var s;
-        for (var k in state.editor.editorSessions) {
-          s = state.editor.editorSessions[k];
+        for (k in ed) {
+          s = ed[k];
           editorSessions[k] = $window.ace.createEditSession(s.content,s.mode);
         }
       }
-      state.editor.editorSessions = editorSessions;
-      if ('editorSettings' in state.editor) {
-        for (var k in state.editor.editorSettings) {
-          editorSettings[k] = state.editor.editorSettings[k];
+      var edSett = StateService.getKey('editor_editorSettings');
+      if (edSett) {
+        for (k in edSett) {
+          editorSettings[k] = edSett[k];
         }
       }
-      state.editor.editorSettings = editorSettings;
-      applySettings();
-      $log.debug('Loaded Ace instance: ', editor);
-      editor.on('change', onAceChanged);
-      if (openDocuments.tabs.length === 0) {
-        createDocument();
-      } else {
-        editor.setSession(editorSessions[openDocuments.currentSession]);
-        aceModel.content = editor.getSession().getValue();
-      }
-    });
+    }
+  };
+  var onAceLoad = function (_ace) {
+    editor = _ace;
+    // loadState();
+    applySettings();
+    editor.on('change', onAceChanged);
+    $log.debug('Loaded Ace instance: ', editor);
+    if (openDocuments.tabs.length === 0) {
+      createDocument();
+    } else {
+      switchSession(openDocuments.currentSession);
+      aceModel.content = editorSessions[openDocuments.currentSession].getValue();
+    }
   };
   var onAceChanged = function (e) {
     for (var i=0;i<openDocuments.tabs.length;i++) {
@@ -337,11 +331,14 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
     editor.setDisplayIndentGuides(editorSettings.showIndentGuides);
   };
   var switchSession = function (filepath) {
-    if (!(openDocuments.currentSession === filepath)) {
-      editorSessions[openDocuments.currentSession] = editor.getSession();
+    if (openDocuments.currentSession !== filepath) {
+      if (openDocuments.currentSession !== '') {
+        editorSessions[openDocuments.currentSession] = editor.getSession();
+      }
       editor.setSession(editorSessions[filepath]);
-      $log.debug('Switching sessions from ', openDocuments.currentSession, ' to ', filepath)
+      $log.debug('Switching sessions from ', openDocuments.currentSession, ' to ', filepath);
       openDocuments.currentSession = filepath;
+      aceModel.mode = editorSessions[openDocuments.currentSession].$modeId.split("/").slice(-1)[0];
     }
   };
   var saveSession = function (filepath) {
@@ -374,6 +371,8 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
     openDocuments.tabs.splice(openDocuments.tabs.lastIndexOf(tab),1);
     if (openDocuments.tabs.length !== 0) {
       switchSession(openDocuments.tabs[openDocuments.tabs.length-1].filepath);
+    } else {
+      openDocuments.currentSession = undefined;
     }
     // editorSessions[tab.filepath].$stopWorker();
     delete editorSessions[tab.filepath];
@@ -536,7 +535,7 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
     multipleSelections: false,
     dirSelected: false
   };
-  StateService.statePromise.then(function () {
+  // StateService.statePromise.then(function () {
     // state = StateService.getState();
     // if ('treeData' in state.editor) {
     //   treeData = state.editor.treeData;
@@ -544,8 +543,8 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
     // } else {
     //   state.editor.treeData = treeData;
     // }
-    initializeFiletree();
-  });
+    // initializeFiletree();
+  // });
   var clipboard = [];
   var initializeFiletree = function () {
     $http
@@ -560,6 +559,7 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
         $log.error('Failed to initialize filetree.');
       });
   };
+  initializeFiletree();
   var getNodeFromPath = function (filepath, nodeList) {
     var matchedNode;
     for (var i=0;i<nodeList.length;i++) {
