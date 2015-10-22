@@ -2,99 +2,99 @@
 
 angular.module('oide.editor')
 
-.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', 'FiletreeService', function ($scope, $modal, $log, EditorService, FiletreeService) {
-  $scope.openDocs = EditorService.openDocuments;
-  $scope.loadEditorContents = function (tab) {
-    EditorService.loadSession(tab.filepath);
-  };
-  $scope.createDocument = function () {
-    EditorService.createDocument();
-  };
-  $scope.closeDocument = function ($event, tab) {
-    $event.preventDefault();
-    if (tab.unsaved) {
-      var unsavedModalInstance = $modal.open({
-        templateUrl: '/static/editor/templates/close-unsaved-modal.html',
+.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', 'FiletreeService',
+  function ($scope, $modal, $log, EditorService, FiletreeService) {
+    var self = this;
+    self.getOpenDocs = function() {
+      return EditorService.getOpenDocs();
+    };
+    self.openDocument = function (filepath) {
+      var fp = filepath || undefined;
+      EditorService.openDocument(fp);
+    };
+    self.closeDocument = function ($event, tab) {
+      $event.preventDefault();
+      if (tab.unsaved) {
+        var unsavedModalInstance = $modal.open({
+          templateUrl: '/static/editor/templates/close-unsaved-modal.html',
+          backdrop: 'static',
+          keyboard: false,
+          controller: 'UnsavedModalCtrl',
+          resolve: {
+            file: function () {
+              return tab;
+            }
+          }
+        });
+  
+        unsavedModalInstance.result.then(function (file) {
+          if (file.saveFile) {
+            if (tab.filepath.substring(0,2) !== '-/') {
+              EditorService.saveDocument(file.filepath);
+              $log.debug('Saved files at: ' + new Date());
+              EditorService.closeDocument(file.filepath);
+            } else {
+              self.saveDocumentAs(file);
+            }
+          } else {
+            $log.debug('Closed without saving at: ' + new Date());
+            EditorService.closeDocument(file.filepath);
+          }
+        }, function () {
+          $log.debug('Modal dismissed at: ' + new Date());
+        });
+      } else {
+        EditorService.closeDocument(tab.filepath);
+      }
+    };
+    self.saveDocumentAs = function (tab) {
+      var saveAsModalInstance = $modal.open({
+        templateUrl: '/static/editor/templates/saveas-modal.html',
         backdrop: 'static',
         keyboard: false,
-        controller: 'UnsavedModalCtrl',
+        size: 'lg',
+        controller: 'SaveAsModalCtrl',
         resolve: {
           file: function () {
             return tab;
           }
         }
       });
-
-      unsavedModalInstance.result.then(function (file) {
-        if (file.saveFile) {
-          EditorService.saveDocument(file);
-          $log.debug('Saved files at: ' + new Date());
-          EditorService.closeDocument(file);
-        } else {
-          $log.debug('Closed without saving at: ' + new Date());
-          EditorService.closeDocument(file);
-        }
+  
+      saveAsModalInstance.result.then(function (newFile) {
+        EditorService.fileRenamed(newFile.oldFilepath,newFile.filepath);
+        EditorService.saveDocument(tab);
+        FiletreeService.updateFiletree();
+        $log.debug('Saved files at: ' + new Date());
       }, function () {
         $log.debug('Modal dismissed at: ' + new Date());
       });
-    } else {
-      EditorService.closeDocument(tab);
-    }
-  };
-  $scope.saveDocumentAs = function (tab) {
-    var saveAsModalInstance = $modal.open({
-      templateUrl: '/static/editor/templates/saveas-modal.html',
-      backdrop: 'static',
-      keyboard: false,
-      size: 'lg',
-      controller: 'SaveAsModalCtrl',
-      resolve: {
-        file: function () {
-          return tab;
-        }
-      }
-    });
-
-    saveAsModalInstance.result.then(function (newFile) {
-      EditorService.fileRenamed(newFile.oldFilepath,newFile.filepath);
-      var tab;
-      for (var i=0;i<EditorService.openDocuments.tabs.length;i++) {
-        if (EditorService.openDocuments.tabs[i].filepath === newFile.filepath) {
-          tab = EditorService.openDocuments.tabs[i];
-        }
-      }
-      EditorService.saveDocument(tab);
-      FiletreeService.updateFiletree();
-      $log.debug('Saved files at: ' + new Date());
-    }, function () {
-      $log.debug('Modal dismissed at: ' + new Date());
-    });
-  };
-  $scope.saveDocument = function (tab) {
-    EditorService.saveDocument(tab);
-  };
-  $scope.undoChanges = function (tab) {
-    EditorService.undoChanges(tab.filepath);
-  };
-  $scope.redoChanges = function (tab) {
-    EditorService.redoChanges(tab.filepath);
-  };
-  $scope.copySelection = function () {
-    EditorService.copySelection();
-  };
-  $scope.cutSelection = function () {
-    EditorService.cutSelection();
-  };
-  $scope.pasteClipboard = function () {
-    EditorService.pasteClipboard();
-  };
-  $scope.commentSelection = function () {
-    EditorService.commentSelection();
-  };
-  $scope.openSearchBox = function () {
-    EditorService.openSearchBox();
-  };
-}])
+    };
+    self.saveDocument = function (tab) {
+      EditorService.saveDocument(tab.filepath);
+    };
+    self.undoChanges = function (tab) {
+      EditorService.undoChanges(tab.filepath);
+    };
+    self.redoChanges = function (tab) {
+      EditorService.redoChanges(tab.filepath);
+    };
+    self.copySelection = function () {
+      EditorService.copySelection();
+    };
+    self.cutSelection = function () {
+      EditorService.cutSelection();
+    };
+    self.pasteClipboard = function () {
+      EditorService.pasteClipboard();
+    };
+    self.commentSelection = function () {
+      EditorService.commentSelection();
+    };
+    self.openSearchBox = function () {
+      EditorService.openSearchBox();
+    };
+  }])
 .controller('SaveAsModalCtrl', function ($scope, $modalInstance, $http, file) {
   $scope.treeData = {};
   var initialContents = $http

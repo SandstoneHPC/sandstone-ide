@@ -165,7 +165,7 @@ angular.module('oide.editor')
     },
     openFilesInEditor: function () {
       for (var i=0;i<treeData.selectedNodes.length;i++) {
-        EditorService.loadSession(treeData.selectedNodes[i].filepath);
+        EditorService.openDocument(treeData.selectedNodes[i].filepath);
         $log.debug('Opened document: ', treeData.selectedNodes[i].filepath);
       }
     },

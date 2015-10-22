@@ -12,16 +12,16 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
         },
         'ace@editor': {
           templateUrl: '/static/editor/templates/ace.html',
-          controller: 'AceCtrl',
-          resolve: {
-            stateLoaded: function(StateService) {
-              return StateService.stateLoaded;
-            }
-          }
+          controller: 'AceCtrl as ctrl'
+          // resolve: {
+          //   stateLoaded: function(StateService) {
+          //     return StateService.stateLoaded;
+          //   }
+          // }
         },
         'tabs@editor': {
           templateUrl: '/static/editor/templates/tabs.html',
-          controller: 'EditorTabsCtrl'
+          controller: 'EditorTabsCtrl as ctrl'
         },
         'settings@editor': {
           templateUrl: '/static/editor/templates/settings.html',

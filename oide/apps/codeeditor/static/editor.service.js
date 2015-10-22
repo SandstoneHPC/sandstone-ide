@@ -1,88 +1,41 @@
 'use strict';
 
+/**
+ * @ngdoc service
+ * @name oide.EditorService
+ * @description
+ * # EditorService
+ * Service to manage documents in the OIDE Editor.
+ */
 angular.module('oide.editor')
 
 .factory('EditorService', ['$window', '$http', '$log', 'AceModeService', 'StateService', function ($window, $http,$log,AceModeService,StateService) {
   var editor = {};
+  
+  // clipboard will hold all copy/paste text for editor
   var clipboard = '';
-  var state, openDocuments, editorSessions, editorSettings;
-  var aceModel = {content:'',mode:'text'};
-  var loadLock = false;
-  openDocuments = {
-    currentSession: '',
-    tabs:[]
-  };
-  editorSessions = {};
-  editorSettings = {
+  /**
+   * This is the object from which all values concerning open documents are derived.
+   * This objects has the following format:
+   * {
+   *   '<filepath>': {
+   *     filename: str,
+   *     unsaved: boolean,
+   *     active: boolean,
+   *     session: obj (defined by Ace)
+   *   },
+   *   ...
+   * }
+   */
+  var openDocs = {};
+  var editorSettings = {
     showInvisibles: true,
     useSoftTabs: true,
     fontSize: 12,
     tabSize: 4,
     showIndentGuides: true
   };
-  var loadState = function() {
-    if (openDocuments.currentSession==='') {
-      // StateService.registerUnloadFunc(function (state) {
-      //   var currSess;
-      //   var editorSessions = {};
-      //   for (var k in state.editor.editorSessions) {
-      //     currSess = state.editor.editorSessions[k];
-      //     editorSessions[k] = {
-      //       content: currSess.getValue(),
-      //       mode: currSess.$modeId
-      //     };
-      //   }
-      //   state.editor.editorSessions = editorSessions;
-      // });
-      var k;
-      var od = StateService.getKey('editor_openDocuments');
-      if (od) {
-        openDocuments.tabs = od.tabs;
-        openDocuments.currentSession = od.currentSession;
-      }
-      var ed = StateService.getKey('editor_editorSessions');
-      if (ed) {
-        var s;
-        for (k in ed) {
-          s = ed[k];
-          editorSessions[k] = $window.ace.createEditSession(s.content,s.mode);
-        }
-      }
-      var edSett = StateService.getKey('editor_editorSettings');
-      if (edSett) {
-        for (k in edSett) {
-          editorSettings[k] = edSett[k];
-        }
-      }
-    }
-  };
-  var onAceLoad = function (_ace) {
-    if (!loadLock) {
-      editor = _ace;
-      // loadState();
-      applySettings();
-      // editor.on('change', onAceChanged);
-      $log.debug('Loaded Ace instance: ', editor);
-      if (openDocuments.tabs.length === 0) {
-        createDocument();
-      } else {
-        switchSession(openDocuments.currentSession);
-        aceModel.content = editorSessions[openDocuments.currentSession].getValue();
-      }
-      loadLock = true;
-    } else {
-      if (openDocuments.tabs.length !== 0) {
-        aceModel.content = editorSessions[openDocuments.currentSession].getValue();
-      }
-    }
-  };
-  var onAceChanged = function (e) {
-    for (var i=0;i<openDocuments.tabs.length;i++) {
-      if (openDocuments.tabs[i].filepath === openDocuments.currentSession) {
-        openDocuments.tabs[i].unsaved = true;
-      }
-    }
-  };
+  
   var applySettings = function () {
     editor.setShowInvisibles(editorSettings.showInvisibles);
     editor.getSession().setUseSoftTabs(editorSettings.useSoftTabs);
@@ -90,152 +43,219 @@ angular.module('oide.editor')
     editor.getSession().setTabSize(editorSettings.tabSize);
     editor.setDisplayIndentGuides(editorSettings.showIndentGuides);
   };
-  var switchSession = function (filepath) {
-    if (openDocuments.currentSession !== filepath) {
-      if (openDocuments.currentSession !== '') {
-        editorSessions[openDocuments.currentSession] = editor.getSession();
-      }
-      editor.setSession(editorSessions[filepath]);
-      $log.debug('Switching sessions from ', openDocuments.currentSession, ' to ', filepath);
-      openDocuments.currentSession = filepath;
-      for (var i=0;i<openDocuments.tabs.length;i++) {
-        if (openDocuments.tabs[i].filepath === filepath) {
-          openDocuments.tabs[i].active = true;
-        }
-      }
-      aceModel.content = editorSessions[openDocuments.currentSession].getValue();
-      aceModel.mode = editorSessions[openDocuments.currentSession].$modeId.split("/").slice(-1)[0];
-    }
+  
+  // Called when the contents of the current session have changed. Bound directly to
+  // an EditSession.
+  var onSessionModified = function(e) {
+    var filepath = getCurrentDoc();
+    openDocs[filepath].unsaved = true;
   };
-  var saveSession = function (filepath) {
-    var contents = editorSessions[filepath].getValue();
+  
+  // Given a filepath, this function will return a filename
+  var getFilenameFromPath = function(filepath) {
+    var filename = filepath.substring(
+      filepath.lastIndexOf('/')+1,
+      filepath.length
+    );
+    return filename;
   };
-  var createDocument = function () {
-    $log.debug('Creating new Document');
+  
+  // Returns the next available filepath enumeration for untitled documents
+  var getNextUntitledFilepath = function() {
     var docExists = true;
     var docEnum = 0;
     var filepath;
     while (docExists) {
       filepath = '-/untitled'+docEnum;
-      if (filepath in editorSessions) {
+      if (filepath in openDocs) {
         docEnum++;
       } else {
         docExists = false;
       }
     }
-    editorSessions[filepath] = $window.ace.createEditSession('','text');
-    editorSessions[filepath].on('change',onAceChanged);
-    openDocuments.tabs.push({
-      filename: 'untitled',
-      filepath: filepath,
-      active: true,
-      unsaved: false
-    });
+    return filepath;
+  };
+  
+  // Return the filepath of the active document in the editor. If no document
+  // is active, return undefined.
+  var getCurrentDoc = function() {
+    var current;
+    for (var filepath in openDocs) {
+      if (openDocs.hasOwnProperty(filepath)) {
+        if (openDocs[filepath].active) {
+          current = filepath;
+        }
+      }
+    }
+    return current;
+  };
+  
+  // Creates a new untitled document, which is added to openDocs
+  var createUntitledDocument = function() {
+    var filepath = getNextUntitledFilepath();
+    createNewSession(filepath);
     switchSession(filepath);
   };
-  var closeDocument = function (tab) {
-    $log.debug('Closing editor session: ', tab.filepath);
-    openDocuments.tabs.splice(openDocuments.tabs.lastIndexOf(tab),1);
-    if (openDocuments.tabs.length !== 0) {
-      switchSession(openDocuments.tabs[openDocuments.tabs.length-1].filepath);
+  
+  // Make the document specified by filepath the active document in the editor.
+  // Returns true if successful, and false if the specified document is not loaded.
+  var switchSession = function(filepath) {
+    var current = getCurrentDoc();
+    
+    if (filepath in openDocs) {
+      if (current) {
+        openDocs[current].active = false;
+      }
+      editor.setSession(openDocs[filepath].session);
+      openDocs[filepath].active = true;
+      // editor.setMode(openDocs[filepath].$modeId);
+      applySettings();
     } else {
-      openDocuments.currentSession = undefined;
+      return false;
     }
-    // editorSessions[tab.filepath].$stopWorker();
-    delete editorSessions[tab.filepath];
-    $log.debug('Closed session.');
   };
+  
+  // Creates a new EditSession, and stores a new openDoc object in openDocs.
+  // content and mode are optional.
+  // This function does not set the new session as active.
+  var createNewSession = function(filepath,content,mode) {
+    var c = content || '';
+    var m = mode || 'ace/mode/text';
+    
+    openDocs[filepath] = {
+      filepath: filepath,
+      filename: getFilenameFromPath(filepath),
+      unsaved: false,
+      active: false
+    };
+    openDocs[filepath].session = new $window.ace.EditSession(c,m);
+    openDocs[filepath].session.on('change',onSessionModified);
+  };
+  
   return {
-    aceModel: aceModel,
-    editorSettings: editorSettings,
-    openDocuments: openDocuments,
-    onAceLoad: function (_ace) {
-      onAceLoad(_ace);
+    /**
+     * Called when ace editor has loaded. Must be bound to directive by controller.
+     */
+    onAceLoad: function(_ace) {
+      editor = _ace;
+      createUntitledDocument();
     },
-    onAceChanged: function(e) {
-      onAceChanged(e);
+    /**
+     * return an object of open documents in the editor.
+     * {
+     *   '<filepath>': {
+     *     filename: str,
+     *     unsaved: boolean,
+     *     active: boolean,
+     *     session: obj (defined by Ace)
+     *   },
+     *   ...
+     * }
+     */
+    getOpenDocs: function() {
+      return openDocs;
     },
-    noOpenSessions: function () {
-      return openDocuments.tabs.length === 0;
+    /**
+     * The following methods get/set editor settings. The editor settings object
+     * is in the following format, with defaults indicated:
+     * {
+     *   showInvisibles: true,
+     *   useSoftTabs: true,
+     *   fontSize: 12,
+     *   tabSize: 4,
+     *   showIndentGuides: true
+     * }
+     */
+    getSettings: function() {
+      return editorSettings;
     },
-    fileRenamed: function (oldFilepath, newFilepath) {
-      var tab, session;
-      for (var i=0;i<openDocuments.tabs.length;i++) {
-        if (openDocuments.tabs[i].filepath === oldFilepath) {
-          tab = openDocuments.tabs[i];
-        }
-      }
-      if (typeof tab !== 'undefined') {
-        tab.filepath = newFilepath;
-        tab.filename = newFilepath.substring(
-          newFilepath.lastIndexOf('/')+1,
-          newFilepath.length
-        );
-      }
-      if (oldFilepath in editorSessions) {
-        editorSessions[newFilepath] = editorSessions[oldFilepath];
-        delete editorSessions[oldFilepath];
-        var mode = AceModeService.getModeForPath(newFilepath);
-        editorSessions[newFilepath].setMode(mode.mode);
-      }
+    setSettings: function(settings) {
+      editorSettings = settings;
+      applySettings();
     },
-    fileDeleted: function (filepath) {
-      var i, tab;
-      for (i=0;i<openDocuments.tabs.length;i++) {
-        if (openDocuments.tabs[i].filepath === filepath) {
-          tab = openDocuments.tabs[i];
-          closeDocument(tab);
-        }
-      }
-    },
-    loadSession: function (filepath) {
-      if (!(filepath in editorSessions)) {
-        $log.debug('Creating new EditSession: ', filepath);
-        $http
-          .get('/filebrowser/localfiles'+filepath)
-          .success(function (data, status, headers, config) {
-            var mode = AceModeService.getModeForPath(filepath);
-            editorSessions[filepath] = $window.ace.createEditSession(data.content,mode.mode);
-            editorSessions[filepath].on('change',onAceChanged);
-            openDocuments.tabs.push({
-              filename: filepath.substring(filepath.lastIndexOf('/')+1),
-              filepath: filepath,
-              active: true,
-              unsaved: false
-            });
-            switchSession(filepath);
-          });
+    /**
+     * @ngdoc
+     * @name oide.EditorService#openDocument
+     * @methodOf oide.EditorService
+     *
+     * @description
+     * Method to open a document in the editor.
+     * @example
+     * EditorService.openDocument('/path/to/file');
+     * @param {str} [filepath] If called with a filepath, that document will be opened or switched to,
+     * otherwise a new document will be created and switched to.
+     * @returns {str} returns filepath of opened document, or return undefined if opening fails.
+     */
+    openDocument: function(filepath) {
+      if (typeof filepath === 'undefined') {
+        // Create an untitled document, and a new editSession to associate it with.
+        createUntitledDocument();
       } else {
-        switchSession(filepath);
-        for (var i=0;i<openDocuments.tabs.length;i++) {
-          if (openDocuments.tabs[i].filepath === filepath) {
-            openDocuments.tabs[i].active = true;
-          }
+        if (filepath in openDocs) {
+          // Switch to open document
+          switchSession(filepath);
+        } else {
+          // Load document from filesystem
+          $log.debug('Load '+filepath+' from filesystem.');
+          $http
+            .get('/filebrowser/localfiles'+filepath)
+            .success(function (data, status, headers, config) {
+              var mode = AceModeService.getModeForPath(filepath);
+              createNewSession(filepath,data.content,mode.mode);
+              switchSession(filepath);
+            });
         }
       }
     },
-    createDocument: function () {
-      createDocument();
+    /**
+     * @ngdoc
+     * @name oide.EditorService#closeDocument
+     * @methodOf oide.EditorService
+     *
+     * @description
+     * Method to close an open document in the editor.
+     * @example
+     * EditorService.closeDocument('/path/to/file');
+     * @param {str} filepath Closes the open document identified by filepath.
+     * @returns {str} returns filepath of closed document, or return undefined in case of failure.
+     */
+    closeDocument: function(filepath) {
+      if (filepath in openDocs) {
+        delete openDocs[filepath];
+        
+        if (Object.keys(openDocs).length !== 0) {
+          switchSession(Object.keys(openDocs)[0]);
+        }
+      }
     },
-    closeDocument: function (tab) {
-      closeDocument(tab);
-    },
-    saveDocument: function (tab) {
-      var content = editorSessions[tab.filepath].getValue();
+    /**
+     * @ngdoc
+     * @name oide.EditorService#saveDocument
+     * @methodOf oide.EditorService
+     *
+     * @description
+     * Method to save an open document in the editor.
+     * @example
+     * EditorService.saveDocument('/path/to/file');
+     * @param {str} filepath Saves the open document identified by filepath to the filesystem.
+     * @returns {str} returns filepath of saved document, or return undefined in case of failure.
+     */
+    saveDocument: function(filepath) {
+      var content = openDocs[filepath].session.getValue();
       $http
         .get(
           '/filebrowser/a/fileutil',
           {
             params: {
               operation: 'CHECK_EXISTS',
-              filepath: tab.filepath
+              filepath: filepath
             }
           }
         )
         .success(function (data, status, headers, config) {
           if (data.result) {
             $http({
-              url: '/filebrowser/localfiles'+tab.filepath,
+              url: '/filebrowser/localfiles'+filepath,
               method: 'PUT',
               params: {
                 _xsrf: getCookie('_xsrf')
@@ -243,12 +263,12 @@ angular.module('oide.editor')
               data: {'content': content}
             })
             .success(function (data,status, headers, config) {
-              $log.debug('Saved file: ', tab.filepath);
-              openDocuments.tabs[openDocuments.tabs.indexOf(tab)].unsaved = false;
+              $log.debug('Saved file: ', filepath);
+              openDocs[filepath].unsaved = false;
             });
           } else {
             $http({
-              url: '/filebrowser/localfiles'+tab.filepath,
+              url: '/filebrowser/localfiles'+filepath,
               method: 'POST',
               params: {
                 _xsrf: getCookie('_xsrf')
@@ -256,7 +276,7 @@ angular.module('oide.editor')
             })
             .success(function (data,status, headers, config) {
               $http({
-                url: '/filebrowser/localfiles'+tab.filepath,
+                url: '/filebrowser/localfiles'+filepath,
                 method: 'PUT',
                 params: {
                   _xsrf: getCookie('_xsrf')
@@ -264,12 +284,29 @@ angular.module('oide.editor')
                 data: {'content': content}
               })
               .success(function (data,status, headers, config) {
-                $log.debug('Saved file: ', tab.filepath);
-                openDocuments.tabs[openDocuments.tabs.indexOf(tab)].unsaved = false;
+                $log.debug('Saved file: ', filepath);
+                openDocs[filepath].unsaved = false;
               });
             });
           }
         });
+    },
+    fileRenamed: function(oldpath,newpath) {
+      openDocs[newpath] = {
+        filepath: newpath,
+        filename: getFilenameFromPath(newpath),
+        unsaved: openDocs[oldpath].unsaved,
+        active: openDocs[oldpath].active,
+        session: openDocs[oldpath].session
+      };
+      var mode = AceModeService.getModeForPath(newpath);
+      openDocs[newpath].session.setMode(mode.mode);
+      delete openDocs[oldpath];
+    },
+    fileDeleted: function(filepath) {
+      if (filepath in openDocs) {
+        openDocs[filepath].unsaved = true;
+      }
     },
     applyEditorSettings: function () {
       applySettings();
@@ -278,10 +315,14 @@ angular.module('oide.editor')
       editor.execCommand("replace");
     },
     undoChanges: function (filepath) {
-      editorSessions[filepath].getUndoManager().undo();
+      if (filepath in openDocs) {
+        openDocs[filepath].getUndoManager().undo();
+      }
     },
     redoChanges: function (filepath) {
-      editorSessions[filepath].getUndoManager().redo();
+      if (filepath in openDocs) {
+        openDocs[filepath].getUndoManager().redo();
+      }
     },
     copySelection: function () {
       clipboard = editor.getCopyText();

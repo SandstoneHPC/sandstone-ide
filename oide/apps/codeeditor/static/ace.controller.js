@@ -2,10 +2,13 @@
 
 angular.module('oide.editor')
 
-.controller('AceCtrl', ['$scope', 'EditorService', '$location', 'StateService', 'stateLoaded', function($scope, EditorService, $location, StateService, stateLoaded) {
-  $scope.aceModel = EditorService.aceModel;
-  $scope.onAceLoad = function(_ace) {
-    EditorService.onAceLoad(_ace);
-  };
-  $scope.noOpenSessions =  EditorService.noOpenSessions;
-}]);
+.controller('AceCtrl', ['$scope', 'EditorService', '$location', 'StateService',
+  function($scope, EditorService, $location, StateService) {
+    var self = this;
+    self.onAceLoad = function(_ace) {
+      EditorService.onAceLoad(_ace);
+    };
+    self.noOpenSessions = function() {
+      return EditorService.getOpenDocs().length === 0;
+    };
+  }]);
