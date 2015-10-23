@@ -141,7 +141,7 @@ angular.module('oide.editor')
      * Called when ace editor has loaded. Must be bound to directive by controller.
      */
     onAceLoad: function(_ace) {
-      var um,content,mode,activeSession;
+      var um,content,mode,activeSession,sel;
       editor = _ace;
       if (Object.keys(openDocs).length !== 0) {
         for (var filepath in openDocs) {
@@ -152,9 +152,11 @@ angular.module('oide.editor')
             // Preserve select portions of the old EditSession, and then
             // reapply them to a new EditSession created against the editor.
             um = openDocs[filepath].session.getUndoManager();
-            content = openDocs[filepath].session.getValue();
+            content = openDocs[filepath].session.getDocument();
             mode = openDocs[filepath].session.$modeId;
+            sel = openDocs[filepath].session.selection;
             createNewSession(filepath,content,mode,um);
+            openDocs[filepath].session.selection = sel;
           }
         }
         switchSession(activeSession);
