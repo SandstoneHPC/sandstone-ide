@@ -9,6 +9,6 @@ angular.module('oide.editor')
       EditorService.onAceLoad(_ace);
     };
     self.noOpenSessions = function() {
-      return EditorService.getOpenDocs().length === 0;
+      return Object.keys(EditorService.getOpenDocs()).length === 0;
     };
   }]);

@@ -141,7 +141,7 @@ angular.module('oide.editor')
      * Called when ace editor has loaded. Must be bound to directive by controller.
      */
     onAceLoad: function(_ace) {
-      var um,content,mode,activeSession,sel;
+      var um,content,mode,activeSession,sel,unsaved;
       editor = _ace;
       if (Object.keys(openDocs).length !== 0) {
         for (var filepath in openDocs) {
@@ -155,8 +155,10 @@ angular.module('oide.editor')
             content = openDocs[filepath].session.getDocument();
             mode = openDocs[filepath].session.$modeId;
             sel = openDocs[filepath].session.selection;
+            unsaved = openDocs[filepath].unsaved;
             createNewSession(filepath,content,mode,um);
             openDocs[filepath].session.selection = sel;
+            openDocs[filepath].unsaved = unsaved;
           }
         }
         switchSession(activeSession);
