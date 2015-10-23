@@ -2,7 +2,7 @@
 
 angular.module('oide.editor')
 
-.controller('AceCtrl', ['$scope', 'EditorService', '$location', 'StateService',
+.controller('AceCtrl', ['$scope', 'EditorService', '$location',
   function($scope, EditorService, $location, StateService) {
     var self = this;
     self.onAceLoad = function(_ace) {

@@ -2,9 +2,8 @@
 
 angular.module('oide.editor')
 
-.factory('FiletreeService', ['$http', '$document', '$q', '$log', 'EditorService', 'StateService', function($http,$document,$q,$log,EditorService,StateService) {
-  // var state = StateService.state;
-  var state, treeData, selectionDesc;
+.factory('FiletreeService', ['$http', '$document', '$q', '$log', 'EditorService', function($http,$document,$q,$log,EditorService) {
+  var treeData, selectionDesc;
   treeData = {
     filetreeContents: [
       // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
@@ -15,16 +14,6 @@ angular.module('oide.editor')
     multipleSelections: false,
     dirSelected: false
   };
-  // StateService.statePromise.then(function () {
-    // state = StateService.getState();
-    // if ('treeData' in state.editor) {
-    //   treeData = state.editor.treeData;
-    //   describeSelection();
-    // } else {
-    //   state.editor.treeData = treeData;
-    // }
-    // initializeFiletree();
-  // });
   var clipboard = [];
   var initializeFiletree = function () {
     $http

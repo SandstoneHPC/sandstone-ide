@@ -9,7 +9,7 @@
  */
 angular.module('oide.editor')
 
-.factory('EditorService', ['$window', '$http', '$log', 'AceModeService', 'StateService', function ($window, $http,$log,AceModeService,StateService) {
+.factory('EditorService', ['$window', '$http', '$log', 'AceModeService', function ($window, $http,$log,AceModeService) {
   var editor = {};
   
   // clipboard will hold all copy/paste text for editor
