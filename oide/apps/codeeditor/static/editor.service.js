@@ -128,7 +128,7 @@ angular.module('oide.editor')
       unsaved: false,
       active: false
     };
-    openDocs[filepath].session = new $window.ace.EditSession(c,m);
+    openDocs[filepath].session = new $window.ace.createEditSession(c,m);
     openDocs[filepath].session.on('change',onSessionModified);
   };
   
@@ -316,12 +316,12 @@ angular.module('oide.editor')
     },
     undoChanges: function (filepath) {
       if (filepath in openDocs) {
-        openDocs[filepath].getUndoManager().undo();
+        openDocs[filepath].session.getUndoManager().undo();
       }
     },
     redoChanges: function (filepath) {
       if (filepath in openDocs) {
-        openDocs[filepath].getUndoManager().redo();
+        openDocs[filepath].session.getUndoManager().redo();
       }
     },
     copySelection: function () {
