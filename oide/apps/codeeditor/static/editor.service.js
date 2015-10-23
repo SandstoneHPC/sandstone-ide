@@ -118,9 +118,10 @@ angular.module('oide.editor')
   // Creates a new EditSession, and stores a new openDoc object in openDocs.
   // content and mode are optional.
   // This function does not set the new session as active.
-  var createNewSession = function(filepath,content,mode) {
+  var createNewSession = function(filepath,content,mode,undoManager) {
     var c = content || '';
     var m = mode || 'ace/mode/text';
+    var um = undoManager || undefined;
     
     openDocs[filepath] = {
       filepath: filepath,
@@ -130,6 +131,9 @@ angular.module('oide.editor')
     };
     openDocs[filepath].session = new $window.ace.createEditSession(c,m);
     openDocs[filepath].session.on('change',onSessionModified);
+    if (um) {
+      openDocs[filepath].session.setUndoManager(um);
+    }
   };
   
   return {
@@ -137,8 +141,26 @@ angular.module('oide.editor')
      * Called when ace editor has loaded. Must be bound to directive by controller.
      */
     onAceLoad: function(_ace) {
+      var um,content,mode,activeSession;
       editor = _ace;
-      createUntitledDocument();
+      if (Object.keys(openDocs).length !== 0) {
+        for (var filepath in openDocs) {
+          if (openDocs.hasOwnProperty(filepath)) {
+            if (openDocs[filepath].active) {
+              activeSession = filepath;
+            }
+            // Preserve select portions of the old EditSession, and then
+            // reapply them to a new EditSession created against the editor.
+            um = openDocs[filepath].session.getUndoManager();
+            content = openDocs[filepath].session.getValue();
+            mode = openDocs[filepath].session.$modeId;
+            createNewSession(filepath,content,mode,um);
+          }
+        }
+        switchSession(activeSession);
+      } else {
+        createUntitledDocument();
+      }
     },
     /**
      * return an object of open documents in the editor.
