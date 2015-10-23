@@ -63,7 +63,7 @@ angular.module('oide.editor')
   
       saveAsModalInstance.result.then(function (newFile) {
         EditorService.fileRenamed(newFile.oldFilepath,newFile.filepath);
-        EditorService.saveDocument(tab);
+        EditorService.saveDocument(newFile.filepath);
         FiletreeService.updateFiletree();
         $log.debug('Saved files at: ' + new Date());
       }, function () {
