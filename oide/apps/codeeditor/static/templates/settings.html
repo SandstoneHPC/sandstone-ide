@@ -3,8 +3,8 @@
     <label>
       <input
         type="checkbox"
-        ng-model="editorSettings.useSoftTabs"
-        ng-change="applyEditorSettings()">
+        ng-model="ctrl.editorSettings.useSoftTabs"
+        ng-change="ctrl.applyEditorSettings()">
       Use soft tabs
     </label>
   </div>
@@ -13,17 +13,17 @@
     <select
       id="settings-tab-size"
       class="form-control input-sm"
-      ng-model="editorSettings.tabSize"
-      ng-change="applyEditorSettings()"
-      ng-options="opt for opt in tabOptions">
+      ng-model="ctrl.editorSettings.tabSize"
+      ng-change="ctrl.applyEditorSettings()"
+      ng-options="opt for opt in ctrl.tabOptions">
     </select>
   </div>
   <div class="checkbox">
     <label>
       <input
         type="checkbox"
-        ng-model="editorSettings.showInvisibles"
-        ng-change="applyEditorSettings()">
+        ng-model="ctrl.editorSettings.showInvisibles"
+        ng-change="ctrl.applyEditorSettings()">
       Show invisible characters
     </label>
   </div>
@@ -32,9 +32,9 @@
     <select
       id="settings-font-size"
       class="form-control input-sm"
-      ng-model="editorSettings.fontSize"
-      ng-change="applyEditorSettings()"
-      ng-options="opt for opt in fontOptions">
+      ng-model="ctrl.editorSettings.fontSize"
+      ng-change="ctrl.applyEditorSettings()"
+      ng-options="opt for opt in ctrl.fontOptions">
     </select>
   </div>
 </form>

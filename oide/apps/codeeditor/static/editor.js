@@ -25,7 +25,7 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
         },
         'settings@editor': {
           templateUrl: '/static/editor/templates/settings.html',
-          controller: 'EditorSettingsCtrl'
+          controller: 'EditorSettingsCtrl as ctrl'
         },
         'filetree@editor': {
           templateUrl: '/static/editor/templates/filetree.html',

@@ -165,6 +165,7 @@ angular.module('oide.editor')
       } else {
         createUntitledDocument();
       }
+      applySettings();
     },
     /**
      * return an object of open documents in the editor.
