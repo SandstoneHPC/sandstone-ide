@@ -2,19 +2,20 @@
 
 angular.module('oide.editor')
 
-.controller('FiletreeCtrl', ['$scope', '$document', '$log', 'FiletreeService', function($scope,$document,$log,FiletreeService) {
-  $scope.treeData= FiletreeService.treeData;
+.controller('FiletreeCtrl', ['$document', '$log', 'FiletreeService', function($document,$log,FiletreeService) {
+  var self = this;
+  self.treeData= FiletreeService.treeData;
   $document.on('keydown', (function (e) {
     if (e.keyCode === 17) {
-      $scope.treeOptions.multiSelection = true;
+      self.treeOptions.multiSelection = true;
     }
   }));
   $document.on('keyup', (function (e) {
     if (e.keyCode === 17) {
-      $scope.treeOptions.multiSelection = false;
+      self.treeOptions.multiSelection = false;
     }
   }));
-  $scope.treeOptions = {
+  self.treeOptions = {
     multiSelection: false,
     isLeaf: function(node) {
       return node.type !== 'dir';
@@ -25,22 +26,21 @@ angular.module('oide.editor')
       iLeaf: "filetree-icon fa fa-file",
     }
   };
-  $scope.describeSelection = function (node, selected) {
-    if ($scope.treeOptions.multiSelection === false) {
+  self.describeSelection = function (node, selected) {
+    if (self.treeOptions.multiSelection === false) {
       if (selected) {
-        $scope.treeData.selectedNodes = [node];
+        self.treeData.selectedNodes = [node];
       } else {
-        $scope.treeData.selectedNodes = [];
+        self.treeData.selectedNodes = [];
       }
     }
     FiletreeService.describeSelection(node, selected);
   };
-  $scope.getDirContents = function (node, expanded) {
+  self.getDirContents = function (node, expanded) {
     FiletreeService.getDirContents(node);
   };
-  $scope.showSelected = function(node, selected) {
+  self.showSelected = function(node, selected) {
     console.log(node);
     console.log(selected);
-      // $scope.selectedNodes = selected;
   };
 }]);
