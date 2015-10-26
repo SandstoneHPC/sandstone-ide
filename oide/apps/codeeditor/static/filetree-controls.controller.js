@@ -2,31 +2,32 @@
 
 angular.module('oide.editor')
 
-.controller('FiletreeControlCtrl', ['$scope', '$modal', '$log', 'FiletreeService', function($scope,$modal,$log,FiletreeService) {
-  $scope.sd = FiletreeService.selectionDesc;
-  $scope.fcDropdown = false;
-  $scope.clipboardEmpty = FiletreeService.clipboardEmpty();
-  $scope.updateFiletree = function () {
+.controller('FiletreeControlCtrl', ['$modal', '$log', 'FiletreeService', function($modal,$log,FiletreeService) {
+  var self = this;
+  self.sd = FiletreeService.selectionDesc;
+  self.fcDropdown = false;
+  self.clipboardEmpty = FiletreeService.clipboardEmpty();
+  self.updateFiletree = function () {
     FiletreeService.updateFiletree();
   };
-  $scope.openFilesInEditor = function () {
+  self.openFilesInEditor = function () {
     FiletreeService.openFilesInEditor();
   };
-  $scope.createNewFile = function () {
+  self.createNewFile = function () {
     FiletreeService.createNewFile();
   };
-  $scope.createNewDir = function () {
+  self.createNewDir = function () {
     FiletreeService.createNewDir();
   };
-  $scope.createDuplicate = function () {
+  self.createDuplicate = function () {
     FiletreeService.createDuplicate();
   };
-  $scope.deleteFiles = function () {
+  self.deleteFiles = function () {
     var deleteModalInstance = $modal.open({
       templateUrl: '/static/editor/templates/delete-modal.html',
       backdrop: 'static',
       keyboard: false,
-      controller: 'DeleteModalCtrl',
+      controller: 'DeleteModalCtrl as ctrl',
       resolve: {
         files: function () {
           return FiletreeService.treeData.selectedNodes;
@@ -41,18 +42,18 @@ angular.module('oide.editor')
       $log.debug('Modal dismissed at: ' + new Date());
     });
   };
-  $scope.copyFiles = function () {
+  self.copyFiles = function () {
     FiletreeService.copyFiles();
   };
-  $scope.pasteFiles = function () {
+  self.pasteFiles = function () {
     FiletreeService.pasteFiles();
   };
-  $scope.renameFile = function () {
+  self.renameFile = function () {
     var renameModalInstance = $modal.open({
       templateUrl: '/static/editor/templates/rename-modal.html',
       backdrop: 'static',
       keyboard: false,
-      controller: 'RenameModalCtrl',
+      controller: 'RenameModalCtrl as ctrl',
       resolve: {
         files: function () {
           return FiletreeService.treeData.selectedNodes;
@@ -68,28 +69,28 @@ angular.module('oide.editor')
     });
   };
 }])
-.controller('DeleteModalCtrl', function ($scope, $modalInstance, files) {
+.controller('DeleteModalCtrl', function ($modalInstance, files) {
+  var self =  this;
+  self.files = files;
 
-  $scope.files = files;
-
-  $scope.remove = function () {
+  self.remove = function () {
     $modalInstance.close();
   };
 
-  $scope.cancel = function () {
+  self.cancel = function () {
     $modalInstance.dismiss('cancel');
   };
 })
-.controller('RenameModalCtrl', function ($scope, $modalInstance, files) {
+.controller('RenameModalCtrl', function ($modalInstance, files) {
+  var self = this;
+  self.files = files;
+  self.newFileName = files[0].filename;
 
-  $scope.files = files;
-  $scope.newFileName = files[0].filename;
-
-  $scope.rename = function () {
-    $modalInstance.close($scope.newFileName);
+  self.rename = function () {
+    $modalInstance.close(self.newFileName);
   };
 
-  $scope.cancel = function () {
+  self.cancel = function () {
     $modalInstance.dismiss('cancel');
   };
 });

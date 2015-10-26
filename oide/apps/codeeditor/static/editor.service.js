@@ -319,16 +319,18 @@ angular.module('oide.editor')
         });
     },
     fileRenamed: function(oldpath,newpath) {
-      openDocs[newpath] = {
-        filepath: newpath,
-        filename: getFilenameFromPath(newpath),
-        unsaved: openDocs[oldpath].unsaved,
-        active: openDocs[oldpath].active,
-        session: openDocs[oldpath].session
-      };
-      var mode = AceModeService.getModeForPath(newpath);
-      openDocs[newpath].session.setMode(mode.mode);
-      delete openDocs[oldpath];
+      if (oldpath in openDocs) {
+        openDocs[newpath] = {
+          filepath: newpath,
+          filename: getFilenameFromPath(newpath),
+          unsaved: openDocs[oldpath].unsaved,
+          active: openDocs[oldpath].active,
+          session: openDocs[oldpath].session
+        };
+        var mode = AceModeService.getModeForPath(newpath);
+        openDocs[newpath].session.setMode(mode.mode);
+        delete openDocs[oldpath];
+      }
     },
     fileDeleted: function(filepath) {
       if (filepath in openDocs) {

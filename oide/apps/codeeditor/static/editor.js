@@ -33,7 +33,7 @@ angular.module('oide.editor', ['ui.ace','treeControl'])
         },
         'filetreeControls@editor': {
           templateUrl: '/static/editor/templates/filetree-controls.html',
-          controller: 'FiletreeControlCtrl'
+          controller: 'FiletreeControlCtrl as ctrl'
         }
       }
     });

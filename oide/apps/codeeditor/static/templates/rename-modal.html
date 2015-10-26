@@ -4,18 +4,18 @@
 <div class="modal-body">
   <span class="modal-body-message">Please enter the new name for the selected file:</span>
     <ul>
-      <li ng-repeat="file in files">
+      <li ng-repeat="file in ctrl.files">
         {{ file.filepath }}
       </li>
     </ul>
     <form class="form">
       <div class="form-group">
         <label for="new-file-name">New File Name</label>
-        <input type="text" class="form-control" id="new-file-name" ng-model="newFileName">
+        <input type="text" class="form-control" id="new-file-name" ng-model="ctrl.newFileName">
       </div>
     </form>
 </div>
 <div class="modal-footer">
-  <button class="btn btn-success" ng-click="rename()">Rename File</button>
-  <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+  <button class="btn btn-success" ng-click="ctrl.rename()">Rename File</button>
+  <button class="btn btn-danger" ng-click="ctrl.cancel()">Cancel</button>
 </div>
