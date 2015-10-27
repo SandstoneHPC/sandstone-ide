@@ -29,4 +29,19 @@ describe('OIDE Editor Tabs', function() {
     expect(el.getText()).toBe('UNTITLED0');
     expect(el.getAttribute('tooltip')).toBe('-/untitled0');
   });
+  
+  it('should have a functioning dropdown menu', function() {
+    element.all(by.css('#editor-nav-tabs li.ng-isolate-scope tab-heading > span')).then(function(arr) {
+      arr[1].click();
+      element.all(by.css('#editor-nav-tabs span.fa-caret-down > ul.dropdown-menu > li')).then(function(arr) {
+        expect(arr.length).toBe(11);
+      });
+    });
+  });
+  
+  it('should not be marked as unsaved', function() {
+    element.all(by.css('#editor-nav-tabs li.ng-isolate-scope tab-heading > span')).then(function(arr) {
+      expect(arr[2].getAttribute('class')).toContain('fa-times');
+    });
+  });
 });
