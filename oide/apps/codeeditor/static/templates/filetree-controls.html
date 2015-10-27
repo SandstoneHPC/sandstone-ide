@@ -6,8 +6,8 @@
       tooltip="Edit Selected"
       tooltip-trigger="mouseenter"
       tooltip-placement="bottom"
-      ng-disabled="sd.noSelections||sd.dirSelected"
-      ng-click="openFilesInEditor()">
+      ng-disabled="ctrl.sd.noSelections||ctrl.sd.dirSelected"
+      ng-click="ctrl.openFilesInEditor()">
       <span class="fa fa-pencil"></span>
     </button>
   </div>
@@ -18,8 +18,8 @@
       tooltip="Duplicate Selected"
       tooltip-trigger="mouseenter"
       tooltip-placement="bottom"
-      ng-disabled="sd.noSelections||sd.multipleSelections"
-      ng-click="createDuplicate()">
+      ng-disabled="ctrl.sd.noSelections||ctrl.sd.multipleSelections"
+      ng-click="ctrl.createDuplicate()">
       <span class="fa fa-files-o"></span>
     </button>
   </div>
@@ -30,8 +30,8 @@
       tooltip="Delete Selected"
       tooltip-trigger="mouseenter"
       tooltip-placement="bottom"
-      ng-disabled="sd.noSelections"
-      ng-click="deleteFiles()">
+      ng-disabled="ctrl.sd.noSelections"
+      ng-click="ctrl.deleteFiles()">
       <span class="fa fa-trash-o"></span>
     </button>
   </div>
@@ -42,7 +42,7 @@
       tooltip="Refresh Filetree"
       tooltip-trigger="mouseenter"
       tooltip-placement="bottom"
-      ng-click="updateFiletree()">
+      ng-click="ctrl.updateFiletree()">
       <span class="fa fa-refresh"></span>
     </button>
   </div>
@@ -51,14 +51,14 @@
     class="btn-group btn-group-sm"
     role="group"
     dropdown
-    is-open="fcDropdown">
+    is-open="ctrl.fcDropdown">
     <button
       type="button"
       class="btn btn-default dropdown-toggle filetree-btn"
       tooltip="More Actions"
       tooltip-trigger="mouseenter"
       tooltip-placement="bottom"
-      ng-disabled="sd.noSelections"
+      ng-disabled="ctrl.sd.noSelections"
       dropdown-toggle>
       <span class="fa fa-caret-down"></span>
     </button>
@@ -66,40 +66,40 @@
       <li>
         <a
           class="btn fc-dropdown-link"
-          ng-disabled="sd.noSelections||(sd.multipleSelections||!sd.dirSelected)"
-          ng-click="createNewFile()">
+          ng-disabled="ctrl.sd.noSelections||(ctrl.sd.multipleSelections||!ctrl.sd.dirSelected)"
+          ng-click="ctrl.createNewFile()">
           New File
         </a>
       </li>
       <li>
         <a
           class="btn fc-dropdown-link"
-          ng-disabled="sd.noSelections||(sd.multipleSelections||!sd.dirSelected)"
-          ng-click="createNewDir()">
+          ng-disabled="ctrl.sd.noSelections||(ctrl.sd.multipleSelections||!ctrl.sd.dirSelected)"
+          ng-click="ctrl.createNewDir()">
           New Folder
         </a>
       </li>
       <li>
         <a
           class="btn fc-dropdown-link"
-          ng-disabled="sd.noSelections"
-          ng-click="copyFiles()">
+          ng-disabled="ctrl.sd.noSelections"
+          ng-click="ctrl.copyFiles()">
           Copy
         </a>
       </li>
       <li>
         <a
           class="btn fc-dropdown-link"
-          ng-disabled="clipboardEmpty||sd.noSelections||(sd.multipleSelections||!sd.dirSelected)"
-          ng-click="pasteFiles()">
+          ng-disabled="ctrl.clipboardEmpty||ctrl.sd.noSelections||(ctrl.sd.multipleSelections||!ctrl.sd.dirSelected)"
+          ng-click="ctrl.pasteFiles()">
           Paste
         </a>
       </li>
       <li>
         <a
           class="btn fc-dropdown-link"
-          ng-disabled="sd.noSelections||sd.multipleSelections"
-          ng-click="renameFile()">
+          ng-disabled="ctrl.sd.noSelections||ctrl.sd.multipleSelections"
+          ng-click="ctrl.renameFile()">
           Rename
         </a>
       </li>

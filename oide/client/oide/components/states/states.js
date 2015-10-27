@@ -2,19 +2,15 @@
 
 angular.module('oide.states', [])
 .factory('StateService', ['$http', '$window', '$log', function($http,$window,$log) {
-  var state = {'state': {}};
-  var unloadFuncs = [];
+  var state = {};
   var storeState = function () {
-    for (var i=0;i<unloadFuncs.length;i++) {
-      unloadFuncs[i](state.state);
-    }
     $http({
       url: '/a/state',
       method: 'POST',
       params: {
         _xsrf: getCookie('_xsrf')
       },
-      data: JSON.stringify(state.state)
+      data: JSON.stringify(state)
     })
     .success(function (data, status, headers, config) {
       $log.debug('Stored state for user.');
@@ -23,47 +19,33 @@ angular.module('oide.states', [])
       $log.error('Failed to store state for user.');
     });
   };
-  var getState = function () {
-    return $http
-    .get('/a/state')
-    .success(function (data, status, headers, config) {
-      $log.debug('Retrieved state for user: ', data);
-      return data;
-    })
-    .error(function (data, status, headers, config) {
-      $log.error('Failed to retrieve state for user.');
-    });
-  };
   var initializeState = function () {
     return $http
-    .get('/a/state')
-    .success(function (data, status, headers, config) {
-      $log.debug('Retrieved state for user: ', data);
-      state.state = data;
-    })
-    .error(function (data, status, headers, config) {
-      $log.error('Failed to retrieve state for user.');
-    });
+      .get('/a/state')
+      .success(function (data, status, headers, config) {
+        $log.debug('Retrieved state for user: ', data);
+        state = data.state;
+        return true;
+      })
+      .error(function (data, status, headers, config) {
+        $log.error('Failed to retrieve state for user.');
+        return false;
+      });
   };
-  var statePromise = initializeState();
+  var stateLoaded = initializeState();
   $window.onbeforeunload = storeState;
   return {
-    state: state.state,
-    // state: function () {
-    //   return state.state;
-    // },
-    statePromise: statePromise,
-    storeState: function () {
-      storeState();
+    stateLoaded: stateLoaded,
+    getKey: function(key) {
+      if (state&&(key in state)) {
+        return state[key];
+      } else {
+        return undefined;
+      }
     },
-    getState: function () {
-      return state.state;
-    },
-    registerUnloadFunc: function (f) {
-      unloadFuncs.push(f);
+    setKey: function(key,value) {
+      state[key] = value;
+      return true;
     }
-    // getState: function () {
-    //   getState();
-    // }
   };
 }]);
