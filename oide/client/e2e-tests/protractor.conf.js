@@ -1,5 +1,9 @@
+var env = require('./environment.js');
+
 exports.config = {
   allScriptsTimeout: 11000,
+
+  seleniumAddress: env.seleniumAddress,
 
   specs: [
     '*.js'
@@ -9,11 +13,33 @@ exports.config = {
     'browserName': 'chrome'
   },
 
-  baseUrl: 'http://localhost:8000/app/',
+  baseUrl: env.baseUrl,
 
-  framework: 'jasmine',
+  framework: 'jasmine2',
 
   jasmineNodeOpts: {
     defaultTimeoutInterval: 30000
+  },
+  
+  params: {
+    login: {
+      username: env.creds.username,
+      password: env.creds.password
+    }
+  },
+  
+  onPrepare: function() {
+    browser.driver.get(env.baseUrl+'/auth/login?next=%2F#/editor');
+    browser.pause();
+    browser.driver.findElement(by.css('input[name=username]')).sendKeys(env.creds.username);
+    browser.driver.findElement(by.css('input[name=password]')).sendKeys(env.creds.password);
+    browser.driver.findElement(by.css('.form-signin > button')).click();
+    
+    return browser.driver.wait(function() {
+      return browser.driver.getCurrentUrl().then(function(url) {
+        // browser.pause();
+        return /index/.test(url);
+      });
+    }, 10000, "URL hasn't changed.");
   }
 };
