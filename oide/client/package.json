@@ -18,7 +18,8 @@
     "phantomjs": "~1.9.18",
     "karma-phantomjs-launcher": "~0.1.0",
     "websockify": "",
-    "chromedriver": "~2.19.0"
+    "chromedriver": "~2.19.0",
+    "jasmine": "~2.3.2"
   },
   "scripts": {
     "postinstall": "bower --allow-root install",
