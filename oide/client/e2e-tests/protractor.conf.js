@@ -30,15 +30,13 @@ exports.config = {
   
   onPrepare: function() {
     browser.driver.get(env.baseUrl+'/auth/login?next=%2F#/editor');
-    browser.pause();
     browser.driver.findElement(by.css('input[name=username]')).sendKeys(env.creds.username);
     browser.driver.findElement(by.css('input[name=password]')).sendKeys(env.creds.password);
     browser.driver.findElement(by.css('.form-signin > button')).click();
     
     return browser.driver.wait(function() {
       return browser.driver.getCurrentUrl().then(function(url) {
-        // browser.pause();
-        return /index/.test(url);
+        return /editor/.test(url);
       });
     }, 10000, "URL hasn't changed.");
   }
