@@ -22,5 +22,17 @@ describe('OIDE Filetree', function(){
     expect(classMatcherHelper(fileNode, 'fa-folder-open')).toBeFalsy();
   });
 
-
+  it('should open the rename modal when rename is clicked', function(){
+      $('.tree-label').click().then(function(){
+        $('.dropdown-toggle').click().then(function(){
+          //click on rename
+          $$('.fc-dropdown-link').get(4).click()
+          //Expect modal to be displayed
+          expect($('.modal').isDisplayed()).toBeTruthy();
+          // Modal title should be Rename File
+          expect($('.modal-title').getInnerHtml()).toBe('Rename File');
+          // browser.pause();
+        });
+      });
+  });
 });
