@@ -1,4 +1,5 @@
 describe('OIDE Filetree', function(){
+
   //Helper function which returns true if the specified element has the specified class
   var classMatcherHelper = function(element, cls) {
     return element.getAttribute('class').then(function(classes){
@@ -26,12 +27,37 @@ describe('OIDE Filetree', function(){
       $('.tree-label').click().then(function(){
         $('.dropdown-toggle').click().then(function(){
           //click on rename
-          $$('.fc-dropdown-link').get(4).click()
+          $$('.fc-dropdown-link').get(4).click();
           //Expect modal to be displayed
           expect($('.modal').isDisplayed()).toBeTruthy();
           // Modal title should be Rename File
           expect($('.modal-title').getInnerHtml()).toBe('Rename File');
           // browser.pause();
+          $('.btn-danger').click();
+        });
+      });
+  });
+
+  it('should open a file for editing', function(){
+      var fileNode = element.all(by.css('.tree-branch-head')).first();
+      fileNode.click();
+      var initialNumberOfFiles = 0;
+      var newNumberOfFiles = 0;
+      //Save the initial number of open files
+      $$('tab-heading > span.ng-binding').then(function(elements){
+        initialNumberOfFiles = elements.length;
+      });
+      console.log(initialNumberOfFiles);
+      //Open a file
+      $('li.tree-leaf > div').click().then(function(){
+        //Click on edit file
+        $('.filetree-btn').click().then(function(){
+          //Get new number of open files
+          $$('tab-heading > span.ng-binding').then(function(elements){
+            newNumberOfFiles = elements.length;
+            //Expect new number of files to be 1 greater than initial number of file
+            expect(newNumberOfFiles).toBe(initialNumberOfFiles + 1);
+          });
         });
       });
   });
