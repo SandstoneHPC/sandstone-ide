@@ -26,76 +26,82 @@ describe('OIDE Filetree', function(){
 
   it('should open the delete modal when delete is clicked', function(){
       $('.tree-label').click().then(function(){
-        //click on delete
-        $$('.filetree-btn').get(2).click();
-        //Expect modal to be displayed
-        expect($('.modal').isDisplayed()).toBeTruthy();
-        // Modal title should be Confirm Remove
-        expect($('.modal-title').getText()).toBe('Confirm Remove');
-        // browser.pause();
-        $('.btn-danger').click();
+        var driver = browser.driver;
+        driver.findElements(by.css('.filetree-btn')).then(function(elements){
+          driver.executeScript("arguments[0].click()", elements[2]).then(function() {
+            expect($('.modal').isDisplayed()).toBeTruthy();
+            // Modal title should be Confirm Remove
+            expect($('.modal-title').getText()).toBe('Confirm Remove');
+            $('.btn-danger').click();
+          });
+        });
       });
   });
 
   it('should open the rename modal when rename is clicked', function(){
       $('.tree-label').click().then(function(){
         $('.tree-label').click();
-        $('.dropdown-toggle').click().then(function(){
-          //click on rename
-          $$('.fc-dropdown-link').get(4).click();
-          //Expect modal to be displayed
-          expect($('.modal').isDisplayed()).toBeTruthy();
-          // Modal title should be Rename File
-          expect($('.modal-title').getInnerHtml()).toBe('Rename File');
-          // browser.pause();
-          $('.btn-danger').click();
-        });
-      });
-  });
+        //click on rename
 
-  it('should open a file for editing', function(){
-      var fileNode = element.all(by.css('.tree-branch-head')).first();
-      fileNode.click();
-      var initialNumberOfFiles = 0;
-      var newNumberOfFiles = 0;
-      //Save the initial number of open files
-      $$('tab-heading > span.ng-binding').then(function(elements){
-        initialNumberOfFiles = elements.length;
-      });
-      console.log(initialNumberOfFiles);
-      //Open a file
-      $('li.tree-leaf > div').click().then(function(){
-        //Click on edit file
-        $('.filetree-btn').click().then(function(){
-          //Get new number of open files
-          $$('tab-heading > span.ng-binding').then(function(elements){
-            newNumberOfFiles = elements.length;
-            //Expect new number of files to be 1 greater than initial number of file
-            expect(newNumberOfFiles).toBe(initialNumberOfFiles + 1);
-          });
-        });
-      });
-  });
-
-  it('should create new file when new file is clicked', function(){
-    var initialNumberOfFiles = 0;
-    var finalNumberOfFiles = 0;
-      $('.tree-label').click().then(function(){
-        $('.dropdown-toggle').click().then(function(){
-          //Get initial number of files
-          $$('.fa-file').then(function(files){
-            initialNumberOfFiles = files.length;
-          });
-          //click on new file
-          $$('.fc-dropdown-link').get(0).click().then(function(){
+        var driver = browser.driver;
+        driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
+          driver.executeScript("arguments[0].click()", elements[4]).then(function() {
+            //$$('.fc-dropdown-link').get(4).click();
+            //Expect modal to be displayed
             // browser.pause();
-            $$('.fa-file').then(function(files){
-              finalNumberOfFiles = files.length;
-              // expect finalNumberOfFiles to be 1 more than initialNumberOfFiles
-              expect(finalNumberOfFiles).toBe(initialNumberOfFiles + 1);
-            });
+            expect($('.modal').isDisplayed()).toBeTruthy();
+            // Modal title should be Rename File
+            expect($('.modal-title').getInnerHtml()).toBe('Rename File');
+            // browser.pause();
+            $('.btn-danger').click();
           });
         });
       });
   });
+
+  // it('should open a file for editing', function(){
+  //     var fileNode = element.all(by.css('.tree-branch-head')).first();
+  //     fileNode.click();
+  //     var initialNumberOfFiles = 0;
+  //     var newNumberOfFiles = 0;
+  //     //Save the initial number of open files
+  //     $$('tab-heading > span.ng-binding').then(function(elements){
+  //       initialNumberOfFiles = elements.length;
+  //     });
+  //     console.log(initialNumberOfFiles);
+  //     //Open a file
+  //     $('li.tree-leaf > div').click().then(function(){
+  //       //Click on edit file
+  //       $('.filetree-btn').click().then(function(){
+  //         //Get new number of open files
+  //         $$('tab-heading > span.ng-binding').then(function(elements){
+  //           newNumberOfFiles = elements.length;
+  //           //Expect new number of files to be 1 greater than initial number of file
+  //           expect(newNumberOfFiles).toBe(initialNumberOfFiles + 1);
+  //         });
+  //       });
+  //     });
+  // });
+  //
+  // it('should create new file when new file is clicked', function(){
+  //   var initialNumberOfFiles = 0;
+  //   var finalNumberOfFiles = 0;
+  //     $('.tree-label').click().then(function(){
+  //       $('.dropdown-toggle').click().then(function(){
+  //         //Get initial number of files
+  //         $$('.fa-file').then(function(files){
+  //           initialNumberOfFiles = files.length;
+  //         });
+  //         //click on new file
+  //         $$('.fc-dropdown-link').get(0).click().then(function(){
+  //           // browser.pause();
+  //           $$('.fa-file').then(function(files){
+  //             finalNumberOfFiles = files.length;
+  //             // expect finalNumberOfFiles to be 1 more than initialNumberOfFiles
+  //             expect(finalNumberOfFiles).toBe(initialNumberOfFiles + 1);
+  //           });
+  //         });
+  //       });
+  //     });
+  // });
 });
