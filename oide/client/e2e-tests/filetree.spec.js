@@ -23,8 +23,23 @@ describe('OIDE Filetree', function(){
     expect(classMatcherHelper(fileNode, 'fa-folder-open')).toBeFalsy();
   });
 
+
+  it('should open the delete modal when delete is clicked', function(){
+      $('.tree-label').click().then(function(){
+        //click on delete
+        $$('.filetree-btn').get(2).click();
+        //Expect modal to be displayed
+        expect($('.modal').isDisplayed()).toBeTruthy();
+        // Modal title should be Confirm Remove
+        expect($('.modal-title').getText()).toBe('Confirm Remove');
+        // browser.pause();
+        $('.btn-danger').click();
+      });
+  });
+
   it('should open the rename modal when rename is clicked', function(){
       $('.tree-label').click().then(function(){
+        $('.tree-label').click();
         $('.dropdown-toggle').click().then(function(){
           //click on rename
           $$('.fc-dropdown-link').get(4).click();
