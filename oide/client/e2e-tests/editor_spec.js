@@ -44,4 +44,28 @@ describe('OIDE Editor Tabs', function() {
       expect(arr[2].getAttribute('class')).toContain('fa-times');
     });
   });
+  
+  describe('Editor Functions', function() {
+    beforeEach(function() {
+      browser.get('/');
+      var editor = element(by.css('textarea.ace_text-input'));
+      browser.actions().doubleClick($('#aceplace')).perform();
+      editor.sendKeys('test.');
+      browser.sleep(3000);
+    });
+    
+    // it('should be marked unsaved after edit', function() {
+    //   element.all(by.css('#editor-nav-tabs li.ng-isolate-scope tab-heading > span')).then(function(arr) {
+    //     // Force a digest cycle.
+    //     browser.actions().mouseMove(element(by.css('#editor-nav-tabs li.ng-isolate-scope tab-heading'))).perform();
+    //     expect(arr[2].getAttribute('class')).toContain('fa-circle-o');
+    //   });
+    // });
+    
+    it('should have the entered text', function() {
+      element(by.css('div.ace_content')).getText().then(function(text) {
+        expect(text.slice(0,-1)).toBe('test.');
+      });
+    });
+  });
 });
