@@ -76,4 +76,26 @@ describe('OIDE Filetree', function(){
         });
       });
   });
+
+  it('should create new file when new file is clicked', function(){
+    var initialNumberOfFiles = 0;
+    var finalNumberOfFiles = 0;
+      $('.tree-label').click().then(function(){
+        $('.dropdown-toggle').click().then(function(){
+          //Get initial number of files
+          $$('.fa-file').then(function(files){
+            initialNumberOfFiles = files.length;
+          });
+          //click on new file
+          $$('.fc-dropdown-link').get(0).click().then(function(){
+            // browser.pause();
+            $$('.fa-file').then(function(files){
+              finalNumberOfFiles = files.length;
+              // expect finalNumberOfFiles to be 1 more than initialNumberOfFiles
+              expect(finalNumberOfFiles).toBe(initialNumberOfFiles + 1);
+            });
+          });
+        });
+      });
+  });
 });
