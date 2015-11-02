@@ -111,9 +111,49 @@ describe('OIDE Filetree', function(){
             });
           });
         });
-        // $('.dropdown-toggle').click().then(function(){
-        //
-        // });
       });
   });
+
+  it('should be able to duplicate a file', function(){
+    // var fileNode = element.all(by.css('.tree-branch-head')).first();
+    // fileNode.click();
+
+    var initialNumberOfFiles = 0;
+    var newNumberOfFiles = 0;
+    //Save the initial number of open files
+
+    $$('li.tree-leaf > div').then(function(elements){
+      initialNumberOfFiles = elements.length;
+      $('li.tree-leaf > div').click().then(function(){
+        //Click on duplicate file
+        var driver = browser.driver;
+        driver.findElements(by.css('.filetree-btn')).then(function(elements){
+          driver.executeScript("arguments[0].click()", elements[1]).then(function() {
+            //Get new number of open files
+            $$('li.tree-leaf > div').then(function(elements){
+              newNumberOfFiles = elements.length;
+              console.log(newNumberOfFiles);
+              // browser.pause();
+              //Expect new number of files to be 1 greater than initial number of file
+              expect(newNumberOfFiles).toBe(initialNumberOfFiles + 1);
+            });
+          });
+        });
+      });
+    });
+
+    // //Click on duplicate file
+    // var driver = browser.driver;
+    // driver.findElements(by.css('.filetree-btn')).then(function(elements){
+    //   driver.executeScript("arguments[1].click()", elements[0]).then(function() {
+    //     //Get new number of open files
+    //     $$('tab-heading > span.ng-binding').then(function(elements){
+    //       newNumberOfFiles = elements.length;
+    //       //Expect new number of files to be 1 greater than initial number of file
+    //       expect(newNumberOfFiles).toBe(initialNumberOfFiles + 1);
+    //     });
+    //   });
+    // });
+  });
+
 });
