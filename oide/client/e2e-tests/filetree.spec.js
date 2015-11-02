@@ -59,49 +59,61 @@ describe('OIDE Filetree', function(){
       });
   });
 
-  // it('should open a file for editing', function(){
-  //     var fileNode = element.all(by.css('.tree-branch-head')).first();
-  //     fileNode.click();
-  //     var initialNumberOfFiles = 0;
-  //     var newNumberOfFiles = 0;
-  //     //Save the initial number of open files
-  //     $$('tab-heading > span.ng-binding').then(function(elements){
-  //       initialNumberOfFiles = elements.length;
-  //     });
-  //     console.log(initialNumberOfFiles);
-  //     //Open a file
-  //     $('li.tree-leaf > div').click().then(function(){
-  //       //Click on edit file
-  //       $('.filetree-btn').click().then(function(){
-  //         //Get new number of open files
-  //         $$('tab-heading > span.ng-binding').then(function(elements){
-  //           newNumberOfFiles = elements.length;
-  //           //Expect new number of files to be 1 greater than initial number of file
-  //           expect(newNumberOfFiles).toBe(initialNumberOfFiles + 1);
-  //         });
-  //       });
-  //     });
-  // });
-  //
-  // it('should create new file when new file is clicked', function(){
-  //   var initialNumberOfFiles = 0;
-  //   var finalNumberOfFiles = 0;
-  //     $('.tree-label').click().then(function(){
-  //       $('.dropdown-toggle').click().then(function(){
-  //         //Get initial number of files
-  //         $$('.fa-file').then(function(files){
-  //           initialNumberOfFiles = files.length;
-  //         });
-  //         //click on new file
-  //         $$('.fc-dropdown-link').get(0).click().then(function(){
-  //           // browser.pause();
-  //           $$('.fa-file').then(function(files){
-  //             finalNumberOfFiles = files.length;
-  //             // expect finalNumberOfFiles to be 1 more than initialNumberOfFiles
-  //             expect(finalNumberOfFiles).toBe(initialNumberOfFiles + 1);
-  //           });
-  //         });
-  //       });
-  //     });
-  // });
+  it('should open a file for editing', function(){
+      var fileNode = element.all(by.css('.tree-branch-head')).first();
+      fileNode.click();
+
+      var initialNumberOfFiles = 0;
+      var newNumberOfFiles = 0;
+      //Save the initial number of open files
+      $$('tab-heading > span.ng-binding').then(function(elements){
+        initialNumberOfFiles = elements.length;
+        console.log(initialNumberOfFiles);
+        //Open a file
+        $('li.tree-leaf > div').click().then(function(){
+          //Click on edit file
+          var driver = browser.driver;
+          driver.findElements(by.css('.filetree-btn')).then(function(elements){
+            driver.executeScript("arguments[0].click()", elements[0]).then(function() {
+              $('.filetree-btn').click().then(function(){
+                //Get new number of open files
+                $$('tab-heading > span.ng-binding').then(function(elements){
+                  newNumberOfFiles = elements.length;
+                  //Expect new number of files to be 1 greater than initial number of file
+                  expect(newNumberOfFiles).toBe(initialNumberOfFiles + 1);
+                });
+              });
+            });
+          });
+        });
+      });
+  });
+
+  it('should create new file when new file is clicked', function(){
+    var initialNumberOfFiles = 0;
+    var finalNumberOfFiles = 0;
+      $('.tree-label').click().then(function(){
+        var driver = browser.driver;
+        driver.findElements(by.css('.dropdown-toggle')).then(function(elements){
+          driver.executeScript("arguments[0].click()", elements[0]).then(function() {
+            //Get initial number of files
+            $$('.fa-file').then(function(files){
+              initialNumberOfFiles = files.length;
+            });
+            //click on new file
+            $$('.fc-dropdown-link').get(0).click().then(function(){
+              // browser.pause();
+              $$('.fa-file').then(function(files){
+                finalNumberOfFiles = files.length;
+                // expect finalNumberOfFiles to be 1 more than initialNumberOfFiles
+                expect(finalNumberOfFiles).toBe(initialNumberOfFiles + 1);
+              });
+            });
+          });
+        });
+        // $('.dropdown-toggle').click().then(function(){
+        //
+        // });
+      });
+  });
 });
