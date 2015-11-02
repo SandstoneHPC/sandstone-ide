@@ -141,19 +141,26 @@ describe('OIDE Filetree', function(){
         });
       });
     });
-
-    // //Click on duplicate file
-    // var driver = browser.driver;
-    // driver.findElements(by.css('.filetree-btn')).then(function(elements){
-    //   driver.executeScript("arguments[1].click()", elements[0]).then(function() {
-    //     //Get new number of open files
-    //     $$('tab-heading > span.ng-binding').then(function(elements){
-    //       newNumberOfFiles = elements.length;
-    //       //Expect new number of files to be 1 greater than initial number of file
-    //       expect(newNumberOfFiles).toBe(initialNumberOfFiles + 1);
-    //     });
-    //   });
-    // });
   });
 
+  it('should create a new folder', function(){
+    var driver = browser.driver;
+    var initialNumberofFolders = 0;
+    var finalNumberOfFolders = 0;
+    $('.tree-label').click().then(function(){
+      $$('.fa-folder').then(function(elements){
+        initialNumberofFolders = elements.length;
+        // Get the number of folders
+        driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
+          driver.executeScript("arguments[0].click()", elements[1]).then(function() {
+            $$('.fa-folder').then(function(elements){
+              finalNumberOfFolders = elements.length;
+              // expect finalNumberOfFolders to be 1 more than initialNumberofFolders
+              expect(finalNumberOfFolders).toBe(initialNumberofFolders + 1);
+            });
+          });
+        });
+      });
+    });
+  });
 });
