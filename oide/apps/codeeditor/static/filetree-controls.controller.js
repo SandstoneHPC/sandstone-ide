@@ -6,10 +6,13 @@ angular.module('oide.editor')
   var self = this;
   self.sd = FiletreeService.selectionDesc;
   self.fcDropdown = false;
-  self.clipboardEmpty = FiletreeService.clipboardEmpty();
+  self.clipboardEmpty = function(){
+    return FiletreeService.clipboardEmpty();
+  };
   self.updateFiletree = function () {
     FiletreeService.updateFiletree();
   };
+
   self.openFilesInEditor = function () {
     FiletreeService.openFilesInEditor();
   };

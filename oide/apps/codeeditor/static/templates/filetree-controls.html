@@ -90,7 +90,7 @@
       <li>
         <a
           class="btn fc-dropdown-link"
-          ng-disabled="ctrl.clipboardEmpty||ctrl.sd.noSelections||(ctrl.sd.multipleSelections||!ctrl.sd.dirSelected)"
+          ng-disabled="ctrl.clipboardEmpty() || ctrl.sd.noSelections || (ctrl.sd.multipleSelections || !ctrl.sd.dirSelected)"
           ng-click="ctrl.pasteFiles()">
           Paste
         </a>
