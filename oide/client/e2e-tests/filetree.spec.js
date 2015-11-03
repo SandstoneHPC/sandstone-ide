@@ -163,4 +163,35 @@ describe('OIDE Filetree', function(){
       });
     });
   });
+
+  it('should copy a file to clipboard and paste in a folder', function(){
+    // var fileNode = element.all(by.css('.tree-branch-head')).first();
+    // fileNode.click();
+    var initialNumberOfFiles = 0;
+    var newNumberOfFiles = 0;
+    var driver = browser.driver;
+    // Count the number of files
+    $$('.tree-label').then(function(elements){
+      initialNumberOfFiles = elements.length;
+      //Click on first element
+      elements[1].click().then(function(){
+        // click on copy
+        driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
+          driver.executeScript("arguments[0].click()", elements[2]).then(function(){
+            // Click paste
+            driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
+              driver.executeScript("arguments[0].click()", elements[3]).then(function(){
+                // count elements
+                $$('.tree-label').then(function(elements){
+                  newNumberOfFiles = elements.length;
+                  // Expect new number of files to be one more than initial number of files
+                  expect(newNumberOfFiles).toBe(initialNumberOfFiles + 1);
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 });
