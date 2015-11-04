@@ -1,5 +1,11 @@
 'use strict';
 
+var sendKeys = function() {
+  var editor = element(by.css('textarea.ace_text-input'));
+  browser.actions().doubleClick($('#aceplace')).perform();
+  editor.sendKeys('test.');
+};
+
 describe('OIDE Ace Editor', function() {
   browser.get('/');
 
@@ -48,9 +54,7 @@ describe('OIDE Editor Tabs', function() {
   describe('Editor Functions', function() {
     beforeEach(function() {
       browser.get('/');
-      var editor = element(by.css('textarea.ace_text-input'));
-      browser.actions().doubleClick($('#aceplace')).perform();
-      editor.sendKeys('test.');
+      sendKeys();
       browser.sleep(3000);
     });
 
@@ -117,19 +121,54 @@ describe('OIDE Editor Tabs', function() {
       var initialTabCount = 0;
       var finalTabCount = 0;
       var driver = browser.driver;
+
+      // Save value of editor
+      var tab_1_text = "";
+      element(by.css('div.ace_content')).getText().then(function(text) {
+        tab_1_text = text;
+      });
+
       driver.findElements(by.css('ul.nav-tabs > li > a')).then(function(elements){
         initialTabCount = elements.length - 1;
         driver.executeScript("arguments[0].click()", elements[1]).then(function(){
           // Get new tab count
           $$('ul.nav-tabs > li > a').then(function(elements){
+            var tabs = elements;
             // Final Tab Count should be element length - 1 to leave out the 'plus' element
             finalTabCount = elements.length - 1;
             // expect finalTabCount to be 1 more than initial tab count
             expect(finalTabCount).toBe(initialTabCount + 1);
+
+            // Send some text to Editor
+            sendKeys();
+
+            // Save value of tab 2
+            var tab_2_text = "";
+            element(by.css('div.ace_content')).getText().then(function(text){
+              tab_2_text = text;
+
+              // Switch to Tab 1
+              tabs[0].click().then(function(){
+                // Get value of ace editor
+                element(by.css('div.ace_content')).getText().then(function(text){
+                  //Expect text to be equal to tab_1_text
+                  expect(text).toBe(tab_1_text);
+
+                  // Switch to Tab 1
+                  tabs[1].click().then(function(){
+                    // Get value of editor
+                    element(by.css('div.ace_content')).getText().then(function(text){
+                      // Expect text to be equal to tab_2_text
+                      expect(text).toBe(tab_2_text);
+                    });
+                  });
+                });
+              });
+            });
+
           });
         });
       });
     });
-
   });
 });
