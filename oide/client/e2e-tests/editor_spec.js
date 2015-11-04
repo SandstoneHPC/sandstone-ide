@@ -170,5 +170,23 @@ describe('OIDE Editor Tabs', function() {
         });
       });
     });
+
+    it("should be able to find and replace", function(){
+      var driver = browser.driver;
+      driver.findElements(by.css('span > .dropdown-menu > li > a')).then(function(elements){
+        driver.executeScript("arguments[0].click()", elements[6]).then(function(){
+          // Send Text to the Find Search Box
+          $('.ace_search_field').sendKeys('es').then(function(){
+            $('.ace_searchbtn').click().then(function(){
+              // find if there is an element with class as ace_selection
+              $$('.ace_selection').then(function(elements){
+                expect(elements.length).toBe(1);
+              });
+            });
+          });
+        });
+      });
+    });
+
   });
 });
