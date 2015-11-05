@@ -202,5 +202,37 @@ describe('OIDE Editor Tabs', function() {
       });
     });
 
+    it("should be able to undo and redo changes", function(){
+      // Save the value of editor text
+      var initialText = "";
+      var finalText = "";
+      var driver = browser.driver;
+      element(by.css('div.ace_content')).getText().then(function(text){
+        initialText = text;
+        // console.log(initialText);
+        // Send some more text
+        sendKeys("Hello World");
+
+        browser.sleep(5000).then(function(){
+          // Get new text
+          element(by.css('div.ace_content')).getText().then(function(text){
+            finalText = text;
+
+            // Click on Redo
+            driver.findElements(by.css('span > .dropdown-menu > li > a')).then(function(elements){
+              driver.executeScript("arguments[0].click()", elements[0]).then(function(){
+                // Get the Text
+                // browser.pause();
+                element(by.css('div.ace_content')).getText().then(function(text){
+                  // Expect text to be equal to initialText
+                  expect(text.slice(0, -1)).toBe("");
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+
   });
 });
