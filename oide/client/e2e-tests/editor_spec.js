@@ -213,12 +213,12 @@ describe('OIDE Editor Tabs', function() {
         // Send some more text
         sendKeys("Hello World");
 
-        browser.sleep(5000).then(function(){
+        browser.sleep(2000).then(function(){
           // Get new text
           element(by.css('div.ace_content')).getText().then(function(text){
             finalText = text;
 
-            // Click on Redo
+            // Click on Undo
             driver.findElements(by.css('span > .dropdown-menu > li > a')).then(function(elements){
               driver.executeScript("arguments[0].click()", elements[0]).then(function(){
                 // Get the Text
@@ -226,6 +226,14 @@ describe('OIDE Editor Tabs', function() {
                 element(by.css('div.ace_content')).getText().then(function(text){
                   // Expect text to be equal to initialText
                   expect(text.slice(0, -1)).toBe("");
+
+                  // Click on Redo
+                  driver.executeScript("arguments[0].click()", elements[1]).then(function(){
+                    element(by.css('div.ace_content')).getText().then(function(text){
+                      // Expect text to be equal to finalText
+                      expect(text).toBe(finalText);
+                    });
+                  });
                 });
               });
             });
