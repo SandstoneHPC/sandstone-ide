@@ -181,6 +181,20 @@ describe('OIDE Editor Tabs', function() {
               // find if there is an element with class as ace_selection
               $$('.ace_selection').then(function(elements){
                 expect(elements.length).toBe(1);
+
+                // Find and replace
+                $$('.ace_search_field').then(function(elements){
+                  // Send some text to replace textbox
+                  elements[1].sendKeys("el").then(function(){
+                    // Click the Replace button
+                    $('.ace_replacebtn').click(function(){
+                      // Ge the Ace Text
+                      element(by.css('div.ace_content')).getText().then(function(text) {
+                        expect(text.slice(0,-1)).toBe('telt.');
+                      });
+                    });
+                  });
+                });
               });
             });
           });
