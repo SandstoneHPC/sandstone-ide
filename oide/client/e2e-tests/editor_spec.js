@@ -40,7 +40,7 @@ describe('OIDE Editor Tabs', function() {
     element.all(by.css('#editor-nav-tabs li.ng-isolate-scope tab-heading > span')).then(function(arr) {
       arr[1].click();
       element.all(by.css('#editor-nav-tabs span.fa-caret-down > ul.dropdown-menu > li')).then(function(arr) {
-        expect(arr.length).toBe(11);
+        expect(arr.length).toBe(8);
       });
     });
   });
@@ -76,7 +76,7 @@ describe('OIDE Editor Tabs', function() {
       // Click on Save As
       var driver = browser.driver;
       driver.findElements(by.css('span > .dropdown-menu > li > a')).then(function(elements){
-        driver.executeScript("arguments[0].click()", elements[8]).then(function(){
+        driver.executeScript("arguments[0].click()", elements[5]).then(function(){
           // Expect a modal to show up with title as Save File As
           expect($('.modal-title').getText()).toBe('Save File As');
         });
@@ -87,7 +87,7 @@ describe('OIDE Editor Tabs', function() {
       // Click on Close File
       var driver = browser.driver;
       driver.findElements(by.css('span > .dropdown-menu > li > a')).then(function(elements){
-        driver.executeScript("arguments[0].click()", elements[9]).then(function(){
+        driver.executeScript("arguments[0].click()", elements[6]).then(function(){
           // Expect a modal to show up with title as File Not Saved
           expect($('.modal-title').getText()).toBe('File Not Saved');
         });
@@ -174,7 +174,7 @@ describe('OIDE Editor Tabs', function() {
     it("should be able to find and replace", function(){
       var driver = browser.driver;
       driver.findElements(by.css('span > .dropdown-menu > li > a')).then(function(elements){
-        driver.executeScript("arguments[0].click()", elements[6]).then(function(){
+        driver.executeScript("arguments[0].click()", elements[3]).then(function(){
           // Send Text to the Find Search Box
           $('.ace_search_field').sendKeys('es').then(function(){
             $('.ace_searchbtn').click().then(function(){
