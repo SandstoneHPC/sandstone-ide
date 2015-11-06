@@ -11,7 +11,7 @@ angular.module('oide.editor')
 
 .factory('EditorService', ['$window', '$http', '$log', 'AceModeService', function ($window, $http,$log,AceModeService) {
   var editor = {};
-  
+
   // clipboard will hold all copy/paste text for editor
   var clipboard = '';
   /**
@@ -35,7 +35,7 @@ angular.module('oide.editor')
     tabSize: 4,
     showIndentGuides: true
   };
-  
+
   var applySettings = function () {
     editor.setShowInvisibles(editorSettings.showInvisibles);
     editor.getSession().setUseSoftTabs(editorSettings.useSoftTabs);
@@ -43,14 +43,14 @@ angular.module('oide.editor')
     editor.getSession().setTabSize(editorSettings.tabSize);
     editor.setDisplayIndentGuides(editorSettings.showIndentGuides);
   };
-  
+
   // Called when the contents of the current session have changed. Bound directly to
   // an EditSession.
   var onSessionModified = function(e) {
     var filepath = getCurrentDoc();
     openDocs[filepath].unsaved = true;
   };
-  
+
   // Given a filepath, this function will return a filename
   var getFilenameFromPath = function(filepath) {
     var filename = filepath.substring(
@@ -59,7 +59,7 @@ angular.module('oide.editor')
     );
     return filename;
   };
-  
+
   // Returns the next available filepath enumeration for untitled documents
   var getNextUntitledFilepath = function() {
     var docExists = true;
@@ -75,7 +75,7 @@ angular.module('oide.editor')
     }
     return filepath;
   };
-  
+
   // Return the filepath of the active document in the editor. If no document
   // is active, return undefined.
   var getCurrentDoc = function() {
@@ -89,19 +89,19 @@ angular.module('oide.editor')
     }
     return current;
   };
-  
+
   // Creates a new untitled document, which is added to openDocs
   var createUntitledDocument = function() {
     var filepath = getNextUntitledFilepath();
     createNewSession(filepath);
     switchSession(filepath);
   };
-  
+
   // Make the document specified by filepath the active document in the editor.
   // Returns true if successful, and false if the specified document is not loaded.
   var switchSession = function(filepath) {
     var current = getCurrentDoc();
-    
+
     if (filepath in openDocs) {
       if (current) {
         openDocs[current].active = false;
@@ -114,7 +114,7 @@ angular.module('oide.editor')
       return false;
     }
   };
-  
+
   // Creates a new EditSession, and stores a new openDoc object in openDocs.
   // content and mode are optional.
   // This function does not set the new session as active.
@@ -122,7 +122,7 @@ angular.module('oide.editor')
     var c = content || '';
     var m = mode || 'ace/mode/text';
     var um = undoManager || undefined;
-    
+
     openDocs[filepath] = {
       filepath: filepath,
       filename: getFilenameFromPath(filepath),
@@ -135,7 +135,7 @@ angular.module('oide.editor')
       openDocs[filepath].session.setUndoManager(um);
     }
   };
-  
+
   return {
     /**
      * Called when ace editor has loaded. Must be bound to directive by controller.
@@ -249,7 +249,7 @@ angular.module('oide.editor')
     closeDocument: function(filepath) {
       if (filepath in openDocs) {
         delete openDocs[filepath];
-        
+
         if (Object.keys(openDocs).length !== 0) {
           switchSession(Object.keys(openDocs)[0]);
         }
@@ -345,12 +345,16 @@ angular.module('oide.editor')
     },
     undoChanges: function (filepath) {
       if (filepath in openDocs) {
-        openDocs[filepath].session.getUndoManager().undo();
+        var um = openDocs[filepath].session.getUndoManager();
+        um.undo();
+        openDocs[filepath].session.setUndoManager(um);
       }
     },
     redoChanges: function (filepath) {
       if (filepath in openDocs) {
-        openDocs[filepath].session.getUndoManager().redo();
+        var um = openDocs[filepath].session.getUndoManager();
+        um.redo();
+        openDocs[filepath].session.setUndoManager(um);
       }
     },
     copySelection: function () {
