@@ -2,7 +2,7 @@
 
 angular.module('oide.editor')
 
-.factory('FiletreeService', ['$http', '$document', '$q', '$log', 'EditorService', function($http,$document,$q,$log,EditorService) {
+.factory('FiletreeService', ['$http', '$document', '$q', '$log', '$rootScope', function($http,$document,$q,$log, $rootScope) {
   var treeData, selectionDesc;
   treeData = {
     filetreeContents: [
@@ -153,10 +153,7 @@ angular.module('oide.editor')
       updateFiletree();
     },
     openFilesInEditor: function () {
-      for (var i=0;i<treeData.selectedNodes.length;i++) {
-        EditorService.openDocument(treeData.selectedNodes[i].filepath);
-        $log.debug('Opened document: ', treeData.selectedNodes[i].filepath);
-      }
+      return treeData.selectedNodes;
     },
     createNewFile: function () {
       var selectedDir = treeData.selectedNodes[0].filepath;
@@ -269,7 +266,7 @@ angular.module('oide.editor')
             $log.debug('DELETE: ', data.result);
             var node = getNodeFromPath(data.filepath,treeData.filetreeContents);
             removeNodeFromFiletree(node);
-            EditorService.fileDeleted(data.filepath);
+            $rootScope.$emit('fileDeleted', data.filepath);
           })
           .then(function (data, status, headers, config) {
             updateFiletree();
@@ -326,7 +323,7 @@ angular.module('oide.editor')
         }
         })
         .success(function (data, status, headers, config) {
-          EditorService.fileRenamed(node.filepath,data.result);
+          $rootScope.$emit('fileRenamed', node.filepath, data.result);
           removeNodeFromFiletree(node);
           updateFiletree();
           $log.debug('POST: ', data.result);

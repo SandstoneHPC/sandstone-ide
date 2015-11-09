@@ -2,7 +2,7 @@
 
 angular.module('oide.editor')
 
-.controller('FiletreeControlCtrl', ['$modal', '$log', 'FiletreeService', function($modal,$log,FiletreeService) {
+.controller('FiletreeControlCtrl', ['$modal', '$log', 'FiletreeService', 'EditorService', '$rootScope', function($modal,$log, FiletreeService, EditorService, $rootScope) {
   var self = this;
   self.sd = FiletreeService.selectionDesc;
   self.fcDropdown = false;
@@ -14,7 +14,12 @@ angular.module('oide.editor')
   };
 
   self.openFilesInEditor = function () {
-    FiletreeService.openFilesInEditor();
+    //FiletreeService.openFilesInEditor();
+    var treeData = FiletreeService.openFilesInEditor();
+    for(var i = 0; i < treeData.length; i++) {
+      EditorService.openDocument(treeData[i].filepath);
+      $log.debug('Opened document: ', treeData[i].filepath);
+    }
   };
   self.createNewFile = function () {
     FiletreeService.createNewFile();
@@ -25,6 +30,15 @@ angular.module('oide.editor')
   self.createDuplicate = function () {
     FiletreeService.createDuplicate();
   };
+
+  $rootScope.$on('fileRenamed',function(event, oldPath, newPath){
+    EditorService.fileRenamed(oldPath, newPath);
+  });
+
+  $rootScope.$on('fileDeleted', function(event, path){
+    EditorService.fileDeleted(path);
+  });
+
   self.deleteFiles = function () {
     var deleteModalInstance = $modal.open({
       templateUrl: '/static/editor/templates/delete-modal.html',
