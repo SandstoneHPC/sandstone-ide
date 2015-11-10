@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('oide.editor')
+angular.module('oide.filetree', [])
 
 .factory('FiletreeService', ['$http', '$document', '$q', '$log', '$rootScope', function($http,$document,$q,$log, $rootScope) {
   var treeData, selectionDesc;
