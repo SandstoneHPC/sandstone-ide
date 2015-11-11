@@ -1,0 +1,67 @@
+<div class="row fill">
+  <div class="filetree-container col-sm-4 col-md-3 sidebar">
+    <div class="row volume-info">
+      Volume Info
+      <div class="progress">
+        <div class="progress-bar progress-bar-danger" style="width: 80%"></div>
+      </div>
+    </div>
+    <div ui-view="filetree"></div>
+  </div>
+  <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main fill">
+    <div class="row">
+      <ol class="breadcrumb ">
+        <li><a href="#">/</a></li>
+        <li><a href="#">home</a></li>
+        <li class="active">saurabh</li>
+        <div class="directory-options">
+            <i class="fa fa-2x fa-users dir-option"></i>
+            <i class="fa fa-2x fa-file-o dir-option"></i>
+            <i class="fa fa-2x fa-folder-o dir-option"></i>
+            <i class="fa fa-2x fa-upload dir-option"></i>
+        </div>
+      </ol>
+    </div>
+    <div class="row">
+      <div class="col-sm-8">
+        <table st-table="rowCollection" class="table">
+        	<thead>
+        	<tr>
+        		<th>Name</th>
+        		<th>Size</th>
+        		<th>Owner</th>
+        		<th>Group</th>
+        		<th>Permissions</th>
+        	</tr>
+        	</thead>
+        	<tbody>
+        	<tr>
+        		<td><i class="fa fa-folder" style="padding-right: 5px;"></i>Subdir1</td>
+        		<td>-</td>
+        		<td>user</td>
+        		<td>usergrp</td>
+        		<td>drwxrwxr--</td>
+        	</tr>
+          <tr>
+        		<td><i class="fa fa-folder" style="padding-right: 5px;"></i>Subdir2</td>
+        		<td>-</td>
+        		<td>user</td>
+        		<td>usergrp</td>
+        		<td>drwxrwxr--</td>
+        	</tr>
+          <tr>
+            <td><i class="fa fa-folder" style="padding-right: 5px;"></i>file1</td>
+            <td>-</td>
+            <td>user</td>
+            <td>usergrp</td>
+            <td>drwxrwxr--</td>
+          </tr>
+        	</tbody>
+        </table>
+      </div>
+      <div class="col-sm-4">
+        File Details
+      </div>
+    </div>
+  </div>
+</div>
