@@ -1,0 +1,13 @@
+.volume-info {
+
+}
+
+.directory-options {
+  float: right;
+  text-align: center;
+}
+
+.dir-option {
+  display: inline;
+  padding: 5px;
+}
