@@ -23,7 +23,7 @@
       </ol>
     </div>
     <div class="row">
-      <div class="col-sm-8">
+      <div class="col-sm-8 scrollable-table">
         <table st-table="rowCollection" class="table">
         	<thead>
         	<tr>
@@ -59,8 +59,92 @@
         	</tbody>
         </table>
       </div>
-      <div class="col-sm-4">
-        File Details
+      <div class="col-sm-4 file-details">
+        <h1>File 1</h1>
+        <div class="directory-options" style="float:left;">
+            <i class="fa fa-users dir-option"></i>
+            <i class="fa fa-file-o dir-option"></i>
+            <i class="fa fa-folder-o dir-option"></i>
+            <i class="fa fa-upload dir-option"></i>
+        </div>
+        <br /> <br /><br /> <br />
+        <p>Owner: Saurabh</p>
+        <br />
+        <div class="row">
+          <div class="col-sm-3">
+            <p>
+              Groups:
+            </p>
+          </div>
+          <div class="col-sm-9">
+            usergrp
+            <i class="fa fa-times"></i><br />
+            root
+            <i class="fa fa-times"></i><br />
+            vboxusers
+            <i class="fa fa-times"></i>
+            <br />
+            <i class="fa fa-plus"></i>
+          </div>
+      </div>
+      <br />
+      <p>Size: 1024 KiB</p>
+      <br />
+      <p>Permissions: </p>
+      <table>
+        <thead>
+          <tr>
+            <td class="perm"></td>
+            <td class="perm">read</td>
+            <td class="perm">write</td>
+            <td class="perm">execute</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="perm">
+              user
+            </td>
+            <td class="perm">
+              <input type="checkbox">
+            </td>
+            <td class="perm">
+              <input type="checkbox">
+            </td>
+            <td class="perm">
+              <input type="checkbox">
+            </td>
+          </tr>
+          <tr>
+            <td class="perm">
+              group
+            </td>
+            <td class="perm">
+              <input type="checkbox">
+            </td>
+            <td class="perm">
+              <input type="checkbox">
+            </td>
+            <td class="perm">
+              <input type="checkbox">
+            </td>
+          </tr>
+          <tr>
+            <td class="perm">
+              other
+            </td>
+            <td class="perm">
+              <input type="checkbox">
+            </td>
+            <td class="perm">
+              <input type="checkbox">
+            </td>
+            <td class="perm">
+              <input type="checkbox">
+            </td>
+          </tr>
+        </tbody>
+      </table>
       </div>
     </div>
   </div>
