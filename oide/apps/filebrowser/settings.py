@@ -16,6 +16,7 @@ APP_SPECIFICATION = {
     'NG_MODULE_SCRIPTS': (
         'filebrowser.js',
         'filetree.controller.js',
+        'filetree.service.js'
     ),
 }
 
