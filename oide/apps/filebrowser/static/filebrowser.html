@@ -10,7 +10,7 @@
   </div>
   <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main fill">
     <div class="row">
-      <ol class="breadcrumb ">
+      <ol class="breadcrumb" style="margin-bottom: 0;">
         <li><a href="#">/</a></li>
         <li><a href="#">home</a></li>
         <li class="active">saurabh</li>
@@ -23,7 +23,7 @@
       </ol>
     </div>
     <div class="row">
-      <div class="col-sm-8 scrollable-table">
+      <div ng-class="{'col-sm-8 scrollable-table': ctrl.show_details, 'col-sm-12 scrollable-table': !ctrl.show_details}">
         <table st-table="rowCollection" class="table">
         	<thead>
         	<tr>
@@ -36,7 +36,7 @@
         	</thead>
         	<tbody>
         	<tr>
-        		<td><i class="fa fa-folder" style="padding-right: 5px;"></i>Subdir1</td>
+        		<td ng-click="ctrl.ShowDetails();"><i class="fa fa-folder" style="padding-right: 5px;"></i>Subdir1</td>
         		<td>-</td>
         		<td>user</td>
         		<td>usergrp</td>
@@ -59,7 +59,7 @@
         	</tbody>
         </table>
       </div>
-      <div class="col-sm-4 file-details">
+      <div class="col-sm-4 file-details" ng-show="ctrl.show_details">
         <h1>File 1</h1>
         <div class="directory-options" style="float:left;">
             <i class="fa fa-users dir-option"></i>
@@ -91,19 +91,19 @@
       <p>Size: 1024 KiB</p>
       <br />
       <p>Permissions: </p>
-      <table>
+      <table class="table">
         <thead>
           <tr>
             <td class="perm"></td>
-            <td class="perm">read</td>
-            <td class="perm">write</td>
-            <td class="perm">execute</td>
+            <td class="perm"><b>read</b></td>
+            <td class="perm"><b>write</b></td>
+            <td class="perm"><b>execute</b></td>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td class="perm">
-              user
+              <b>user</b>
             </td>
             <td class="perm">
               <input type="checkbox">
@@ -117,7 +117,7 @@
           </tr>
           <tr>
             <td class="perm">
-              group
+              <b>group</b>
             </td>
             <td class="perm">
               <input type="checkbox">
@@ -131,7 +131,7 @@
           </tr>
           <tr>
             <td class="perm">
-              other
+              <b>other</b>
             </td>
             <td class="perm">
               <input type="checkbox">
