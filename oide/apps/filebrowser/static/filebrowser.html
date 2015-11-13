@@ -1,14 +1,14 @@
 <div class="row fill">
-  <div class="filetree-container col-sm-4 col-md-3 sidebar">
+  <div class="filetree-container col-sm-4 col-md-3 sidebar side">
     <div class="row volume-info">
       Volume Info
       <div class="progress">
-        <div class="progress-bar progress-bar-danger" style="width: 80%"></div>
+        <div class="progress-bar" style="width: 80%"></div>
       </div>
     </div>
     <div ui-view="filetree"></div>
   </div>
-  <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main fill">
+  <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main fill" style="padding: 10px;">
     <div class="row">
       <ol class="breadcrumb" style="margin-bottom: 0;">
         <li><a href="#">/</a></li>
@@ -61,12 +61,18 @@
       </div>
       <div class="col-sm-4 file-details" ng-show="ctrl.show_details">
         <h1>File 1</h1>
-        <div class="directory-options" style="float:left;">
-            <i class="fa fa-users dir-option"></i>
-            <i class="fa fa-file-o dir-option"></i>
-            <i class="fa fa-folder-o dir-option"></i>
-            <i class="fa fa-upload dir-option"></i>
+        <hr />
+        <div class="row">
+          <div class="col-sm-8 col-sm-offset-4">
+            <div class="directory-options" style="float:left;">
+                <i class="fa fa-users dir-option"></i>
+                <i class="fa fa-file-o dir-option"></i>
+                <i class="fa fa-folder-o dir-option"></i>
+                <i class="fa fa-upload dir-option"></i>
+            </div>
+          </div>
         </div>
+
         <br /> <br /><br /> <br />
         <p>Owner: Saurabh</p>
         <br />

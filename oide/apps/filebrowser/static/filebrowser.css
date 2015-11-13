@@ -12,6 +12,10 @@
   padding: 5px;
 }
 
+.side {
+  background-color: #FFFFFF;
+}
+
 .file-details {
   border-left: 1px solid #eee;
   background-color: #FFFFFF;
