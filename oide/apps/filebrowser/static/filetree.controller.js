@@ -2,28 +2,45 @@
 
 angular.module('oide.filebrowser')
 
-.controller('FiletreeController', ['FiletreeService', '$http', function(FiletreeService, $http){
+.controller('FiletreeController', ['$document', '$log', 'FiletreeService', function($document,$log,FiletreeService) {
   var self = this;
-  this.treeData = {};
-  $http
-    .get('/filebrowser/filetree/a/dir')
-    .success(function(data, status, headers, config) {
-      for (var i=0;i<data.length;i++) {
-        data[i].children = [];
+  self.treeData= FiletreeService.treeData;
+  $document.on('keydown', (function (e) {
+    if (e.keyCode === 17) {
+      self.treeOptions.multiSelection = true;
+    }
+  }));
+  $document.on('keyup', (function (e) {
+    if (e.keyCode === 17) {
+      self.treeOptions.multiSelection = false;
+    }
+  }));
+  self.treeOptions = {
+    multiSelection: false,
+    isLeaf: function(node) {
+      return node.type !== 'dir';
+    },
+    injectClasses: {
+      iExpanded: "filetree-icon fa fa-folder-open",
+      iCollapsed: "filetree-icon fa fa-folder",
+      iLeaf: "filetree-icon fa fa-file",
+    }
+  };
+  self.describeSelection = function (node, selected) {
+    if (self.treeOptions.multiSelection === false) {
+      if (selected) {
+        self.treeData.selectedNodes = [node];
+      } else {
+        self.treeData.selectedNodes = [];
       }
-      self.treeData.filetreeContents = data;
-      self.treeOptions = {
-        multiSelection: false,
-        isLeaf: function(node) {
-            return node.type !== 'dir';
-          },
-          injectClasses: {
-            iExpanded: "filetree-icon fa fa-folder-open",
-            iCollapsed: "filetree-icon fa fa-folder",
-            iLeaf: "filetree-icon fa fa-file",
-          }};
-    }).
-    error(function(data, status, headers, config) {
-      // $log.error('Failed to initialize filetree.');
-    });
+    }
+    FiletreeService.describeSelection(node, selected);
+  };
+  self.getDirContents = function (node, expanded) {
+    FiletreeService.getDirContents(node);
+  };
+  self.showSelected = function(node, selected) {
+    console.log(node);
+    console.log(selected);
+  };
 }]);
