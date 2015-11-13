@@ -7,7 +7,9 @@ angular.module('oide.filebrowser', ['smart-table'])
     url: '/filebrowser',
     views: {
       '': {
-        templateUrl: '/static/filebrowser/filebrowser.html'
+        templateUrl: '/static/filebrowser/filebrowser.html',
+        controller: 'FilebrowserController',
+        controllerAs: 'ctrl'
       },
       'filetree@filebrowser': {
         templateUrl: '/static/filebrowser/templates/filetree.html',
@@ -16,4 +18,13 @@ angular.module('oide.filebrowser', ['smart-table'])
       }
     }
   });
+}])
+
+
+.controller('FilebrowserController', [function(){
+  var self = this;
+  self.show_details = false;
+  self.ShowDetails = function(){
+    self.show_details = true;
+  };
 }]);
