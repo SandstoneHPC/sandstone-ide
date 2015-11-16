@@ -12,6 +12,17 @@
   padding: 5px;
 }
 
+.breadcrumb-positioning {
+  margin-bottom: 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.progressbar {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
 .side {
   background-color: #FFFFFF;
 }
@@ -28,7 +39,7 @@
 }
 
 .scrollable-table {
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 100vh;
 }
 
