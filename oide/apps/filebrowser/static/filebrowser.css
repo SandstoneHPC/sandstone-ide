@@ -18,6 +18,14 @@
   padding-bottom: 20px;
 }
 
+.breadcrumb a {
+  color: #555;
+}
+
+.breadcrumb > .active {
+  color: #93c54b;
+}
+
 .progressbar {
   margin-left: 20px;
   margin-right: 20px;
