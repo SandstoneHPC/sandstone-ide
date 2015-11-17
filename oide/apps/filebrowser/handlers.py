@@ -167,6 +167,35 @@ class FileTreeHandler(BaseHandler,FSMixin):
 
     @oide.lib.decorators.authenticated
     def get(self):
+        is_folders = self.get_argument('folders', '')
+        if is_folders == "true":
+            self.get_folders()
+        else:
+            dirpath = self.get_argument('dirpath','')
+            dir_contents = []
+            if dirpath == '':
+                for r in self.fs.list_root_paths(self.current_user):
+                    dir_contents.append({
+                        'type':'dir',
+                        'filename':r,
+                        'filepath':r})
+            else:
+                for i in self.fs.get_dir_contents(dirpath):
+                    curr_file = {}
+                    if i[0].startswith('.'):
+                        continue
+                    if i[2]:
+                        curr_file['type'] = 'dir'
+                    else:
+                        curr_file['type'] = 'file'
+                    curr_file['filename'] = i[0]
+                    curr_file['filepath'] = i[1]
+                    dir_contents.append(curr_file)
+
+            self.write(json.dumps(dir_contents))
+
+    @oide.lib.decorators.authenticated
+    def get_folders(self):
         dirpath = self.get_argument('dirpath','')
         dir_contents = []
         if dirpath == '':
@@ -176,7 +205,7 @@ class FileTreeHandler(BaseHandler,FSMixin):
                     'filename':r,
                     'filepath':r})
         else:
-            for i in self.fs.get_dir_contents(dirpath):
+            for i in self.fs.get_dir_folders(dirpath):
                 curr_file = {}
                 if i[0].startswith('.'):
                     continue

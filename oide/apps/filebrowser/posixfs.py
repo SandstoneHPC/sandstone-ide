@@ -4,7 +4,6 @@ import stat
 import pwd
 import shutil
 import logging
-
 import oide.apps.filebrowser.settings as app_settings
 
 
@@ -106,5 +105,18 @@ class PosixFS():
             is_dir = os.path.isdir(filepath)
             if is_dir:
                 filepath = filepath + '/'
+            contents.append( ( i,filepath,is_dir ) )
+        return contents
+
+    @staticmethod
+    def get_dir_folders(dirpath):
+        contents = []
+        for i in os.listdir(dirpath):
+            filepath = os.path.join(dirpath,i)
+            is_dir = os.path.isdir(filepath)
+            if is_dir:
+                filepath = filepath + '/'
+            else:
+                continue
             contents.append( ( i,filepath,is_dir ) )
         return contents
