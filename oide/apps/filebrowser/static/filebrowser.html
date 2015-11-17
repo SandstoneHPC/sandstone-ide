@@ -10,7 +10,7 @@
   </div>
   <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main fill" style="padding: 10px;">
     <div class="row">
-      <ol class="breadcrumb breadcrumb-positioning">
+      <ol class="breadcrumb">
         <li><a href="#">/</a></li>
         <li><a href="#">home</a></li>
         <li class="active">saurabh</li>
@@ -329,12 +329,24 @@
         <h1>File 1</h1>
         <hr />
         <div class="row">
-          <div class="col-sm-8 col-sm-offset-4">
+          <div class="col-sm-8 col-sm-offset-3">
             <div class="directory-options" style="float:left;">
-                <i class="fa fa-users dir-option"></i>
-                <i class="fa fa-file-o dir-option"></i>
-                <i class="fa fa-folder-o dir-option"></i>
-                <i class="fa fa-upload dir-option"></i>
+              <div class="btn-toolbar" role="toolbar">
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-default">
+                    <i class="fa fa-2x fa-users dir-option"></i>
+                  </button>
+                  <button type="button" class="btn btn-default">
+                    <i class="fa fa-2x fa-file-o dir-option"></i>
+                  </button>
+                  <button type="button" class="btn btn-default">
+                    <i class="fa fa-2x fa-folder-o dir-option"></i>
+                  </button>
+                  <button type="button" class="btn btn-default">
+                    <i class="fa fa-2x fa-upload dir-option"></i>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -363,7 +375,7 @@
             </div>
             <div class="row">
               <p class="col-sm-4"></p>
-              <i class="fa fa-plus-circle col-sm-8"></i>
+              <i class="fa fa-plus col-sm-8"></i>
             </div>
           </div>
       </div>
@@ -375,15 +387,15 @@
         <thead>
           <tr>
             <td class="perm"></td>
-            <td class="perm"><b>read</b></td>
-            <td class="perm"><b>write</b></td>
-            <td class="perm"><b>execute</b></td>
+            <td class="perm">read</td>
+            <td class="perm">write</td>
+            <td class="perm">execute</td>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td class="perm">
-              <b>user</b>
+              user
             </td>
             <td class="perm">
               <input type="checkbox">
@@ -397,7 +409,7 @@
           </tr>
           <tr>
             <td class="perm">
-              <b>group</b>
+              group
             </td>
             <td class="perm">
               <input type="checkbox">
@@ -411,7 +423,7 @@
           </tr>
           <tr>
             <td class="perm">
-              <b>other</b>
+              other
             </td>
             <td class="perm">
               <input type="checkbox">
