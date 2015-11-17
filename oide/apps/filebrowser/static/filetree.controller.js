@@ -2,7 +2,7 @@
 
 angular.module('oide.filebrowser')
 
-.controller('FiletreeController', ['$document', '$log', 'FiletreeService', function($document,$log,FiletreeService) {
+.controller('FiletreeController', ['$document', '$log', 'FBFiletreeService', function($document,$log,FiletreeService) {
   var self = this;
   self.treeData= FiletreeService.treeData;
   $document.on('keydown', (function (e) {

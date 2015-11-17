@@ -2,7 +2,7 @@
 
 angular.module('oide.filebrowser')
 
-.factory('FiletreeService', ['$http', '$document', '$q', '$log', '$rootScope', function($http,$document,$q,$log, $rootScope) {
+.factory('FBFiletreeService', ['$http', '$document', '$q', '$log', '$rootScope', function($http,$document,$q,$log, $rootScope) {
   var treeData, selectionDesc;
   treeData = {
     filetreeContents: [
@@ -91,7 +91,8 @@ angular.module('oide.filebrowser')
     $http
       .get('/filebrowser/filetree/a/dir', {
         params: {
-          dirpath: node.filepath
+          dirpath: node.filepath,
+          folders: 'true'
         }
       }).
       success(function(data, status, headers, config) {
