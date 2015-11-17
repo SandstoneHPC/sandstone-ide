@@ -2,7 +2,7 @@
 
 angular.module('oide.editor')
 
-.factory('FiletreeService', ['$http', '$document', '$q', '$log', '$rootScope', function($http,$document,$q,$log, $rootScope) {
+.factory('FiletreeService', ['$http', '$document', '$q', '$log', '$rootScope', 'FilesystemService', function($http,$document,$q,$log, $rootScope, FilesystemService) {
   var treeData, selectionDesc;
   treeData = {
     filetreeContents: [
@@ -15,18 +15,16 @@ angular.module('oide.editor')
     dirSelected: false
   };
   var clipboard = [];
+
+  var populateTreeData = function(data, status, headers, config) {
+    for (var i=0;i<data.length;i++) {
+      data[i].children = [];
+    }
+    treeData.filetreeContents = data;
+  };
+
   var initializeFiletree = function () {
-    $http
-      .get('/filebrowser/filetree/a/dir')
-      .success(function(data, status, headers, config) {
-        for (var i=0;i<data.length;i++) {
-          data[i].children = [];
-        }
-        treeData.filetreeContents = data;
-      }).
-      error(function(data, status, headers, config) {
-        $log.error('Failed to initialize filetree.');
-      });
+    FilesystemService.getFiles('', populateTreeData);
   };
   initializeFiletree();
   var getNodeFromPath = function (filepath, nodeList) {
@@ -87,37 +85,31 @@ angular.module('oide.editor')
     }
     return false;
   };
-  var getDirContents = function (node) {
-    $http
-      .get('/filebrowser/filetree/a/dir', {
-        params: {
-          dirpath: node.filepath
-        }
-      }).
-      success(function(data, status, headers, config) {
-        var matchedNode;
-        var currContents = getFilepathsForDir(node.filepath);
-        for (var i=0;i<data.length;i++) {
-          if (currContents.indexOf(data[i].filepath) >= 0) {
-            matchedNode = getNodeFromPath(data[i].filepath,treeData.filetreeContents);
-            if ((data[i].type === 'dir')&&isExpanded(data[i].filepath)) {
-              getDirContents(matchedNode);
-            }
-            currContents.splice(currContents.indexOf(data[i].filepath), 1);
-          } else {
-            data[i].children = [];
-            node.children.push(data[i]);
+
+  var populatetreeContents = function(data, status, headers, config, node) {
+      var matchedNode;
+      var currContents = getFilepathsForDir(node.filepath);
+      for (var i=0;i<data.length;i++) {
+        if (currContents.indexOf(data[i].filepath) >= 0) {
+          matchedNode = getNodeFromPath(data[i].filepath,treeData.filetreeContents);
+          if ((data[i].type === 'dir')&&isExpanded(data[i].filepath)) {
+            getDirContents(matchedNode);
           }
+          currContents.splice(currContents.indexOf(data[i].filepath), 1);
+        } else {
+          data[i].children = [];
+          node.children.push(data[i]);
         }
-        var index;
-        for (var i=0;i<currContents.length;i++) {
-          matchedNode = getNodeFromPath(currContents[i],treeData.filetreeContents);
-          removeNodeFromFiletree(matchedNode);
-        }
-      }).
-      error(function(data, status, headers, config) {
-        $log.error('Failed to grab dir contents from ',node.filepath);
-      });
+      }
+      var index;
+      for (var i=0;i<currContents.length;i++) {
+        matchedNode = getNodeFromPath(currContents[i],treeData.filetreeContents);
+        removeNodeFromFiletree(matchedNode);
+      }
+    };
+
+  var getDirContents = function (node) {
+    FilesystemService.getFiles(node, populatetreeContents);
   };
   var updateFiletree = function () {
     var filepath, node;
