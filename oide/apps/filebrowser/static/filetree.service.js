@@ -86,6 +86,8 @@ angular.module('oide.filebrowser')
     return false;
   };
 
+  // Callback for getting directory contents
+  // For filebrowser, only the folders are returned in this call
   var populatetreeContents = function(data, status, headers, config, node) {
     var matchedNode;
     var currContents = getFilepathsForDir(node.filepath);
@@ -108,6 +110,8 @@ angular.module('oide.filebrowser')
     }
   };
 
+  // Invoke Filesystem service to get the folders in the selected directory
+  // Invoked when a node is expanded
   var getDirContents = function (node) {
     FilesystemService.getFolders(node, populatetreeContents);
   };
@@ -128,6 +132,23 @@ angular.module('oide.filebrowser')
     }
     selectionDesc.dirSelected = dirSelected;
   };
+
+  // Callback of invocation to FilesystemService to create a file
+  // Update the filetree to show the new file
+  var createFileCallback = function(data, status, headers, config){
+    $log.debug('POST: ', data);
+    updateFiletree();
+  };
+
+  // Callback of invocation to FilesystemService to get the next Untitled FIle
+  // Invoke the FilesystemService to create the new file
+  var gotNewUntitledFile = function(data, status, headers, config) {
+    $log.debug('GET: ', data);
+    var newFilePath = data.result;
+    // Post back new file to backend
+    FilesystemService.createNewFile(newFilePath, createFileCallback);
+  };
+
   return {
     treeData: treeData,
     selectionDesc: selectionDesc,
@@ -148,34 +169,9 @@ angular.module('oide.filebrowser')
       return treeData.selectedNodes;
     },
     createNewFile: function () {
+      //Invokes filesystem service to create a new file
       var selectedDir = treeData.selectedNodes[0].filepath;
-      var newFilePath;
-      $http
-        .get(
-          '/filebrowser/a/fileutil', {
-            params: {
-              dirpath: selectedDir,
-              operation: 'GET_NEXT_UNTITLED_FILE'
-            }
-        })
-        .success(function (data, status, headers, config) {
-          $log.debug('GET: ', data);
-          newFilePath = data.result;
-        })
-        .then(function (data, status, headers, config) {
-          $http({
-            url: '/filebrowser/localfiles'+newFilePath,
-            method: 'POST',
-            // headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
-            params: {_xsrf:getCookie('_xsrf')}
-            })
-            .success(function (data, status, headers, config) {
-              $log.debug('POST: ', data);
-            })
-            .then(function (data, status, headers, config) {
-              updateFiletree();
-            });
-        });
+      FilesystemService.getNextUntitledFile(selectedDir, gotNewUntitledFile);
     },
     createNewDir: function () {
       var selectedDir = treeData.selectedNodes[0].filepath;
