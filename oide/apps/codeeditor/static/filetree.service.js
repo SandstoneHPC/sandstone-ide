@@ -147,11 +147,16 @@ angular.module('oide.editor')
     // Post back new file to backend
     FilesystemService.createNewFile(newFilePath, createFileCallback);
   };
-
+  // Callback for invocation to FilesystemService rename method
   var fileRenamed = function(data, status, headers, config, node) {
     $rootScope.$emit('fileRenamed', node.filepath, data.result);
     removeNodeFromFiletree(node);
     updateFiletree();
+    $log.debug('POST: ', data.result);
+  };
+  
+  // Callback for invocation to FilesystemService paste method
+  var pastedFiles = function(data, status, headers, config, node){
     $log.debug('POST: ', data.result);
   };
 
@@ -279,23 +284,12 @@ angular.module('oide.editor')
       }
       $log.debug('Copied ', i, ' files to clipboard: ', clipboard)
     },
+    // Invoke the Filesystem Service to paste a file
     pasteFiles: function () {
       var i;
       var newDirPath = treeData.selectedNodes[0].filepath;
       for (i=0;i<clipboard.length;i++) {
-        $http({
-          url: '/filebrowser/a/fileutil',
-          method: 'POST',
-          params: {
-            _xsrf:getCookie('_xsrf'),
-            operation: 'COPY',
-            origpath: clipboard[i].filepath,
-            newpath: newDirPath+clipboard[i].filename
-          }
-          })
-          .success(function (data, status, headers, config) {
-            $log.debug('POST: ', data.result);
-          });
+        FilesystemService.pasteFile(clipboard[i].filepath, newDirPath + clipboard[i].filename, pastedFiles);
       }
       clipboard = [];
       if (!isExpanded(newDirPath)) {
@@ -304,6 +298,7 @@ angular.module('oide.editor')
       }
       updateFiletree();
     },
+    // Invoke the Filesystem Service to rename a file
     renameFile: function (newFileName) {
       var node = treeData.selectedNodes[0];
       FilesystemService.renameFile(newFileName, node, fileRenamed);

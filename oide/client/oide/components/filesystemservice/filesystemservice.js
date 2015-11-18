@@ -77,6 +77,22 @@ angular.module('oide.filesystemservice', [])
         .success(function(data, status, headers, config){
           callback(data, status, headers, config, node);
         });
+    },
+    // Paste file
+    pasteFile: function(originalPath, newPath, callback) {
+      $http({
+        url: '/filebrowser/a/fileutil',
+        method: 'POST',
+        params: {
+          _xsrf:getCookie('_xsrf'),
+          operation: 'COPY',
+          origpath: originalPath,
+          newpath: newPath
+        }
+        })
+        .success(function(data, status, headers, config){
+          callback(data, status, headers, config);
+        });
     }
   }
 }]);
