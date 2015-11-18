@@ -93,6 +93,19 @@ angular.module('oide.filesystemservice', [])
         .success(function(data, status, headers, config){
           callback(data, status, headers, config);
         });
+    },
+    // Deleting files from the filesystem
+    deleteFile: function(filepath, callback) {
+      $http({
+        url: '/filebrowser/localfiles'+filepath,
+        method: 'DELETE',
+        params: {
+          _xsrf:getCookie('_xsrf')
+          }
+        })
+        .success(function(data, status, headers, config){
+          callback(data, status, headers, config);
+        });
     }
   }
 }]);

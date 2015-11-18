@@ -162,6 +162,15 @@ angular.module('oide.filebrowser')
     $log.debug('POST: ', data.result);
   };
 
+  // Callback for invocation to FilesystemService deleteFile method
+  var deletedFile = function(data, status, headers, config, node) {
+    $log.debug('DELETE: ', data.result);
+    var node = getNodeFromPath(data.filepath,treeData.filetreeContents);
+    removeNodeFromFiletree(node);
+    $rootScope.$emit('fileDeleted', data.filepath);
+    updateFiletree();
+  };
+
   return {
     treeData: treeData,
     selectionDesc: selectionDesc,
@@ -253,25 +262,11 @@ angular.module('oide.filebrowser')
             });
         });
     },
+    // Delete selected files by invoking the FilesystemService deleteFile method
     deleteFiles: function () {
       for (var i=0;i<treeData.selectedNodes.length;i++) {
         var filepath = treeData.selectedNodes[i].filepath;
-        $http({
-          url: '/filebrowser/localfiles'+filepath,
-          method: 'DELETE',
-          params: {
-            _xsrf:getCookie('_xsrf')
-            }
-          })
-          .success(function (data, status, headers, config) {
-            $log.debug('DELETE: ', data.result);
-            var node = getNodeFromPath(data.filepath,treeData.filetreeContents);
-            removeNodeFromFiletree(node);
-            $rootScope.$emit('fileDeleted', data.filepath);
-          })
-          .then(function (data, status, headers, config) {
-            updateFiletree();
-          });
+        FilesystemService.deleteFile(filepath, deletedFile);
       }
     },
     copyFiles: function () {
