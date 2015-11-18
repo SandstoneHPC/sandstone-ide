@@ -137,6 +137,35 @@ angular.module('oide.filesystemservice', [])
         .success(function(data, status, headers, config){
           callback(data, status, headers, config);
         });
+    },
+    // Get next untitled directory
+    getNextUntitledDir: function(selectedDir, callback) {
+      $http
+        .get(
+          '/filebrowser/a/fileutil', {
+            params: {
+              dirpath: selectedDir,
+              operation: 'GET_NEXT_UNTITLED_DIR'
+            }
+        })
+        .success(function(data, status, headers, config){
+          callback(data, status, headers, config);
+        });
+    },
+    // Create new directory
+    createNewDir: function(newDirPath, callback) {
+      $http({
+        url: '/filebrowser/localfiles'+newDirPath,
+        method: 'POST',
+        // headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
+        params: {
+          _xsrf:getCookie('_xsrf'),
+          isDir: true
+        }
+        })
+        .success(function(data, status, headers, config){
+          callback(data, status, headers, config);
+        });
     }
   }
 }]);
