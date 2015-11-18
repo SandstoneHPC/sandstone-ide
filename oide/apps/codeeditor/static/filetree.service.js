@@ -2,7 +2,7 @@
 
 angular.module('oide.editor')
 
-.factory('FiletreeService', ['$http', '$document', '$q', '$log', '$rootScope', 'FilesystemService', function($http,$document,$q,$log, $rootScope, FilesystemService) {
+.factory('FiletreeService', ['$document', '$q', '$log', '$rootScope', 'FilesystemService', function($document,$q,$log, $rootScope, FilesystemService) {
   var treeData, selectionDesc;
   treeData = {
     filetreeContents: [
@@ -182,6 +182,19 @@ angular.module('oide.editor')
     updateFiletree();
   };
 
+  // Callback for getting a new untitled directory name from FilesystemService
+  var gotNewUntitledDir = function(data, status, headers, config) {
+    $log.debug('GET: ', data);
+    var newDirPath = data.result;
+    FilesystemService.createNewDir(newDirPath, createdNewDir);
+  };
+
+  // Callback for creating new directory
+  var createdNewDir = function(data, status, headers, config) {
+    $log.debug('POST: ', data);
+    updateFiletree();
+  }
+
   return {
     treeData: treeData,
     selectionDesc: selectionDesc,
@@ -206,38 +219,10 @@ angular.module('oide.editor')
       var selectedDir = treeData.selectedNodes[0].filepath;
       FilesystemService.getNextUntitledFile(selectedDir, gotNewUntitledFile);
     },
+    // Invoke FilesystemService to create a new directory
     createNewDir: function () {
       var selectedDir = treeData.selectedNodes[0].filepath;
-      var newDirPath;
-      $http
-        .get(
-          '/filebrowser/a/fileutil', {
-            params: {
-              dirpath: selectedDir,
-              operation: 'GET_NEXT_UNTITLED_DIR'
-            }
-        })
-        .success(function (data, status, headers, config) {
-          $log.debug('GET: ', data);
-          newDirPath = data.result;
-        })
-        .then(function (data, status, headers, config) {
-          $http({
-            url: '/filebrowser/localfiles'+newDirPath,
-            method: 'POST',
-            // headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
-            params: {
-              _xsrf:getCookie('_xsrf'),
-              isDir: true
-            }
-            })
-            .success(function (data, status, headers, config) {
-              $log.debug('POST: ', data);
-            })
-            .then(function (data, status, headers, config) {
-              updateFiletree();
-            });
-        });
+      FilesystemService.getNextUntitledDir(selectedDir, gotNewUntitledDir);
     },
     // Create a duplicate of the selected file
     createDuplicate: function () {
