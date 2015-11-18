@@ -106,6 +106,37 @@ angular.module('oide.filesystemservice', [])
         .success(function(data, status, headers, config){
           callback(data, status, headers, config);
         });
+    },
+    // Get the next duplicate from the filesystem
+    getNextDuplicate: function(selectedFile, callback) {
+      $http
+        .get(
+          '/filebrowser/a/fileutil', {
+            params: {
+              filepath: selectedFile,
+              operation: 'GET_NEXT_DUPLICATE'
+            }
+        })
+        .success(function(data, status, headers, config){
+          data.originalFile = selectedFile;
+          callback(data, status, headers, config);
+        });
+    },
+    // Duplicate File
+    duplicateFile: function(selectedFile, newFilePath, callback) {
+      $http({
+        url: '/filebrowser/a/fileutil',
+        method: 'POST',
+        params: {
+          _xsrf:getCookie('_xsrf'),
+          operation: 'COPY',
+          origpath: selectedFile,
+          newpath: newFilePath
+        }
+        })
+        .success(function(data, status, headers, config){
+          callback(data, status, headers, config);
+        });
     }
   }
 }]);

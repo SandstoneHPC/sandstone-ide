@@ -169,6 +169,19 @@ angular.module('oide.editor')
     updateFiletree();
   };
 
+  // Callback for getting the next duplicated file for selected file
+  var gotNextDuplicateFile = function(data, status, headers, config) {
+    $log.debug('GET: ', data);
+     var newFilePath = data.result;
+     FilesystemService.duplicateFile(data.originalFile, newFilePath, duplicatedFile);
+  };
+
+  // Callback for duplicating a file
+  var duplicatedFile = function(data, status, headers, config) {
+    $log.debug('Copied: ', data.result);
+    updateFiletree();
+  };
+
   return {
     treeData: treeData,
     selectionDesc: selectionDesc,
@@ -226,39 +239,10 @@ angular.module('oide.editor')
             });
         });
     },
+    // Create a duplicate of the selected file
     createDuplicate: function () {
       var selectedFile = treeData.selectedNodes[0].filepath;
-      var newFilePath;
-      $http
-        .get(
-          '/filebrowser/a/fileutil', {
-            params: {
-              filepath: selectedFile,
-              operation: 'GET_NEXT_DUPLICATE'
-            }
-        })
-        .success(function (data, status, headers, config) {
-          $log.debug('GET: ', data);
-          newFilePath = data.result;
-        })
-        .then(function (data, status, headers, config) {
-          $http({
-            url: '/filebrowser/a/fileutil',
-            method: 'POST',
-            params: {
-              _xsrf:getCookie('_xsrf'),
-              operation: 'COPY',
-              origpath: selectedFile,
-              newpath: newFilePath
-            }
-            })
-            .success(function (data, status, headers, config) {
-              $log.debug('Copied: ', data.result);
-            })
-            .then(function (data, status, headers, config) {
-              updateFiletree();
-            });
-        });
+      FilesystemService.getNextDuplicate(selectedFile, gotNextDuplicateFile);
     },
     // Delete selected files by invoking the FilesystemService deleteFile method
     deleteFiles: function () {
