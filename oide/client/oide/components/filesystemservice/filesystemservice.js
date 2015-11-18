@@ -5,6 +5,7 @@ angular.module('oide.filesystemservice', [])
 .service('FilesystemService', ['$http', '$log',function($http, $log){
 
   return {
+    // Get all files for a particular node
     getFiles: function(node, callback) {
       $http
         .get('/filebrowser/filetree/a/dir', {
@@ -19,6 +20,7 @@ angular.module('oide.filesystemservice', [])
           $log.error('Failed to get files');
         });
     },
+    // Get all the folders for a particular node
     getFolders: function(node, callback) {
       $http
         .get('/filebrowser/filetree/a/dir', {
@@ -34,6 +36,7 @@ angular.module('oide.filesystemservice', [])
           $log.error('Failed to get folders');
         });
     },
+    // Returns the name of the next untitled file on filesystem
     getNextUntitledFile: function(selectedDir, callback) {
       $http
         .get(
@@ -47,6 +50,7 @@ angular.module('oide.filesystemservice', [])
           callback(data, status, headers, config);
         });
     },
+    // Creates a new file on the filesystem
     createNewFile: function(newFilePath, callback){
       $http({
         url: '/filebrowser/localfiles'+newFilePath,
@@ -57,6 +61,22 @@ angular.module('oide.filesystemservice', [])
         .success(function (data, status, headers, config) {
           callback(data, status, headers, config);
         })
+    },
+    // Rename a file on the filesystem
+    renameFile: function(newFilename, node, callback) {
+      $http({
+        url: '/filebrowser/a/fileutil',
+        method: 'POST',
+        params: {
+          _xsrf:getCookie('_xsrf'),
+          operation: 'RENAME',
+          filepath: node.filepath,
+          newFileName: newFilename
+        }
+        })
+        .success(function(data, status, headers, config){
+          callback(data, status, headers, config, node);
+        });
     }
   }
 }]);

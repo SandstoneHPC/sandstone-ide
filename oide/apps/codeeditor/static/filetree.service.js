@@ -148,6 +148,13 @@ angular.module('oide.editor')
     FilesystemService.createNewFile(newFilePath, createFileCallback);
   };
 
+  var fileRenamed = function(data, status, headers, config, node) {
+    $rootScope.$emit('fileRenamed', node.filepath, data.result);
+    removeNodeFromFiletree(node);
+    updateFiletree();
+    $log.debug('POST: ', data.result);
+  };
+
   return {
     treeData: treeData,
     selectionDesc: selectionDesc,
@@ -299,24 +306,7 @@ angular.module('oide.editor')
     },
     renameFile: function (newFileName) {
       var node = treeData.selectedNodes[0];
-      $http({
-        url: '/filebrowser/a/fileutil',
-        method: 'POST',
-        params: {
-          _xsrf:getCookie('_xsrf'),
-          operation: 'RENAME',
-          filepath: node.filepath,
-          newFileName: newFileName
-        }
-        })
-        .success(function (data, status, headers, config) {
-          $rootScope.$emit('fileRenamed', node.filepath, data.result);
-          removeNodeFromFiletree(node);
-          updateFiletree();
-          $log.debug('POST: ', data.result);
-        });
-        // removeNodeFromFiletree(node);
-        // updateFiletree();
+      FilesystemService.renameFile(newFileName, node, fileRenamed);
     }
   };
 }]);
