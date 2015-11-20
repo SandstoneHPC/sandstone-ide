@@ -29,9 +29,19 @@ angular.module('oide.editor')
   initializeFiletree();
   var getNodeFromPath = function (filepath, nodeList) {
     var matchedNode;
+    var folderName;
+    var strippedFilepath;
     for (var i=0;i<nodeList.length;i++) {
-      if (filepath.lastIndexOf(nodeList[i].filepath,0) === 0) {
-        if (filepath === nodeList[i].filepath) {
+      folderName = nodeList[i].filepath;
+      strippedFilepath = filepath;
+      if(filepath.charAt(filepath.length - 1) == '/') {
+        strippedFilepath = filepath.substr(0, filepath.length - 1);
+      }
+      if(nodeList[i].type == 'dir') {
+        folderName = folderName.substr(0, folderName.length - 1);
+      }
+      if (strippedFilepath.lastIndexOf(folderName,0) === 0) {
+        if (strippedFilepath === folderName) {
           return nodeList[i];
         } else if (nodeList[i].type === 'dir') {
           return getNodeFromPath(filepath, nodeList[i].children);
