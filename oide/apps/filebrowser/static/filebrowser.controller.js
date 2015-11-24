@@ -3,24 +3,18 @@
 angular.module('oide.filebrowser')
 .controller('FilebrowserController', ['FBFiletreeService', '$rootScope', 'FileService', '$scope', function(FiletreeService, $rootScope, FileService, $scope){
   var self = this;
-  // self.fileData = FileService.fileData;
-  // $scope.$watch(function () { return FileService.fileData }, function (newVal, oldVal) {
-  //   if (typeof newVal !== 'undefined') {
-  //       $scope.fileData = FileService.fileData;
-  //   }
-  // });
-
-  // $scope.$watch('FileService.getFileData()', function(newVal){
-  //   $scope.fileData = newVal;
-  // });
 
   $scope.$watch(function(){
-    return FileService.getFileData();
-}, function (newValue) {
-    // alert("isLoggedIn changed to " + newValue);
-    console.log("fileData changed");
+      return FileService.getFileData();
+    }, function (newValue) {
     self.fileData = newValue;
-});
+  });
+
+  $scope.$watch(function(){
+      return FileService.getCurrentDirectory();
+    }, function (newValue) {
+    self.currentDirectory = newValue;
+  });
 
   self.show_details = false;
   self.ShowDetails = function(){
@@ -29,7 +23,7 @@ angular.module('oide.filebrowser')
 }])
 .factory('FileService', ['$rootScope', function($rootScope){
   var fileData;
-
+  var currentDirectory = [];
   var setFileData = function(data) {
     fileData = data;
     // $rootScope.$apply();
@@ -37,10 +31,24 @@ angular.module('oide.filebrowser')
 
   var getFileData = function(){
     return fileData;
-  }
+  };
+
+  var getCurrentDirectory = function() {
+    return currentDirectory;
+  };
+
+  var setCurrentDirectory = function(filepath) {
+    currentDirectory = filepath.split("/")
+    // Current Directory Path should be '/'
+    currentDirectory[0] = "/";
+    // Last component will be blank and needs to be spliced
+    currentDirectory.splice(-1)
+  };
 
   return {
     setFileData: setFileData,
-    getFileData: getFileData
+    getFileData: getFileData,
+    setCurrentDirectory: setCurrentDirectory,
+    getCurrentDirectory: getCurrentDirectory
   };
 }]);

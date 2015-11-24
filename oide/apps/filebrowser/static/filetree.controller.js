@@ -33,6 +33,8 @@ angular.module('oide.filebrowser')
     if (self.treeOptions.multiSelection === false) {
       if (selected) {
         self.treeData.selectedNodes = [node];
+        // Set the current directory
+        FileService.setCurrentDirectory(node.filepath);
         // Get the list of files from FilesystemService
         FilesystemService.getFiles(node, self.gotFiles);
       } else {
