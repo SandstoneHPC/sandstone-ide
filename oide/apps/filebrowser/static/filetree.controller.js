@@ -2,7 +2,7 @@
 
 angular.module('oide.filebrowser')
 
-.controller('FiletreeController', ['$document', '$log', 'FBFiletreeService', function($document,$log,FiletreeService) {
+.controller('FiletreeController', ['$document', '$log', 'FBFiletreeService', 'FilesystemService', 'FileService', function($document,$log,FiletreeService, FilesystemService, FileService) {
   var self = this;
   self.treeData= FiletreeService.treeData;
   $document.on('keydown', (function (e) {
@@ -26,10 +26,15 @@ angular.module('oide.filebrowser')
       iLeaf: "filetree-icon fa fa-file",
     }
   };
+  self.gotFiles = function(data, status, headers, config) {
+    FileService.setFileData(data);
+  };
   self.describeSelection = function (node, selected) {
     if (self.treeOptions.multiSelection === false) {
       if (selected) {
         self.treeData.selectedNodes = [node];
+        // Get the list of files from FilesystemService
+        FilesystemService.getFiles(node, self.gotFiles);
       } else {
         self.treeData.selectedNodes = [];
       }
