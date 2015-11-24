@@ -39,7 +39,12 @@
 .file-details {
   border-left: 1px solid #eee;
   background-color: #FFFFFF;
-  height: 100vh;
+  overflow-y: scroll;
+  margin-top: 70px;
+  position: absolute;
+  right: 15px;
+  bottom: 30px;
+  top: 20px;
 }
 
 .main {
@@ -48,8 +53,13 @@
 }
 
 .scrollable-table {
-  overflow-y: auto;
-  height: 100vh;
+  overflow-y: scroll;
+  margin-top: 70px;
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  bottom: 30px;
+  top: 20px;
 }
 
 td.perm {
