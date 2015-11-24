@@ -18,13 +18,4 @@ angular.module('oide.filebrowser', ['smart-table'])
       }
     }
   });
-}])
-
-
-.controller('FilebrowserController', [function(){
-  var self = this;
-  self.show_details = false;
-  self.ShowDetails = function(){
-    self.show_details = true;
-  };
 }]);
