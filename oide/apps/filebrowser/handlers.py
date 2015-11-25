@@ -15,6 +15,8 @@ import oide.settings as global_settings
 import oide.apps.filebrowser.settings as app_settings
 from oide.lib.handlers.base import BaseHandler
 from oide.apps.filebrowser.mixins.fs_mixin import FSMixin
+from os import stat
+from pwd import getpwuid
 
 
 
@@ -188,8 +190,11 @@ class FileTreeHandler(BaseHandler,FSMixin):
                         curr_file['type'] = 'dir'
                     else:
                         curr_file['type'] = 'file'
+                    # Get owner information
+                    owner = getpwuid(stat(i[1]).st_uid).pw_name
                     curr_file['filename'] = i[0]
                     curr_file['filepath'] = i[1]
+                    curr_file['owner'] = owner
                     dir_contents.append(curr_file)
 
             self.write(json.dumps(dir_contents))
@@ -213,8 +218,11 @@ class FileTreeHandler(BaseHandler,FSMixin):
                     curr_file['type'] = 'dir'
                 else:
                     curr_file['type'] = 'file'
+                # Get owner information
+                owner = (getpwuid(filepath).st_uid).pw_name
                 curr_file['filename'] = i[0]
                 curr_file['filepath'] = i[1]
+                curr_file['owner'] = owner
                 dir_contents.append(curr_file)
 
         self.write(json.dumps(dir_contents))

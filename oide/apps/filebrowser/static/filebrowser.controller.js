@@ -18,7 +18,8 @@ angular.module('oide.filebrowser')
 
   self.show_details = false;
   self.ShowDetails = function(selectedFile){
-    self.selectedFile = selectedFile;
+    self.selectedFile = selectedFile.filename;
+    self.selectedFileOwner = selectedFile.owner
     self.show_details = true;
   };
 }])
