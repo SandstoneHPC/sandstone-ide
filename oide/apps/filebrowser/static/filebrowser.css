@@ -47,6 +47,15 @@
   top: 20px;
 }
 
+.filetable-filename {
+  cursor: pointer;
+}
+
+.filetable-filename-selected {
+  color: #93c54b;
+  font-weight: bold;
+}
+
 .main {
   padding-right: 0;
   overflow: hidden;
