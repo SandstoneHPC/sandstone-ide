@@ -21,6 +21,7 @@ angular.module('oide.filebrowser')
     self.selectedFile = selectedFile.filename;
     self.selectedFileOwner = selectedFile.owner
     self.show_details = true;
+    self.currentFileSize = selectedFile.size
   };
 }])
 .factory('FileService', ['$rootScope', function($rootScope){

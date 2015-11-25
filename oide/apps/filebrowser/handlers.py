@@ -191,10 +191,13 @@ class FileTreeHandler(BaseHandler,FSMixin):
                     else:
                         curr_file['type'] = 'file'
                     # Get owner information
-                    owner = getpwuid(stat(i[1]).st_uid).pw_name
+                    stat_object = stat(i[1])
+                    owner = getpwuid(stat_object.st_uid).pw_name
+                    file_size = str((float(stat_object.st_size) / 1024)) + " KiB"
                     curr_file['filename'] = i[0]
                     curr_file['filepath'] = i[1]
                     curr_file['owner'] = owner
+                    curr_file['size'] = file_size
                     dir_contents.append(curr_file)
 
             self.write(json.dumps(dir_contents))
@@ -219,10 +222,13 @@ class FileTreeHandler(BaseHandler,FSMixin):
                 else:
                     curr_file['type'] = 'file'
                 # Get owner information
-                owner = (getpwuid(filepath).st_uid).pw_name
+                stat_object = stat(i[1])
+                owner = getpwuid(stat_object.st_uid).pw_name
+                file_size = str((float(stat_object.st_size) / 1024)) + " KiB"
                 curr_file['filename'] = i[0]
                 curr_file['filepath'] = i[1]
                 curr_file['owner'] = owner
+                curr_file['size'] = file_size
                 dir_contents.append(curr_file)
 
         self.write(json.dumps(dir_contents))
