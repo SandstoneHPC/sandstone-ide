@@ -37,7 +37,7 @@
         	</thead>
         	<tbody>
             <tr ng-repeat="file in ctrl.fileData">
-              <td><i class="fa fa-folder" style="padding-right: 5px;"></i>{{file.filename}}</td>
+              <td><i class="fa" ng-class="{'fa-folder': file.type==='dir', 'fa-file': file.type==='file'}" style="padding-right: 5px;"></i><a ng-click="ctrl.ShowDetails(file.filename)">{{file.filename}}</a></td>
               <td>-</td>
               <td>user</td>
               <td>usergrp</td>
@@ -47,7 +47,7 @@
         </table>
       </div>
       <div class="col-sm-4 file-details" ng-show="ctrl.show_details">
-        <h1>File 1</h1>
+        <h1>{{ctrl.selectedFile}}</h1>
         <hr />
         <div class="row">
           <div class="col-sm-8 col-sm-offset-3">
