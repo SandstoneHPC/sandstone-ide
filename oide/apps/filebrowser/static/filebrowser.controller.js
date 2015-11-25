@@ -17,7 +17,8 @@ angular.module('oide.filebrowser')
   });
 
   self.show_details = false;
-  self.ShowDetails = function(){
+  self.ShowDetails = function(selectedFile){
+    self.selectedFile = selectedFile;
     self.show_details = true;
   };
 }])
