@@ -18,10 +18,10 @@ angular.module('oide.filebrowser')
 
   self.show_details = false;
   self.ShowDetails = function(selectedFile){
-    self.selectedFile = selectedFile.filename;
-    self.selectedFileOwner = selectedFile.owner
+    self.selectedFile = selectedFile;
+    // self.selectedFileOwner = selectedFile.owner
     self.show_details = true;
-    self.currentFileSize = selectedFile.size
+    // self.currentFileSize = selectedFile.size
   };
 }])
 .factory('FileService', ['$rootScope', function($rootScope){

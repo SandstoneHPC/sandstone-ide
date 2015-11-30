@@ -40,14 +40,14 @@
               <td><i class="fa" ng-class="{'fa-folder': file.type==='dir', 'fa-file': file.type==='file'}" style="padding-right: 5px;"></i><span class="filetable-filename" ng-class="{'filetable-filename-selected': file.filename === ctrl.selectedFile}" ng-click="ctrl.ShowDetails(file)">{{file.filename}}</span></td>
               <td>{{ file.size }}</td>
               <td>{{ file.owner }}</td>
-              <td>usergrp</td>
-              <td>drwxrwxr--</td>
+              <td>{{ file.group }}</td>
+              <td>{{ file.perm }}</td>
             </tr>
         	</tbody>
         </table>
       </div>
       <div class="col-sm-4 file-details" ng-show="ctrl.show_details">
-        <h1>{{ctrl.selectedFile}}</h1>
+        <h1>{{ctrl.selectedFile.filename}}</h1>
         <hr />
         <div class="row">
           <div class="col-sm-8 col-sm-offset-3">
@@ -73,7 +73,7 @@
         </div>
 
         <br /> <br /><br /> <br />
-        <p><b>Owner:</b> {{ctrl.selectedFileOwner}}</p>
+        <p><b>Owner:</b> {{ctrl.selectedFile.owner}}</p>
         <br />
         <div class="row">
           <div class="col-sm-3">
@@ -83,25 +83,14 @@
           </div>
           <div class="col-sm-9">
             <div class="row">
-              <p class="col-sm-4">usergrp</p>
+              <!-- Should do ng-repeat here with all groups -->
+              <p class="col-sm-4">{{ ctrl.selectedFile.group }}</p>
               <i class="fa fa-times col-sm-8"></i>
-            </div>
-            <div class="row">
-              <p class="col-sm-4">root</p>
-              <i class="fa fa-times col-sm-8"></i>
-            </div>
-            <div class="row">
-              <p class="col-sm-4">vboxusers</p>
-              <i class="fa fa-times col-sm-8"></i>
-            </div>
-            <div class="row">
-              <p class="col-sm-4"></p>
-              <i class="fa fa-plus col-sm-8"></i>
             </div>
           </div>
       </div>
       <br />
-      <p><b>Size:</b> {{ctrl.currentFileSize}}</p>
+      <p><b>Size:</b> {{ctrl.selectedFile.size}}</p>
       <br />
       <p><b>Permissions:</b> </p>
       <table class="table">

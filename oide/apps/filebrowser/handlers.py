@@ -17,7 +17,8 @@ from oide.lib.handlers.base import BaseHandler
 from oide.apps.filebrowser.mixins.fs_mixin import FSMixin
 from os import stat
 from pwd import getpwuid
-
+from permissions import *
+import grp
 
 
 class LocalFileHandler(BaseHandler,FSMixin):
@@ -198,6 +199,8 @@ class FileTreeHandler(BaseHandler,FSMixin):
                     curr_file['filepath'] = i[1]
                     curr_file['owner'] = owner
                     curr_file['size'] = file_size
+                    curr_file['perm'] = filemode(stat_object[ST_MODE])
+                    curr_file['group'] = grp.getgrgid(stat_object.st_gid).gr_name
                     dir_contents.append(curr_file)
 
             self.write(json.dumps(dir_contents))
@@ -229,6 +232,8 @@ class FileTreeHandler(BaseHandler,FSMixin):
                 curr_file['filepath'] = i[1]
                 curr_file['owner'] = owner
                 curr_file['size'] = file_size
+                curr_file['perm'] = filemode(stat_object[ST_MODE])
+                curr_file['group'] = grp.getgrgid(stat_object.st_gid).gr_name
                 dir_contents.append(curr_file)
 
         self.write(json.dumps(dir_contents))
