@@ -16,12 +16,105 @@ angular.module('oide.filebrowser')
     self.currentDirectory = newValue;
   });
 
+  self.populatePermissions = function() {
+    // Perm sting looks like 644, 755 etc
+    // Split it into its consituents
+    var perm_array = self.selectedFile.perm_string.split('')
+    // Permissions object for current file
+    self.currentFilePermissions = {
+      'user': {
+        'r': false,
+        'w': false,
+        'x': false
+      },
+      'group': {
+        'r': false,
+        'w': false,
+        'x': false
+      },
+      'others': {
+        'r': false,
+        'w': false,
+        'x': false
+      }
+    };
+
+    // TODO: Iterate over object and do in one loop instead of 3
+
+    // User Permissions
+    if(perm_array[0] == "7") {
+      self.currentFilePermissions['user']['r'] = true;
+      self.currentFilePermissions['user']['w'] = true;
+      self.currentFilePermissions['user']['x'] = true;
+    } else if(perm_array[0] == "6") {
+      self.currentFilePermissions['user']['r'] = true;
+      self.currentFilePermissions['user']['w'] = true;
+    } else if(perm_array[0] == "5") {
+      self.currentFilePermissions['user']['r'] = true;
+      self.currentFilePermissions['user']['x'] = true;
+    } else if(perm_array[0] == "4") {
+      self.currentFilePermissions['user']['r'] = true;
+    } else if(perm_array[0] == "3") {
+      self.currentFilePermissions['user']['w'] = true;
+      self.currentFilePermissions['user']['x'] = true;
+    } else if(perm_array[0] == "2") {
+      self.currentFilePermissions['user']['w'] = true;
+    } else if(perm_array[0] == "1") {
+      self.currentFilePermissions['user']['x'] = true;
+    }
+
+    // Group Permissions
+    if(perm_array[1] == "7") {
+      self.currentFilePermissions['group']['r'] = true;
+      self.currentFilePermissions['group']['w'] = true;
+      self.currentFilePermissions['group']['x'] = true;
+    } else if(perm_array[1] == "6") {
+      self.currentFilePermissions['group']['r'] = true;
+      self.currentFilePermissions['group']['w'] = true;
+    } else if(perm_array[1] == "5") {
+      self.currentFilePermissions['group']['r'] = true;
+      self.currentFilePermissions['group']['x'] = true;
+    } else if(perm_array[1] == "4") {
+      self.currentFilePermissions['group']['r'] = true;
+    } else if(perm_array[1] == "3") {
+      self.currentFilePermissions['group']['w'] = true;
+      self.currentFilePermissions['group']['x'] = true;
+    } else if(perm_array[1] == "2") {
+      self.currentFilePermissions['group']['w'] = true;
+    } else if(perm_array[1] == "1") {
+      self.currentFilePermissions['group']['x'] = true;
+    }
+
+    // Others Permissions
+    if(perm_array[2] == "7") {
+      self.currentFilePermissions['others']['r'] = true;
+      self.currentFilePermissions['others']['w'] = true;
+      self.currentFilePermissions['others']['x'] = true;
+    } else if(perm_array[2] == "6") {
+      self.currentFilePermissions['others']['r'] = true;
+      self.currentFilePermissions['others']['w'] = true;
+    } else if(perm_array[2] == "5") {
+      self.currentFilePermissions['others']['r'] = true;
+      self.currentFilePermissions['others']['x'] = true;
+    } else if(perm_array[2] == "4") {
+      self.currentFilePermissions['others']['r'] = true;
+    } else if(perm_array[2] == "3") {
+      self.currentFilePermissions['others']['w'] = true;
+      self.currentFilePermissions['others']['x'] = true;
+    } else if(perm_array[2] == "2") {
+      self.currentFilePermissions['others']['w'] = true;
+    } else if(perm_array[2] == "1") {
+      self.currentFilePermissions['others']['x'] = true;
+    }
+  };
+
   self.show_details = false;
   self.ShowDetails = function(selectedFile){
     self.selectedFile = selectedFile;
-    // self.selectedFileOwner = selectedFile.owner
     self.show_details = true;
-    // self.currentFileSize = selectedFile.size
+    // Set the permissions for the file
+    self.populatePermissions();
+
   };
 }])
 .factory('FileService', ['$rootScope', function($rootScope){
@@ -29,7 +122,6 @@ angular.module('oide.filebrowser')
   var currentDirectory = [];
   var setFileData = function(data) {
     fileData = data;
-    // $rootScope.$apply();
   };
 
   var getFileData = function(){
