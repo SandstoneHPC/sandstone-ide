@@ -108,13 +108,13 @@
               user
             </td>
             <td class="perm">
-              <input type="checkbox">
+              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.user.r">
             </td>
             <td class="perm">
-              <input type="checkbox">
+              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.user.w">
             </td>
             <td class="perm">
-              <input type="checkbox">
+              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.user.x">
             </td>
           </tr>
           <tr>
@@ -122,13 +122,13 @@
               group
             </td>
             <td class="perm">
-              <input type="checkbox">
+              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.group.r">
             </td>
             <td class="perm">
-              <input type="checkbox">
+              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.group.w">
             </td>
             <td class="perm">
-              <input type="checkbox">
+              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.group.x">
             </td>
           </tr>
           <tr>
@@ -136,13 +136,13 @@
               other
             </td>
             <td class="perm">
-              <input type="checkbox">
+              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.others.r">
             </td>
             <td class="perm">
-              <input type="checkbox">
+              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.others.w">
             </td>
             <td class="perm">
-              <input type="checkbox">
+              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.others.x">
             </td>
           </tr>
         </tbody>
