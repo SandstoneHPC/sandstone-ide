@@ -14,7 +14,7 @@
         <!-- <li><a href="#">/</a></li>
         <li><a href="#">home</a></li>
         <li class="active">saurabh</li> -->
-        <li ng-repeat="pathComponent in ctrl.currentDirectory" ng-class="{active: $last}">{{pathComponent}}</li>
+        <li ng-click="ctrl.changeDir($index)" ng-repeat="pathComponent in ctrl.currentDirectory" ng-class="{active: $last}">{{pathComponent}}</li>
         <div class="directory-options">
             <i class="fa fa-2x fa-users dir-option"></i>
             <i class="fa fa-2x fa-file-o dir-option"></i>
@@ -88,7 +88,7 @@
               <i class="fa fa-times col-sm-8"></i>
             </div>
             <div class="row">
-              <p class="col-sm-4"></p>		
+              <p class="col-sm-4"></p>
               <i class="fa fa-plus col-sm-8"></i>
             </div>
           </div>

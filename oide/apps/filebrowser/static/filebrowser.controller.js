@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('oide.filebrowser')
-.controller('FilebrowserController', ['FBFiletreeService', '$rootScope', 'FileService', '$scope', function(FiletreeService, $rootScope, FileService, $scope){
+.controller('FilebrowserController', ['FBFiletreeService', '$rootScope', 'FileService', '$scope', 'FilesystemService', function(FiletreeService, $rootScope, FileService, $scope, FilesystemService){
   var self = this;
 
   $scope.$watch(function(){
@@ -15,6 +15,26 @@ angular.module('oide.filebrowser')
     }, function (newValue) {
     self.currentDirectory = newValue;
   });
+
+  self.changeDir = function(index) {
+    // Form path
+    var path = ""
+    var i = 0;
+    for(var pathComponent in self.currentDirectory) {
+      if(self.currentDirectory[pathComponent] != '/')
+        path = path + "/" + self.currentDirectory[pathComponent];
+      if(i == index) {
+        break;
+      }
+      i++;
+    }
+    path += "/";
+    console.log(path);
+    FilesystemService.getFiles({'filepath': path}, function(data, status, headers, config){
+      self.fileData = data;
+      FileService.setCurrentDirectory(path);
+    });
+  };
 
   self.populatePermissions = function() {
     // Perm sting looks like 644, 755 etc
