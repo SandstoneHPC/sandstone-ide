@@ -8,6 +8,7 @@ angular.module('oide.filebrowser')
       return FileService.getFileData();
     }, function (newValue) {
     self.fileData = newValue;
+    self.displayData = [].concat(self.fileData);
   });
 
   $scope.$watch(function(){
@@ -15,6 +16,16 @@ angular.module('oide.filebrowser')
     }, function (newValue) {
     self.currentDirectory = newValue;
   });
+
+  self.getters={
+    filename: function (value) {
+        //this will sort by the length of the first name string
+        return value.filename;
+    },
+    size: function(value) {
+      return parseFloat(value.size.split()[0]);
+    }
+  };
 
   self.changeDir = function(index) {
     // Form path
@@ -29,7 +40,6 @@ angular.module('oide.filebrowser')
       i++;
     }
     path += "/";
-    console.log(path);
     FilesystemService.getFiles({'filepath': path}, function(data, status, headers, config){
       self.fileData = data;
       FileService.setCurrentDirectory(path);

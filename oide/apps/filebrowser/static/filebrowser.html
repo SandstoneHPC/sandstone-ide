@@ -25,18 +25,18 @@
     </div>
     <div class="row">
       <div ng-class="{'col-sm-8 scrollable-table': ctrl.show_details, 'col-sm-12 scrollable-table': !ctrl.show_details}">
-        <table st-table="rowCollection" class="table">
+        <table st-table="ctrl.displayData" st-safe-src="ctrl.fileData" class="table">
         	<thead>
         	<tr>
-        		<th>Name</th>
-        		<th>Size</th>
+        		<th st-sort="ctrl.getters.filename" st-sort-default="true">Name</th>
+        		<th st-sort="ctrl.getters.size">Size</th>
         		<th>Owner</th>
         		<th>Group</th>
         		<th>Permissions</th>
         	</tr>
         	</thead>
         	<tbody>
-            <tr ng-repeat="file in ctrl.fileData">
+            <tr ng-repeat="file in ctrl.displayData">
               <td><i class="fa" ng-class="{'fa-folder': file.type==='dir', 'fa-file': file.type==='file'}" style="padding-right: 5px;"></i><span class="filetable-filename" ng-class="{'filetable-filename-selected': file.filename === ctrl.selectedFile}" ng-click="ctrl.ShowDetails(file)">{{file.filename}}</span></td>
               <td>{{ file.size }}</td>
               <td>{{ file.owner }}</td>
