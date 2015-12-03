@@ -27,6 +27,11 @@ angular.module('oide.filebrowser')
     }
   };
 
+  // Get groups
+  FilesystemService.getGroups(function(data, status, headers, config){
+    self.groups = data;
+  });
+
   self.changeDir = function(index) {
     // Form path
     var path = ""
@@ -144,6 +149,14 @@ angular.module('oide.filebrowser')
     self.show_details = true;
     // Set the permissions for the file
     self.populatePermissions();
+  };
+
+  self.changeGroup = function(){
+    var group_name = self.selectedFile.group
+    var filepath = self.selectedFile.filepath
+    FilesystemService.changeGroup(filepath, group_name, function(data, status, headers, config){
+      console.log(data);
+    });
   };
 
   self.changePermissions = function() {

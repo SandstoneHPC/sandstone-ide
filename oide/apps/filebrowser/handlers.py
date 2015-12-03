@@ -120,6 +120,9 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
                     newFilePath = ''.join([filepath,'-duplicate%s'%index])
                 fileExists = self.fs.file_exists(newFilePath)
             self.write({'result':newFilePath})
+        if operation == "GET_GROUPS":
+            res = self.fs.get_groups()
+            self.write(json.dumps(res))
 
     @oide.lib.decorators.authenticated
     def post(self):
@@ -144,6 +147,11 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
             result = self.fs.make_executable(filepath)
         elif operation=='CHANGE_PERMISSIONS':
             result = self.change_permissions()
+        elif operation == 'CHANGE_GROUP':
+            filepath = self.get_argument('filepath')
+            group = self.get_argument('group')
+            self.fs.change_group(filepath, group)
+            result = "Changed Group"
         self.write({'result':result})
 
     @oide.lib.decorators.authenticated

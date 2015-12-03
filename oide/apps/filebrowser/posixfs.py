@@ -5,6 +5,8 @@ import pwd
 import shutil
 import logging
 import oide.apps.filebrowser.settings as app_settings
+import grp
+import subprocess
 
 
 
@@ -124,3 +126,16 @@ class PosixFS():
     @staticmethod
     def change_permisions(filepath, perm_string):
         os.chmod(filepath, int(perm_string, 8))
+
+    @staticmethod
+    def get_groups():
+        return subprocess.check_output(["id", "--name", "-G"]).strip().split()
+
+    @staticmethod
+    def change_group(filepath, group_name):
+        # Get uid
+        uid = os.stat(filepath).st_uid
+        # Get GID of new group
+        gid = grp.getgrnam(group_name).gr_gid
+        # change group
+        os.chown(filepath, uid, gid)
