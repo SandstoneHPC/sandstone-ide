@@ -17,7 +17,7 @@ angular.module('oide.filebrowser')
     self.currentDirectory = newValue;
   });
 
-  self.getters={
+  self.getters = {
     filename: function (value) {
         //this will sort by the length of the first name string
         return value.filename;
@@ -144,8 +144,38 @@ angular.module('oide.filebrowser')
     self.show_details = true;
     // Set the permissions for the file
     self.populatePermissions();
-
   };
+
+  self.changePermissions = function() {
+    // Form permissions object
+    var perms = ["0"];
+    var keys = ['user', 'group', 'others'];
+    for(var index in keys) {
+      var perm = 0;
+      var key = keys[index]
+      if(self.currentFilePermissions[key]['r']) {
+        perm += 4;
+      }
+      if(self.currentFilePermissions[key]['w']) {
+        perm += 2;
+      }
+      if(self.currentFilePermissions[key]['x']) {
+        perm += 1;
+      }
+      perms.push("" + perm);
+    }
+    // console.log(perms);
+    // Change Permissions with FilesystemService
+    FilesystemService.changePermissions(self.selectedFile.filepath, perms.join(""), function(data, status, headers, config){
+      //Refresh the File table
+      console.log(data);
+      var path = "/" + self.currentDirectory.slice(1).join("/");
+      FilesystemService.getFiles({filepath: path}, function(data, status, headers, config){
+        self.fileData = data;
+      });
+    });
+  };
+
 }])
 .factory('FileService', ['$rootScope', function($rootScope){
   var fileData;

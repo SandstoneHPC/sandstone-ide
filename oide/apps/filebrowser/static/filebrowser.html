@@ -112,13 +112,13 @@
               user
             </td>
             <td class="perm">
-              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.user.r">
+              <input type="checkbox" ng-model="ctrl.currentFilePermissions['user']['r']" ng-click="ctrl.changePermissions()" ng-checked="ctrl.currentFilePermissions.user.r">
             </td>
             <td class="perm">
-              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.user.w">
+              <input type="checkbox" ng-model="ctrl.currentFilePermissions['user']['w']" ng-click="ctrl.changePermissions()" ng-checked="ctrl.currentFilePermissions.user.w">
             </td>
             <td class="perm">
-              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.user.x">
+              <input type="checkbox"  ng-model="ctrl.currentFilePermissions['user']['x']" ng-click="ctrl.changePermissions()" ng-checked="ctrl.currentFilePermissions.user.x">
             </td>
           </tr>
           <tr>
@@ -126,13 +126,13 @@
               group
             </td>
             <td class="perm">
-              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.group.r">
+              <input type="checkbox" ng-model="ctrl.currentFilePermissions['group']['r']" ng-click="ctrl.changePermissions()" ng-checked="ctrl.currentFilePermissions.group.r">
             </td>
             <td class="perm">
-              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.group.w">
+              <input type="checkbox" ng-model="ctrl.currentFilePermissions['group']['w']" ng-click="ctrl.changePermissions()" ng-checked="ctrl.currentFilePermissions.group.w">
             </td>
             <td class="perm">
-              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.group.x">
+              <input type="checkbox" ng-model="ctrl.currentFilePermissions['group']['x']" ng-click="ctrl.changePermissions()" ng-checked="ctrl.currentFilePermissions.group.x">
             </td>
           </tr>
           <tr>
@@ -140,13 +140,13 @@
               other
             </td>
             <td class="perm">
-              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.others.r">
+              <input type="checkbox" ng-model="ctrl.currentFilePermissions['others']['r']" ng-click="ctrl.changePermissions()" ng-checked="ctrl.currentFilePermissions.others.r">
             </td>
             <td class="perm">
-              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.others.w">
+              <input type="checkbox" ng-model="ctrl.currentFilePermissions['others']['w']" ng-click="ctrl.changePermissions()" ng-checked="ctrl.currentFilePermissions.others.w">
             </td>
             <td class="perm">
-              <input type="checkbox" ng-checked="ctrl.currentFilePermissions.others.x">
+              <input type="checkbox" ng-model="ctrl.currentFilePermissions['others']['x']" ng-click="ctrl.changePermissions()" ng-checked="ctrl.currentFilePermissions.others.x">
             </td>
           </tr>
         </tbody>
