@@ -76,21 +76,15 @@
         <p><b>Owner:</b> {{ctrl.selectedFile.owner}}</p>
         <br />
         <div class="row">
-          <div class="col-sm-3">
+          <div class="col-sm-2">
             <p>
               <b>Groups:</b>
             </p>
           </div>
           <div class="col-sm-9">
-            <div class="row">
-              <!-- Should do ng-repeat here with all groups -->
-              <p class="col-sm-4">{{ ctrl.selectedFile.group }}</p>
-              <i class="fa fa-times col-sm-8"></i>
-            </div>
-            <div class="row">
-              <p class="col-sm-4"></p>
-              <i class="fa fa-plus col-sm-8"></i>
-            </div>
+            <select name="select" ng-model="ctrl.selectedFile.group" ng-change="ctrl.changeGroup()">
+              <option ng-repeat="group in ctrl.groups">{{group}}</option>
+            </select>
           </div>
       </div>
       <br />

@@ -182,6 +182,36 @@ angular.module('oide.filesystemservice', [])
       .success(function(data, status, headers, config){
         callback(data, status, headers, config);
       });
+    },
+    // Get List of Groups
+    getGroups: function(callback) {
+      $http({
+        url: '/filebrowser/a/fileutil',
+        method: 'GET',
+        params: {
+          _xsrf:getCookie('_xsrf'),
+          operation: 'GET_GROUPS',
+        }
+      })
+      .success(function(data, status, headers, config){
+        callback(data, status, headers, config);
+      });
+    },
+    // Change Group
+    changeGroup: function(filepath, group, callback) {
+      $http({
+        url: '/filebrowser/a/fileutil',
+        method: 'POST',
+        params: {
+          _xsrf:getCookie('_xsrf'),
+          operation: 'CHANGE_GROUP',
+          filepath: filepath,
+          group: group
+        }
+      })
+      .success(function(data, status, headers, config){
+        callback(data, status, headers, config);
+      });
     }
-  }
+  };
 }]);
