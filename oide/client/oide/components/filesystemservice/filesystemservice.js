@@ -166,6 +166,22 @@ angular.module('oide.filesystemservice', [])
         .success(function(data, status, headers, config){
           callback(data, status, headers, config);
         });
+    },
+    // Change Permissions
+    changePermissions: function(filepath, permissionString, callback) {
+      $http({
+        url: '/filebrowser/a/fileutil',
+        method: 'POST',
+        params: {
+          _xsrf:getCookie('_xsrf'),
+          operation: 'CHANGE_PERMISSIONS',
+          permissions: permissionString,
+          filepath: filepath
+        }
+      })
+      .success(function(data, status, headers, config){
+        callback(data, status, headers, config);
+      });
     }
   }
 }]);

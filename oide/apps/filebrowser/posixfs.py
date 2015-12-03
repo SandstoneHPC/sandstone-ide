@@ -120,3 +120,7 @@ class PosixFS():
                 continue
             contents.append( ( i,filepath,is_dir ) )
         return contents
+
+    @staticmethod
+    def change_permisions(filepath, perm_string):
+        os.chmod(filepath, int(perm_string, 8))

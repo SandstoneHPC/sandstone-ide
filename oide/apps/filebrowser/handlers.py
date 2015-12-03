@@ -142,8 +142,17 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
         elif operation=='MAKE_EXEC':
             filepath = self.get_argument('filepath')
             result = self.fs.make_executable(filepath)
-
+        elif operation=='CHANGE_PERMISSIONS':
+            result = self.change_permissions()
         self.write({'result':result})
+
+    @oide.lib.decorators.authenticated
+    def change_permissions(self):
+        perm_string = self.get_argument('permissions')
+        filepath = self.get_argument('filepath')
+        self.fs.change_permisions(filepath, perm_string)
+        result = "Changed permission of ", filepath, " to ", perm_string
+        return result
 
 class FilesystemUploadHandler(BaseHandler,FSMixin):
 
