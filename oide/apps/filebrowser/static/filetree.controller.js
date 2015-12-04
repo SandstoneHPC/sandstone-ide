@@ -29,6 +29,10 @@ angular.module('oide.filebrowser')
   self.gotFiles = function(data, status, headers, config) {
     FileService.setFileData(data);
   };
+  self.gotRootDirectory = function(data, status, headers, config) {
+    var rootDirectory = data.result;
+    FileService.setRootDirectory(rootDirectory);
+  };
   self.describeSelection = function (node, selected) {
     if (self.treeOptions.multiSelection === false) {
       if (selected) {
@@ -37,6 +41,8 @@ angular.module('oide.filebrowser')
         FileService.setCurrentDirectory(node.filepath);
         // Get the list of files from FilesystemService
         FilesystemService.getFiles(node, self.gotFiles);
+        // Get Root Directory
+        FilesystemService.getRootDirectory(node.filepath, self.gotRootDirectory);
       } else {
         self.treeData.selectedNodes = [];
       }

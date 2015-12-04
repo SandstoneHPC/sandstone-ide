@@ -123,6 +123,15 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
         if operation == "GET_GROUPS":
             res = self.fs.get_groups()
             self.write(json.dumps(res))
+        if operation == "GET_ROOT_DIR":
+            list_of_root_dirs = self.fs.list_root_paths(self.current_user)
+            dirpath = self.get_argument('filepath')
+            root_dir = ""
+            for root in list_of_root_dirs:
+                if dirpath.startswith(root):
+                    root_dir = root
+                    break
+            self.write({'result': root_dir})
 
     @oide.lib.decorators.authenticated
     def post(self):

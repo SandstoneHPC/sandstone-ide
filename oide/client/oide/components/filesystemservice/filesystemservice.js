@@ -212,6 +212,21 @@ angular.module('oide.filesystemservice', [])
       .success(function(data, status, headers, config){
         callback(data, status, headers, config);
       });
+    },
+    // Get Root Directory for given filepath
+    getRootDirectory: function(filepath, callback) {
+      $http({
+        url: '/filebrowser/a/fileutil',
+        method: 'GET',
+        params: {
+          _xsrf:getCookie('_xsrf'),
+          operation: 'GET_ROOT_DIR',
+          filepath: filepath
+        }
+      })
+      .success(function(data, status, headers, config){
+        callback(data, status, headers, config);
+      });
     }
   };
 }]);
