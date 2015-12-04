@@ -17,6 +17,12 @@ angular.module('oide.filebrowser')
     self.currentDirectory = newValue;
   });
 
+  $scope.$watch(function(){
+      return FileService.getRootDirectory();
+    }, function (newValue) {
+    self.rootDirectory = newValue;
+  });
+
   self.getters = {
     filename: function (value) {
         //this will sort by the length of the first name string
@@ -45,6 +51,9 @@ angular.module('oide.filebrowser')
       i++;
     }
     path += "/";
+    if(!self.isNavigatable(index)) {
+      return;
+    }
     FilesystemService.getFiles({'filepath': path}, function(data, status, headers, config){
       self.fileData = data;
       FileService.setCurrentDirectory(path);
@@ -159,6 +168,10 @@ angular.module('oide.filebrowser')
     });
   };
 
+  self.isNavigatable = function(index) {
+    return index >= self.rootDirectory.length - 1;
+  };
+
   self.changePermissions = function() {
     // Form permissions object
     var perms = ["0"];
@@ -188,11 +201,11 @@ angular.module('oide.filebrowser')
       });
     });
   };
-
 }])
 .factory('FileService', ['$rootScope', function($rootScope){
   var fileData;
   var currentDirectory = [];
+  var root_dir = []
   var setFileData = function(data) {
     fileData = data;
   };
@@ -213,10 +226,24 @@ angular.module('oide.filebrowser')
     currentDirectory.splice(-1)
   };
 
+  var setRootDirectory = function(rootDirectory) {
+    root_dir = rootDirectory.split("/")
+    // Current Directory Path should be '/'
+    root_dir[0] = "/";
+    // Last component will be blank and needs to be spliced
+    root_dir.splice(-1)
+  };
+
+  var getRootDirectory = function() {
+    return root_dir;
+  };
+
   return {
     setFileData: setFileData,
     getFileData: getFileData,
     setCurrentDirectory: setCurrentDirectory,
-    getCurrentDirectory: getCurrentDirectory
+    getCurrentDirectory: getCurrentDirectory,
+    setRootDirectory: setRootDirectory,
+    getRootDirectory: getRootDirectory
   };
 }]);
