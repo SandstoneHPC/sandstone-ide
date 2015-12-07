@@ -145,4 +145,6 @@ class PosixFS():
         df = subprocess.Popen(['df', filepath], stdout=subprocess.PIPE)
         output = df.communicate()[0]
         device, size, used, available, percent, mountpoint = output.split("\n")[1].split()
-        return float(percent.strip('%'))
+        size = int(size) / (1024 * 1024)
+        used = int(used) / (1024 * 1024)
+        return {'percent': float(percent.strip('%')), 'used': used, 'size': size}
