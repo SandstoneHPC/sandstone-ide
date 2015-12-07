@@ -26,8 +26,19 @@ angular.module('oide.filebrowser')
   $scope.$watch(function(){
       return FileService.getVolumeInfo();
     }, function (newValue) {
-    self.volumeInfo = newValue;
+      if(typeof newValue != 'undefined') {
+        self.volumeInfo = newValue.percent;
+        self.volumeUsed = newValue.used;
+        self.volumeSize = newValue.size;
+      }
   });
+
+  self.showVolumeInfo = function() {
+    if(typeof self.volumeUsed == 'undefined') {
+      return false;
+    }
+    return true;
+  }
 
   self.getters = {
     filename: function (value) {
