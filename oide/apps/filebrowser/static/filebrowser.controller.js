@@ -23,6 +23,12 @@ angular.module('oide.filebrowser')
     self.rootDirectory = newValue;
   });
 
+  $scope.$watch(function(){
+      return FileService.getVolumeInfo();
+    }, function (newValue) {
+    self.volumeInfo = newValue;
+  });
+
   self.getters = {
     filename: function (value) {
         //this will sort by the length of the first name string
@@ -205,7 +211,8 @@ angular.module('oide.filebrowser')
 .factory('FileService', ['$rootScope', function($rootScope){
   var fileData;
   var currentDirectory = [];
-  var root_dir = []
+  var root_dir = [];
+  var volume_info;
   var setFileData = function(data) {
     fileData = data;
   };
@@ -216,6 +223,10 @@ angular.module('oide.filebrowser')
 
   var getCurrentDirectory = function() {
     return currentDirectory;
+  };
+
+  var getVolumeInfo = function() {
+    return volume_info;
   };
 
   var setCurrentDirectory = function(filepath) {
@@ -234,6 +245,10 @@ angular.module('oide.filebrowser')
     root_dir.splice(-1)
   };
 
+  var setVolumeInfo = function(volumeInfo) {
+    volume_info = volumeInfo;
+  };
+
   var getRootDirectory = function() {
     return root_dir;
   };
@@ -244,6 +259,8 @@ angular.module('oide.filebrowser')
     setCurrentDirectory: setCurrentDirectory,
     getCurrentDirectory: getCurrentDirectory,
     setRootDirectory: setRootDirectory,
-    getRootDirectory: getRootDirectory
+    getRootDirectory: getRootDirectory,
+    setVolumeInfo: setVolumeInfo,
+    getVolumeInfo: getVolumeInfo
   };
 }]);

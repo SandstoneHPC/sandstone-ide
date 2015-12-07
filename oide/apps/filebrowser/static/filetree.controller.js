@@ -33,6 +33,12 @@ angular.module('oide.filebrowser')
     var rootDirectory = data.result;
     FileService.setRootDirectory(rootDirectory);
   };
+
+  self.gotVolumeInfo = function(data, status, headers, config) {
+    var volumeInfo = data.result;
+    FileService.setVolumeInfo(volumeInfo);
+  };
+
   self.describeSelection = function (node, selected) {
     if (self.treeOptions.multiSelection === false) {
       if (selected) {
@@ -43,6 +49,7 @@ angular.module('oide.filebrowser')
         FilesystemService.getFiles(node, self.gotFiles);
         // Get Root Directory
         FilesystemService.getRootDirectory(node.filepath, self.gotRootDirectory);
+        FilesystemService.getVolumeInfo(node.filepath, self.gotVolumeInfo);
       } else {
         self.treeData.selectedNodes = [];
       }
