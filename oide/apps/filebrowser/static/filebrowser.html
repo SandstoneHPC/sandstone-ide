@@ -2,8 +2,8 @@
   <div class="filetree-container col-sm-4 col-md-3 sidebar side">
     <div class="row volume-info">
       Volume Info
-      <div class="progress progressbar">
-        <div class="progress-bar" style="width: 80%"></div>
+      <div class="progress">
+        <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="{{ctrl.volumeInfo}}" aria-valuemin="0" aria-valuemax="20" ng-style="{width: ctrl.volumeInfo + '%'}"></div>
       </div>
     </div>
     <div ui-view="filetree"></div>

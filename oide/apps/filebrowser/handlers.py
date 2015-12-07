@@ -132,6 +132,10 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
                     root_dir = root
                     break
             self.write({'result': root_dir})
+        if operation == 'GET_VOLUME_INFO':
+            filepath = self.get_argument('filepath')
+            res = self.fs.get_volume_info(filepath)
+            self.write(json.dumps({'result': res}))
 
     @oide.lib.decorators.authenticated
     def post(self):

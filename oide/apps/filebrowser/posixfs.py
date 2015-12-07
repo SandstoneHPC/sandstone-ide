@@ -139,3 +139,10 @@ class PosixFS():
         gid = grp.getgrnam(group_name).gr_gid
         # change group
         os.chown(filepath, uid, gid)
+
+    @staticmethod
+    def get_volume_info(filepath):
+        df = subprocess.Popen(['df', filepath], stdout=subprocess.PIPE)
+        output = df.communicate()[0]
+        device, size, used, available, percent, mountpoint = output.split("\n")[1].split()
+        return float(percent.strip('%'))
