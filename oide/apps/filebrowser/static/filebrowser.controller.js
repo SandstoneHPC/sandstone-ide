@@ -84,6 +84,7 @@ angular.module('oide.filebrowser')
       self.selectedFile = "";
       self.show_details = false;
       self.refreshDirectory();
+      FiletreeService.updateFiletree();
     });
   };
 
@@ -105,6 +106,7 @@ angular.module('oide.filebrowser')
       // Post back new file to backend
       FilesystemService.createNewDir(newFolderPath, function(data){
         self.refreshDirectory();
+        FiletreeService.updateFiletree();
       });
     });
   };
