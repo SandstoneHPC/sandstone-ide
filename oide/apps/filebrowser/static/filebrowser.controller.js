@@ -65,6 +65,15 @@ angular.module('oide.filebrowser')
     });
   };
 
+  self.duplicateFile = function(){
+    FilesystemService.getNextDuplicate(self.selectedFile.filepath, function(data){
+      FilesystemService.duplicateFile(data.originalFile, data.result, function(data){
+        // Refresh Filetree
+        self.refreshDirectory();
+      });
+    });
+  };
+
   self.showVolumeInfo = function() {
     if(typeof self.volumeUsed == 'undefined') {
       return false;
@@ -86,6 +95,23 @@ angular.module('oide.filebrowser')
   FilesystemService.getGroups(function(data, status, headers, config){
     self.groups = data;
   });
+
+  self.refreshDirectory = function() {
+    // Form path
+    var path = "";
+    var dirpath = "";
+    var i = 0;
+    for(var pathComponent in self.currentDirectory) {
+      if(self.currentDirectory[pathComponent] != '/')
+        path = path + "/" + self.currentDirectory[pathComponent];
+      i++;
+    }
+    path += "/";
+    dirpath = path;
+    FilesystemService.getFiles({'filepath': dirpath}, function(data){
+      self.fileData = data;
+    });
+  }
 
   self.changeDir = function(index) {
     // Form path
