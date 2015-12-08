@@ -38,10 +38,9 @@ angular.module('oide.filebrowser')
     self.isCopied = true;
   };
 
-  self.pasteFile = function() {
+  self.formDirPath = function() {
     // Form path
     var path = "";
-    var dirpath = "";
     var i = 0;
     for(var pathComponent in self.currentDirectory) {
       if(self.currentDirectory[pathComponent] != '/')
@@ -49,7 +48,13 @@ angular.module('oide.filebrowser')
       i++;
     }
     path += "/";
-    dirpath = path;
+    return path;
+  };
+
+  self.pasteFile = function() {
+    // Form path
+    var path = self.formDirPath();
+    var dirpath = path;
 
     if(self.copiedFile.type == "dir") {
       path += self.copiedFile.filename;
@@ -79,6 +84,28 @@ angular.module('oide.filebrowser')
       self.selectedFile = "";
       self.show_details = false;
       self.refreshDirectory();
+    });
+  };
+
+  self.createNewFile = function() {
+    var path = self.formDirPath();
+    FilesystemService.getNextUntitledFile(path, function(data){
+      var newFilePath = data.result;
+      // Post back new file to backend
+      FilesystemService.createNewFile(newFilePath, function(data){
+        self.refreshDirectory();
+      });
+    });
+  };
+
+  self.createNewDirectory = function() {
+    var path = self.formDirPath();
+    FilesystemService.getNextUntitledFile(path, function(data){
+      var newFolderPath = data.result;
+      // Post back new file to backend
+      FilesystemService.createNewDir(newFolderPath, function(data){
+        self.refreshDirectory();
+      });
     });
   };
 
