@@ -32,6 +32,38 @@ angular.module('oide.filebrowser')
         self.volumeSize = newValue.size;
       }
   });
+  self.isCopied = false;
+  self.copyFile = function() {
+    self.copiedFile = self.selectedFile;
+    self.isCopied = true;
+  };
+
+  self.pasteFile = function() {
+    // Form path
+    var path = "";
+    var dirpath = "";
+    var i = 0;
+    for(var pathComponent in self.currentDirectory) {
+      if(self.currentDirectory[pathComponent] != '/')
+        path = path + "/" + self.currentDirectory[pathComponent];
+      i++;
+    }
+    path += "/";
+    dirpath = path;
+
+    if(self.copiedFile.type == "dir") {
+      path += self.copiedFile.filename;
+    }
+
+    FilesystemService.pasteFile(self.copiedFile.filepath, path, function(data){
+      console.log(data);
+      FilesystemService.getFiles({'filepath': dirpath}, function(data){
+        self.fileData = data;
+        self.isCopied = false;
+        self.copiedFile = "";
+      });
+    });
+  };
 
   self.showVolumeInfo = function() {
     if(typeof self.volumeUsed == 'undefined') {
