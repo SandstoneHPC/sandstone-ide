@@ -25,10 +25,10 @@
               <button type="button" class="btn btn-default" tooltip="Upload">
                 <i class="fa fa-2x fa-upload dir-option"></i>
               </button>
-              <button type="button" class="btn btn-default" tooltip="New File">
+              <button type="button" ng-click="ctrl.createNewFile()" ng-disabled="ctrl.currentDirectory.length == 0" class="btn btn-default" tooltip="New File">
                 <i class="fa fa-2x fa-file-o dir-option"></i>
               </button>
-              <button type="button" class="btn btn-default" tooltip="New Directory">
+              <button type="button" ng-click="ctrl.createNewDirectory()" ng-disabled="ctrl.currentDirectory.length == 0"  class="btn btn-default" tooltip="New Directory">
                 <i class="fa fa-2x fa-folder-o dir-option"></i>
               </button>
             </div>
