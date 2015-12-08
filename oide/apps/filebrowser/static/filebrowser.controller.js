@@ -74,6 +74,14 @@ angular.module('oide.filebrowser')
     });
   };
 
+  self.deleteFile = function() {
+    FilesystemService.deleteFile(self.selectedFile.filepath, function(data){
+      self.selectedFile = "";
+      self.show_details = false;
+      self.refreshDirectory();
+    });
+  };
+
   self.showVolumeInfo = function() {
     if(typeof self.volumeUsed == 'undefined') {
       return false;
