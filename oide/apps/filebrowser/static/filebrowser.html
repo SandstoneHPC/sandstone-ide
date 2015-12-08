@@ -17,10 +17,22 @@
         <li class="active">saurabh</li> -->
         <li ng-click="ctrl.changeDir($index)" ng-repeat="pathComponent in ctrl.currentDirectory" ng-class="{active: $last}">{{pathComponent}}</li>
         <div class="directory-options">
-            <i class="fa fa-2x fa-users dir-option"></i>
-            <i class="fa fa-2x fa-file-o dir-option"></i>
-            <i class="fa fa-2x fa-folder-o dir-option"></i>
-            <i class="fa fa-2x fa-upload dir-option"></i>
+          <div class="btn-toolbar" role="toolbar">
+            <div class="btn-group btn-group-sm" role="group">
+              <button type="button" class="btn btn-default" tooltip="Paste">
+                <i class="fa fa-2x fa-paste dir-option"></i>
+              </button>
+              <button type="button" class="btn btn-default" tooltip="Upload">
+                <i class="fa fa-2x fa-upload dir-option"></i>
+              </button>
+              <button type="button" class="btn btn-default" tooltip="New File">
+                <i class="fa fa-2x fa-file-o dir-option"></i>
+              </button>
+              <button type="button" class="btn btn-default" tooltip="New Directory">
+                <i class="fa fa-2x fa-folder-o dir-option"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </ol>
     </div>
@@ -51,21 +63,22 @@
         <h1>{{ctrl.selectedFile.filename}}</h1>
         <hr />
         <div class="row">
-          <div class="col-sm-8 col-sm-offset-3">
+          <div class="col-sm-9 col-sm-offset-2">
             <div class="directory-options" style="float:left;">
               <div class="btn-toolbar" role="toolbar">
                 <div class="btn-group" role="group">
-                  <button type="button" class="btn btn-default" style="height:40px;">
-                    <i class="fa fa-users dir-option" style="font-size:18px;"></i>
+                  <button type="button" tooltip="Copy" class="btn btn-default" style="height:40px;">
+                    <i class="fa fa-files-o dir-option" style="font-size:18px;"></i>
                   </button>
-                  <button type="button" class="btn btn-default" style="height:40px;">
-                    <i class="fa fa-file-o dir-option" style="font-size:18px;"></i>
+                  <button type="button" tooltip="Duplicate" class="btn btn-default" style="height:40px;">
+                    <p style="font-size: 14px;">DUPLICATE</p>
                   </button>
-                  <button type="button" class="btn btn-default" style="height:40px;">
-                    <i class="fa fa-folder-o dir-option" style="font-size:18px;"></i>
+                  <button type="button" tooltip="Rename" class="btn btn-default" style="height:40px;">
+                    <!-- <i class="fa fa-folder-o dir-option" style="font-size:18px;"></i> -->
+                    <p style="font-size: 14px;">RENAME</p>
                   </button>
-                  <button type="button" class="btn btn-default" style="height:40px;">
-                    <i class="fa fa-upload dir-option" style="font-size:18px;"></i>
+                  <button type="button" tooltip="Delete" class="btn btn-default" style="height:40px;">
+                    <i class="fa fa-ban dir-option" style="font-size:18px;"></i>
                   </button>
                 </div>
               </div>
