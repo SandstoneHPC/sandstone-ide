@@ -50,6 +50,12 @@
   top: 20px;
 }
 
+.filedetails-filename {
+  display: inline;
+  font-size: 36px;
+  font-weight: 400;
+}
+
 .filetable-filename {
   cursor: pointer;
 }

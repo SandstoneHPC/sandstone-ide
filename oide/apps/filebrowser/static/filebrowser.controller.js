@@ -33,6 +33,7 @@ angular.module('oide.filebrowser')
       }
   });
   self.isCopied = false;
+  self.isEditing = false;
   self.copyFile = function() {
     self.copiedFile = self.selectedFile;
     self.isCopied = true;
@@ -96,6 +97,19 @@ angular.module('oide.filebrowser')
       FilesystemService.createNewFile(newFilePath, function(data){
         self.refreshDirectory();
       });
+    });
+  };
+
+  self.editFileName = function() {
+    self.isEditing = true;
+  };
+
+  self.renameFile = function() {
+    FilesystemService.renameFile(self.editedFileName, self.selectedFile, function(data){
+      self.selectedFile.filename = self.editedFileName;
+      self.selectedFile.filepath = data.result;
+      self.refreshDirectory();
+      self.isEditing = false;
     });
   };
 
@@ -268,6 +282,8 @@ angular.module('oide.filebrowser')
   self.ShowDetails = function(selectedFile){
     self.selectedFile = selectedFile;
     self.show_details = true;
+    self.isEditing = false;
+    self.editedFileName = self.selectedFile.filename;
     // Set the permissions for the file
     self.populatePermissions();
   };
