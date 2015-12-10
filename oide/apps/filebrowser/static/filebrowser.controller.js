@@ -277,11 +277,7 @@ angular.module('oide.filebrowser')
       return;
     }
 
-    var path = selectedFile.filepath;
-    FilesystemService.getFiles({filepath: path}, function(data, status, headers, config){
-      self.fileData = data;
-      FileService.setCurrentDirectory(path);
-    });
+    FileService.setSelectionPath(selectedFile.filepath);
   };
 
   self.changeGroup = function(){
@@ -331,6 +327,7 @@ angular.module('oide.filebrowser')
   var currentDirectory = [];
   var root_dir = [];
   var volume_info;
+  var selection = "";
   var setFileData = function(data) {
     fileData = data;
   };
@@ -371,6 +368,14 @@ angular.module('oide.filebrowser')
     return root_dir;
   };
 
+  var setSelectionPath = function(path) {
+    selection = path;
+  };
+
+  var getSelectionPath = function() {
+    return selection;
+  };
+
   return {
     setFileData: setFileData,
     getFileData: getFileData,
@@ -379,6 +384,8 @@ angular.module('oide.filebrowser')
     setRootDirectory: setRootDirectory,
     getRootDirectory: getRootDirectory,
     setVolumeInfo: setVolumeInfo,
-    getVolumeInfo: getVolumeInfo
+    getVolumeInfo: getVolumeInfo,
+    setSelectionPath: setSelectionPath,
+    getSelectionPath: getSelectionPath
   };
 }]);

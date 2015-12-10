@@ -2,9 +2,19 @@
 
 angular.module('oide.filebrowser')
 
-.controller('FiletreeController', ['$document', '$log', 'FBFiletreeService', 'FilesystemService', 'FileService', function($document,$log,FiletreeService, FilesystemService, FileService) {
+.controller('FiletreeController', ['$document', '$log', 'FBFiletreeService', 'FilesystemService', 'FileService', '$scope', function($document,$log,FiletreeService, FilesystemService, FileService, $scope) {
   var self = this;
   self.treeData= FiletreeService.treeData;
+
+  $scope.$watch(function(){
+      return FileService.getSelectionPath();
+    }, function (newValue) {
+      if(newValue == "") {
+        return;
+      }
+      self.describeSelection({'filepath': newValue, 'type': 'dir'}, true);
+  });
+
   $document.on('keydown', (function (e) {
     if (e.keyCode === 17) {
       self.treeOptions.multiSelection = true;
