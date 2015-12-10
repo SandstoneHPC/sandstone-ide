@@ -12,9 +12,6 @@
   <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main fill" style="padding: 10px;">
     <div class="row">
       <ol class="breadcrumb">
-        <!-- <li><a href="#">/</a></li>
-        <li><a href="#">home</a></li>
-        <li class="active">saurabh</li> -->
         <li ng-click="ctrl.changeDir($index)" ng-repeat="pathComponent in ctrl.currentDirectory" ng-class="{active: $last}">{{pathComponent}}</li>
         <div class="directory-options">
           <div class="btn-toolbar" role="toolbar">
@@ -60,7 +57,17 @@
         </table>
       </div>
       <div class="col-sm-4 file-details" ng-show="ctrl.show_details">
-        <h1>{{ctrl.selectedFile.filename}}</h1>
+        <!-- <h1>{{ctrl.selectedFile.filename}}</h1> -->
+        <!-- <p class="filedetails-filename">{{ctrl.selectedFile.filename}}</p>
+        <button type="button" class="btn btn-default"><i class="fa fa-pencil"></i></button> -->
+        <div class="row">
+          <div class="input-group">
+            <input type="text" style="margin: 5px;" class="form-control" ng-disabled="!ctrl.isEditing" ng-model="ctrl.editedFileName" ng-blur="ctrl.renameFile()">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" ng-click="ctrl.editFileName()"><i class="fa fa-pencil"></i></button>
+            </span>
+          </div>
+        </div>
         <hr />
         <div class="row">
           <div class="col-sm-10 col-sm-offset-1">
@@ -73,12 +80,8 @@
                   <button type="button" ng-click="ctrl.duplicateFile()" tooltip="Duplicate" class="btn btn-default" style="height:40px;">
                     <p style="font-size: 14px;">DUPLICATE</p>
                   </button>
-                  <button type="button" tooltip="Rename" class="btn btn-default" style="height:40px;">
-                    <!-- <i class="fa fa-folder-o dir-option" style="font-size:18px;"></i> -->
-                    <p style="font-size: 14px;">RENAME</p>
-                  </button>
                   <button type="button" ng-click="ctrl.deleteFile()" tooltip="Delete" class="btn btn-default" style="height:40px;">
-                    <i class="fa fa-ban dir-option" style="font-size:18px;"></i>
+                    <i class="fa fa-trash dir-option" style="font-size:18px;"></i>
                   </button>
                 </div>
               </div>
