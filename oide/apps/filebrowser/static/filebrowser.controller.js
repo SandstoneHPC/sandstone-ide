@@ -272,6 +272,18 @@ angular.module('oide.filebrowser')
     self.populatePermissions();
   };
 
+  self.openFolder = function(selectedFile) {
+    if(selectedFile.type == 'file') {
+      return;
+    }
+
+    var path = selectedFile.filepath;
+    FilesystemService.getFiles({filepath: path}, function(data, status, headers, config){
+      self.fileData = data;
+      FileService.setCurrentDirectory(path);
+    });
+  };
+
   self.changeGroup = function(){
     var group_name = self.selectedFile.group
     var filepath = self.selectedFile.filepath
