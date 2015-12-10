@@ -70,14 +70,8 @@
             <div class="directory-options" style="float:left;">
               <div class="btn-toolbar" role="toolbar">
                 <div class="btn-group" role="group">
-                  <button type="button" ng-click="ctrl.copyFile()" tooltip="Copy" class="btn btn-default" style="height:40px;">
-                    <i class="fa fa-files-o dir-option" style="font-size:18px;"></i>
-                  </button>
                   <button type="button" ng-click="ctrl.duplicateFile()" tooltip="Duplicate" class="btn btn-default" style="height:40px;">
                     <p style="font-size: 14px;">DUPLICATE</p>
-                  </button>
-                  <button type="button" ng-click="ctrl.deleteFile()" tooltip="Delete" class="btn btn-default" style="height:40px;">
-                    <i class="fa fa-trash dir-option" style="font-size:18px;"></i>
                   </button>
                 </div>
               </div>
@@ -158,6 +152,12 @@
           </tr>
         </tbody>
       </table>
+      <button type="button" ng-click="ctrl.copyFile()" tooltip="Copy" class="btn btn-default filedetails-bottom-actions" style="right: 45px">
+        <i class="fa fa-files-o dir-option" style="font-size:18px;"></i>
+      </button>
+      <button type="button" ng-click="ctrl.deleteFile()" tooltip="Delete" class="btn btn-default filedetails-bottom-actions" style="right: 5px;">
+        <i class="fa fa-trash dir-option" style="font-size:18px;"></i>
+      </button>
       </div>
     </div>
   </div>

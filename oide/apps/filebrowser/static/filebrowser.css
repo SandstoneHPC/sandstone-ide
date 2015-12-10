@@ -68,6 +68,12 @@
   cursor: pointer;
 }
 
+.filedetails-bottom-actions {
+  height:40px;
+  bottom: 5px;
+  position: absolute;
+}
+
 .filetable-filename-selected {
   color: #93c54b;
   font-weight: bold;
