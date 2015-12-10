@@ -61,14 +61,10 @@
         <!-- <p class="filedetails-filename">{{ctrl.selectedFile.filename}}</p>
         <button type="button" class="btn btn-default"><i class="fa fa-pencil"></i></button> -->
         <div class="row">
-          <div class="input-group">
-            <input type="text" style="margin: 5px;" class="form-control" ng-disabled="!ctrl.isEditing" ng-model="ctrl.editedFileName" ng-blur="ctrl.renameFile()">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="button" ng-click="ctrl.editFileName()"><i class="fa fa-pencil"></i></button>
-            </span>
-          </div>
+          <input type="text" style="margin: 5px;" class="filedetails-filename" ng-disabled="!ctrl.isEditing" ng-model="ctrl.editedFileName" ng-blur="ctrl.renameFile()">
+          <i class="fa fa-pencil" ng-click="ctrl.editFileName()" style="cursor: pointer;"></i>
         </div>
-        <hr />
+        <!-- <hr /> -->
         <div class="row">
           <div class="col-sm-10 col-sm-offset-1">
             <div class="directory-options" style="float:left;">

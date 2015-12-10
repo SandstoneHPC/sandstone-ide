@@ -51,9 +51,13 @@
 }
 
 .filedetails-filename {
-  display: inline;
   font-size: 36px;
   font-weight: 400;
+  border-right: 0;
+  border-left: 0;
+  border-top: 0;
+  background-color: #FFFFFF !important;
+  width: 90%;
 }
 
 .filetable-filename {
