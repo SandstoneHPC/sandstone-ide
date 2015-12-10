@@ -60,6 +60,10 @@
   width: 90%;
 }
 
+.filedetails-filename[disabled] {
+  cursor: not-allowed;
+}
+
 .filetable-filename {
   cursor: pointer;
 }
