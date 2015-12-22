@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('oide.filebrowser')
-.controller('FilebrowserController', ['FBFiletreeService', '$rootScope', 'FileService', '$scope', 'FilesystemService', function(FiletreeService, $rootScope, FileService, $scope, FilesystemService){
+.controller('FilebrowserController', ['FBFiletreeService', '$rootScope', 'FileService', '$scope', 'FilesystemService', '$modal', function(FiletreeService, $rootScope, FileService, $scope, FilesystemService, $modal){
   var self = this;
 
   $scope.$watch(function(){
@@ -32,6 +32,7 @@ angular.module('oide.filebrowser')
         self.volumeSize = newValue.size;
       }
   });
+
   self.isCopied = false;
   self.isEditing = false;
   self.copyFile = function() {
@@ -81,12 +82,24 @@ angular.module('oide.filebrowser')
   };
 
   self.deleteFile = function() {
-    FilesystemService.deleteFile(self.selectedFile.filepath, function(data){
+    var modalInstance = $modal.open({
+      templateUrl: '/static/filebrowser/templates/delete-modal.html',
+      controller: 'DeleteModalInstanceCtrl as ctrl',
+      backdrop: 'static',
+      resolve: {
+        selectedFile: function () {
+          return self.selectedFile;
+        }
+      }
+    });
+
+    modalInstance.result.then(function(){
       self.selectedFile = "";
       self.show_details = false;
       self.refreshDirectory();
       FiletreeService.updateFiletree();
     });
+
   };
 
   self.createNewFile = function() {
@@ -338,6 +351,21 @@ angular.module('oide.filebrowser')
     });
   };
 }])
+
+.controller('DeleteModalInstanceCtrl', ['FilesystemService', '$modalInstance', 'selectedFile',function (FilesystemService, $modalInstance, selectedFile) {
+  var self = this;
+  self.selectedFile = selectedFile;
+  self.remove = function () {
+    FilesystemService.deleteFile(self.selectedFile.filepath, function(data){
+      $modalInstance.close(self.selectedFile);
+    });
+  };
+
+  self.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+}])
+
 .factory('FileService', ['$rootScope', function($rootScope){
   var fileData;
   var currentDirectory = [];
