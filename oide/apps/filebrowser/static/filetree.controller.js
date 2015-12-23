@@ -5,7 +5,7 @@ angular.module('oide.filebrowser')
 .controller('FiletreeController', ['$document', '$log', 'FBFiletreeService', 'FilesystemService', 'FileService', '$scope', function($document,$log,FiletreeService, FilesystemService, FileService, $scope) {
   var self = this;
   self.treeData= FiletreeService.treeData;
-
+  self.multiSelection = false;
   $scope.$watch(function(){
       return FileService.getSelectionPath();
     }, function (newValue) {
