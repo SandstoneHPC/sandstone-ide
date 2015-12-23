@@ -1,11 +1,11 @@
 <div class="row fill">
   <div class="filetree-container col-sm-4 col-md-3 sidebar side">
-    <div class="row volume-info">
-      Volume Info
+    <div class="row">
+      <span class="volume-info">Volume Info</span>
       <div class="progress">
         <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="{{ctrl.volumeInfo}}" aria-valuemin="0" aria-valuemax="20" ng-style="{width: ctrl.volumeInfo + '%'}"></div>
       </div>
-      <p ng-show="ctrl.showVolumeInfo()">{{ ctrl.volumeUsed + ' GB' }} of {{ ctrl.volumeSize + ' GB' }} used</p>
+      <p class="volume-info" ng-show="ctrl.showVolumeInfo()">{{ ctrl.volumeUsed + ' GB' }} of {{ ctrl.volumeSize + ' GB' }} used</p>
     </div>
     <div ui-view="filetree"></div>
   </div>
@@ -61,27 +61,12 @@
         <!-- <p class="filedetails-filename">{{ctrl.selectedFile.filename}}</p>
         <button type="button" class="btn btn-default"><i class="fa fa-pencil"></i></button> -->
         <div class="row">
-          <input type="text" style="margin: 5px;" class="filedetails-filename" ng-disabled="!ctrl.isEditing" ng-model="ctrl.editedFileName" ng-blur="ctrl.renameFile()">
+          <input type="text" style="margin: 5px;" class="filedetails-filename" ng-disabled="!ctrl.isEditing" ng-model="ctrl.editedFileName" ng-blur="ctrl.renameFile()" sync-focus-with="ctrl.isEditing">
           <i class="fa fa-pencil" ng-click="ctrl.editFileName()" style="cursor: pointer;"></i>
         </div>
-        <!-- <hr /> -->
-        <div class="row">
-          <div class="col-sm-10 col-sm-offset-1">
-            <div class="directory-options" style="float:left;">
-              <div class="btn-toolbar" role="toolbar">
-                <div class="btn-group" role="group">
-                  <button type="button" ng-click="ctrl.duplicateFile()" tooltip="Duplicate" class="btn btn-default" style="height:40px;">
-                    <p style="font-size: 14px;">DUPLICATE</p>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <br /> <br />
-        <p><b>Owner:</b> {{ctrl.selectedFile.owner}}</p>
         <br />
+        <p><b>Owner:</b> {{ctrl.selectedFile.owner}}</p>
+        <!-- <br /> -->
         <div class="row">
           <div class="col-sm-2">
             <p>
@@ -94,9 +79,9 @@
             </select>
           </div>
       </div>
-      <br />
+      <!-- <br /> -->
       <p><b>Size:</b> {{ctrl.selectedFile.size}}</p>
-      <br />
+      <!-- <br /> -->
       <p><b>Permissions:</b> </p>
       <table class="table">
         <thead>
@@ -156,7 +141,7 @@
         <i class="fa fa-files-o dir-option" style="font-size:18px;"></i>
       </button>
       <button type="button" ng-click="ctrl.deleteFile()" tooltip="Delete" class="btn btn-default filedetails-bottom-actions" style="right: 5px;">
-        <i class="fa fa-trash dir-option" style="font-size:18px;"></i>
+        <i class="fa fa-trash-o dir-option" style="font-size:18px;"></i>
       </button>
       </div>
     </div>
