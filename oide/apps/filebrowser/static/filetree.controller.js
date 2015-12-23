@@ -17,16 +17,16 @@ angular.module('oide.filebrowser')
 
   $document.on('keydown', (function (e) {
     if (e.keyCode === 17) {
-      self.treeOptions.multiSelection = true;
+      self.multiSelection = true;
     }
   }));
   $document.on('keyup', (function (e) {
     if (e.keyCode === 17) {
-      self.treeOptions.multiSelection = false;
+      self.multiSelection = false;
     }
   }));
   self.treeOptions = {
-    multiSelection: false,
+    multiSelection: true,
     isLeaf: function(node) {
       return node.type !== 'dir';
     },
@@ -50,7 +50,7 @@ angular.module('oide.filebrowser')
   };
 
   self.describeSelection = function (node, selected) {
-    if (self.treeOptions.multiSelection === false) {
+    if (self.multiSelection === false) {
       if (selected) {
         self.treeData.selectedNodes = [node];
         // Set the current directory
