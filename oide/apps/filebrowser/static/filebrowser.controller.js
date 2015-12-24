@@ -102,6 +102,19 @@ angular.module('oide.filebrowser')
 
   };
 
+  self.openUploadModal = function() {
+    var modalInstance = $modal.open({
+      templateUrl: '/static/filebrowser/templates/upload-modal.html',
+      controller: 'UploadModalInstanceCtrl as ctrl',
+      backdrop: 'static',
+      resolve: {
+        selectedDirectory: function () {
+          return self.formDirPath();
+        }
+      }
+    });
+  };
+
   self.createNewFile = function() {
     var path = self.formDirPath();
     FilesystemService.getNextUntitledFile(path, function(data){
@@ -381,7 +394,62 @@ angular.module('oide.filebrowser')
     $modalInstance.dismiss('cancel');
   };
 }])
+.controller('UploadModalInstanceCtrl', ['FilesystemService', '$modalInstance', 'FileUploader', 'selectedDirectory',function (FilesystemService, $modalInstance, FileUploader, selectedDirectory) {
+  var self = this;
+  var uploader = self.uploader = new FileUploader({
+       url: '/supl/a/upload',
+       headers: {
+                  'X-XSRFToken': getCookie('_xsrf')
+                }
+   });
 
+  uploader.filters.push({
+    name: 'customFilter',
+    fn: function(item /*{File|FileLikeObject}*/, options) {
+      return this.queue.length < 10;
+    }
+  });
+
+   uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
+       console.info('onWhenAddingFileFailed', item, filter, options);
+   };
+    uploader.onAfterAddingFile = function(fileItem) {
+      fileItem.headers['uploadDir'] = $scope.dirpath;
+      console.info('onAfterAddingFile', fileItem);
+    };
+   uploader.onAfterAddingAll = function(addedFileItems) {
+       console.info('onAfterAddingAll', addedFileItems);
+   };
+   uploader.onBeforeUploadItem = function(item) {
+       console.info('onBeforeUploadItem', item);
+   };
+   uploader.onProgressItem = function(fileItem, progress) {
+       console.info('onProgressItem', fileItem, progress);
+   };
+   uploader.onProgressAll = function(progress) {
+       console.info('onProgressAll', progress);
+   };
+   uploader.onSuccessItem = function(fileItem, response, status, headers) {
+       console.info('onSuccessItem', fileItem, response, status, headers);
+   };
+   uploader.onErrorItem = function(fileItem, response, status, headers) {
+       console.info('onErrorItem', fileItem, response, status, headers);
+   };
+   uploader.onCancelItem = function(fileItem, response, status, headers) {
+       console.info('onCancelItem', fileItem, response, status, headers);
+   };
+   uploader.onCompleteItem = function(fileItem, response, status, headers) {
+       console.info('onCompleteItem', fileItem, response, status, headers);
+   };
+   uploader.onCompleteAll = function() {
+       console.info('onCompleteAll');
+   };
+  self.selectedFile = selectedDirectory;
+
+  self.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+}])
 .factory('FileService', ['$rootScope', function($rootScope){
   var fileData;
   var currentDirectory = [];

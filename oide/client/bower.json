@@ -15,7 +15,8 @@
     "angular-ui-ace": "",
     "ng-context-menu": "",
     "angular-tree-control": "",
-    "term.js": ""
+    "term.js": "",
+    "angular-file-upload": "2.1.4"
   },
   "resolutions": {
     "angular": "1.4.x"
