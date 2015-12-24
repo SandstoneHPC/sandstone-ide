@@ -396,6 +396,7 @@ angular.module('oide.filebrowser')
 }])
 .controller('UploadModalInstanceCtrl', ['FilesystemService', '$modalInstance', 'FileUploader', 'selectedDirectory',function (FilesystemService, $modalInstance, FileUploader, selectedDirectory) {
   var self = this;
+  self.dirpath = selectedDirectory;
   var uploader = self.uploader = new FileUploader({
        url: '/supl/a/upload',
        headers: {
@@ -414,7 +415,7 @@ angular.module('oide.filebrowser')
        console.info('onWhenAddingFileFailed', item, filter, options);
    };
     uploader.onAfterAddingFile = function(fileItem) {
-      fileItem.headers['uploadDir'] = $scope.dirpath;
+      fileItem.headers['uploadDir'] = self.dirpath;
       console.info('onAfterAddingFile', fileItem);
     };
    uploader.onAfterAddingAll = function(addedFileItems) {
@@ -444,7 +445,6 @@ angular.module('oide.filebrowser')
    uploader.onCompleteAll = function() {
        console.info('onCompleteAll');
    };
-  self.selectedFile = selectedDirectory;
 
   self.cancel = function () {
     $modalInstance.dismiss('cancel');
