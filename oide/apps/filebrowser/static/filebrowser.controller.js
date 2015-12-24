@@ -114,6 +114,11 @@ angular.module('oide.filebrowser')
         }
       }
     });
+
+    modalInstance.result.then(function(){
+      self.refreshDirectory();
+    });
+
   };
 
   self.createNewFile = function() {
@@ -448,7 +453,7 @@ angular.module('oide.filebrowser')
    };
 
   self.cancel = function () {
-    $modalInstance.dismiss('cancel');
+    $modalInstance.close();
   };
 }])
 .factory('FileService', ['$rootScope', function($rootScope){
