@@ -1,7 +1,7 @@
 <div class="modal-header">
     <h3 class="modal-title"><i class="fa fa-exclamation fa-border"></i> Upload</h3>
 </div>
-<div class="modal-body" style="height: 100vh; width: 100vh;">
+<div class="modal-body">
   <span>Choose files</span>
   <div class="row fill">
     <div class="col-md-12 main fill">
@@ -11,10 +11,10 @@
           <span>Choose files</span>
           <input
             type="file"
+            nv-file-select=""
             uploader="ctrl.uploader"
             multiple
-            nv-file-select
-            class="btn btn-success file-upload"
+            class="upload"
            />
           <br/>
         </div>
@@ -101,5 +101,5 @@
 
 </div>
 <div class="modal-footer">
-<button class="btn btn-danger" ng-click="ctrl.cancel()">Cancel</button>
+  <button class="btn btn-danger" ng-click="ctrl.cancel()">Close</button>
 </div>

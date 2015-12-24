@@ -107,6 +107,7 @@ angular.module('oide.filebrowser')
       templateUrl: '/static/filebrowser/templates/upload-modal.html',
       controller: 'UploadModalInstanceCtrl as ctrl',
       backdrop: 'static',
+      size: 'lg',
       resolve: {
         selectedDirectory: function () {
           return self.formDirPath();
