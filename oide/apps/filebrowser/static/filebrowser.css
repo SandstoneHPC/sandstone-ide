@@ -50,6 +50,18 @@
   top: 20px;
 }
 
+.file-upload {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+
 .filedetails-filename {
   font-size: 36px;
   font-weight: 400;
