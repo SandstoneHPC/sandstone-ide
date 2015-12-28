@@ -406,8 +406,9 @@ angular.module('oide.filebrowser')
   var uploader = self.uploader = new FileUploader({
        url: '/supl/a/upload',
        headers: {
-                  'X-XSRFToken': getCookie('_xsrf')
-                }
+         'X-XSRFToken': getCookie('_xsrf'),
+         'basepath': self.dirpath
+       }
    });
 
   uploader.filters.push({
@@ -418,38 +419,38 @@ angular.module('oide.filebrowser')
   });
 
    uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
-       console.info('onWhenAddingFileFailed', item, filter, options);
+       console.log('onWhenAddingFileFailed', item, filter, options);
    };
     uploader.onAfterAddingFile = function(fileItem) {
       fileItem.headers['uploadDir'] = self.dirpath;
-      console.info('onAfterAddingFile', fileItem);
+      console.log('onAfterAddingFile', fileItem);
     };
    uploader.onAfterAddingAll = function(addedFileItems) {
-       console.info('onAfterAddingAll', addedFileItems);
+       console.log('onAfterAddingAll', addedFileItems);
    };
    uploader.onBeforeUploadItem = function(item) {
-       console.info('onBeforeUploadItem', item);
+       console.log('onBeforeUploadItem', item);
    };
    uploader.onProgressItem = function(fileItem, progress) {
-       console.info('onProgressItem', fileItem, progress);
+       console.log('onProgressItem', fileItem, progress);
    };
    uploader.onProgressAll = function(progress) {
-       console.info('onProgressAll', progress);
+       console.log('onProgressAll', progress);
    };
    uploader.onSuccessItem = function(fileItem, response, status, headers) {
-       console.info('onSuccessItem', fileItem, response, status, headers);
+       console.log('onSuccessItem', fileItem, response, status, headers);
    };
    uploader.onErrorItem = function(fileItem, response, status, headers) {
-       console.info('onErrorItem', fileItem, response, status, headers);
+       console.log('onErrorItem', fileItem, response, status, headers);
    };
    uploader.onCancelItem = function(fileItem, response, status, headers) {
-       console.info('onCancelItem', fileItem, response, status, headers);
+       console.log('onCancelItem', fileItem, response, status, headers);
    };
    uploader.onCompleteItem = function(fileItem, response, status, headers) {
-       console.info('onCompleteItem', fileItem, response, status, headers);
+       console.log('onCompleteItem', fileItem, response, status, headers);
    };
    uploader.onCompleteAll = function() {
-       console.info('onCompleteAll');
+       console.log('onCompleteAll');
    };
 
   self.cancel = function () {
