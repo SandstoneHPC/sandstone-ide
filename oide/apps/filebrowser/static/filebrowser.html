@@ -19,7 +19,7 @@
               <button type="button" ng-disabled="!ctrl.isCopied || ctrl.selectedFile == ''" ng-click="ctrl.pasteFile()" class="btn btn-default" tooltip="Paste">
                 <i class="fa fa-2x fa-paste dir-option"></i>
               </button>
-              <button type="button" class="btn btn-default" tooltip="Upload" ng-click="ctrl.openUploadModal()">
+              <button type="button" class="btn btn-default" tooltip="Upload" ng-click="ctrl.openUploadModal()" ng-disabled="ctrl.currentDirectory.length == 0">
                 <i class="fa fa-2x fa-upload dir-option"></i>
               </button>
               <button type="button" ng-click="ctrl.createNewFile()" ng-disabled="ctrl.currentDirectory.length == 0" class="btn btn-default" tooltip="New File">
