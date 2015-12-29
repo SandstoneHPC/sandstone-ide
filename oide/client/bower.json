@@ -16,7 +16,7 @@
     "ng-context-menu": "",
     "angular-tree-control": "",
     "term.js": "",
-    "angular-file-upload": "2.1.4"
+    "angular-file-upload": "https://github.com/ResearchComputing/angular-file-upload.git#2.2.1"
   },
   "resolutions": {
     "angular": "1.4.x"
