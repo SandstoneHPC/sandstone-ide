@@ -215,6 +215,7 @@ angular.module('oide.filebrowser')
     FilesystemService.getFiles({'filepath': path}, function(data, status, headers, config){
       self.fileData = data;
       FileService.setCurrentDirectory(path);
+      self.show_details = false;
     });
   };
 
@@ -324,8 +325,8 @@ angular.module('oide.filebrowser')
     if(selectedFile.type == 'file') {
       return;
     }
-
     FileService.setSelectionPath(selectedFile.filepath);
+    self.show_details = false;
   };
 
   self.changeGroup = function(){
