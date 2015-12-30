@@ -313,12 +313,15 @@ angular.module('oide.filebrowser')
 
   self.show_details = false;
   self.ShowDetails = function(selectedFile){
-    self.selectedFile = selectedFile;
-    self.show_details = true;
-    self.isEditing = false;
-    self.editedFileName = self.selectedFile.filename;
-    // Set the permissions for the file
-    self.populatePermissions();
+    self.show_details = false;
+      self.selectedFile = selectedFile;
+    if(self.selectedFile.is_accessible) {
+      self.show_details = true;
+      self.isEditing = false;
+      self.editedFileName = self.selectedFile.filename;
+      // Set the permissions for the file
+      self.populatePermissions();
+    }
   };
 
   self.openFolder = function(selectedFile) {
