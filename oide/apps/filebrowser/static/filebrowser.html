@@ -47,7 +47,7 @@
         	</thead>
         	<tbody>
             <tr ng-repeat="file in ctrl.displayData">
-              <td><i class="fa" ng-class="{'fa-folder': file.type==='dir', 'fa-file': file.type==='file'}" style="padding-right: 5px;"></i><span class="filetable-filename" ng-class="{'filetable-filename-selected': file.filename === ctrl.selectedFile.filename}" ng-dblclick="ctrl.openFolder(file)" ng-click="ctrl.ShowDetails(file)">{{file.filename}} </span></td>
+              <td><i class="fa" ng-class="{'fa-folder': file.type==='dir' && file.is_accessible, 'fa-file': file.type==='file' && file.is_accessible, 'fa-lock': file.is_accessible == false}" style="padding-right: 5px;"></i><span class="filetable-filename" ng-class="{'filetable-filename-selected': file.filename === ctrl.selectedFile.filename}" ng-dblclick="ctrl.openFolder(file)" ng-click="ctrl.ShowDetails(file)">{{file.filename}} </span></td>
               <td>{{ file.size }}</td>
               <td>{{ file.owner }}</td>
               <td>{{ file.group }}</td>

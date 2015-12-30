@@ -284,6 +284,7 @@ class FileTreeHandler(BaseHandler,FSMixin):
                     curr_file['perm'] = filemode(stat_object[ST_MODE])
                     curr_file['perm_string'] = oct(stat_object[ST_MODE])[-3:]
                     curr_file['group'] = grp.getgrgid(stat_object.st_gid).gr_name
+                    curr_file['is_accessible'] = os.access(i[1], os.W_OK)
                     dir_contents.append(curr_file)
 
             self.write(json.dumps(dir_contents))
@@ -318,6 +319,7 @@ class FileTreeHandler(BaseHandler,FSMixin):
                 curr_file['perm'] = filemode(stat_object[ST_MODE])
                 curr_file['perm_string'] = oct(stat_object[ST_MODE])[-3:]
                 curr_file['group'] = grp.getgrgid(stat_object.st_gid).gr_name
+                curr_file['is_accessible'] = os.access(i[1], os.W_OK)
                 dir_contents.append(curr_file)
 
         self.write(json.dumps(dir_contents))
