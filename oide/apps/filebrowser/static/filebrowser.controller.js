@@ -15,6 +15,7 @@ angular.module('oide.filebrowser')
       return FileService.getCurrentDirectory();
     }, function (newValue) {
     self.currentDirectory = newValue;
+    self.show_details = false;
   });
 
   $scope.$watch(function(){
