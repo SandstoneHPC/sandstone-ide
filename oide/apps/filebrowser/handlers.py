@@ -310,11 +310,11 @@ class FileTreeHandler(BaseHandler,FSMixin):
                     curr_file['type'] = 'file'
                 # Get owner information
                 stat_object = stat(i[1])
-                owner = getpwuid(stat_object.st_uid).pw_name
+                # owner = getpwuid(stat_object.st_uid).pw_name
                 file_size = str((float(stat_object.st_size) / 1024)) + " KiB"
                 curr_file['filename'] = i[0]
                 curr_file['filepath'] = i[1]
-                curr_file['owner'] = owner
+                # curr_file['owner'] = owner
                 curr_file['size'] = file_size
                 curr_file['perm'] = filemode(stat_object[ST_MODE])
                 curr_file['perm_string'] = oct(stat_object[ST_MODE])[-3:]

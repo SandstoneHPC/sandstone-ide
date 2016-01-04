@@ -37,13 +37,16 @@ angular.module('oide.filebrowser')
       if(filepath.charAt(filepath.length - 1) == '/') {
         strippedFilepath = filepath.substr(0, filepath.length - 1);
       }
-      if(nodeList[i].type == 'dir') {
+      if(nodeList[i].type == 'dir' && folderName.charAt(filepath.length - 1) == '/') {
         folderName = folderName.substr(0, folderName.length - 1);
       }
       if (strippedFilepath.lastIndexOf(folderName,0) === 0) {
         if (strippedFilepath === folderName) {
           return nodeList[i];
         } else if (nodeList[i].type === 'dir') {
+          if(nodeList[i].children.length == 0) {
+            continue;
+          }
           return getNodeFromPath(filepath, nodeList[i].children);
         }
       }
@@ -96,6 +99,33 @@ angular.module('oide.filebrowser')
     return false;
   };
 
+  var getNodePath = function(filepath, nodeList, node) {
+    var matchedNode;
+    var folderName;
+    var strippedFilepath;
+    var nodes = node.children;
+    for (var i=0;i<nodes.length;i++) {
+      folderName = nodes[i].filepath;
+      strippedFilepath = filepath;
+      if(filepath.charAt(filepath.length - 1) == '/') {
+        strippedFilepath = filepath.substr(0, filepath.length - 1);
+      }
+      if(nodeList[i].type == 'dir' && folderName.charAt(filepath.length - 1) == '/') {
+        folderName = folderName.substr(0, folderName.length - 1);
+      }
+      if (strippedFilepath.lastIndexOf(folderName,0) === 0) {
+        if (strippedFilepath === folderName) {
+          return nodes[i];
+        } else if (nodes[i].type === 'dir') {
+          if(nodes[i].children.length == 0) {
+            continue;
+          }
+          return getNodePath(filepath, nodes, nodes[i].children);
+        }
+      }
+    }
+  }
+
   // Callback for getting directory contents
   // For filebrowser, only the folders are returned in this call
   var populatetreeContents = function(data, status, headers, config, node) {
@@ -103,7 +133,7 @@ angular.module('oide.filebrowser')
     var currContents = getFilepathsForDir(node.filepath);
     for (var i=0;i<data.length;i++) {
       if (currContents.indexOf(data[i].filepath) >= 0) {
-        matchedNode = getNodeFromPath(data[i].filepath,treeData.filetreeContents);
+        matchedNode = getNodePath(data[i].filepath,treeData.filetreeContents, node);
         if ((data[i].type === 'dir')&&isExpanded(data[i].filepath)) {
           getDirContents(matchedNode);
         }
@@ -122,7 +152,9 @@ angular.module('oide.filebrowser')
 
   // Invoke Filesystem service to get the folders in the selected directory
   // Invoked when a node is expanded
+  var currentlyExpandingNode;
   var getDirContents = function (node) {
+    currentlyExpandingNode = node;
     FilesystemService.getFolders(node, populatetreeContents);
   };
   var updateFiletree = function () {
