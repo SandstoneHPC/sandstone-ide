@@ -1,5 +1,7 @@
 import logging
 import oide.settings as global_settings
+import oide.lib.decorators
+from oide.lib.handlers.base import BaseHandler
 
 
 
@@ -43,3 +45,17 @@ def get_installed_app_specs():
         except AttributeError:
             logging.debug('No app spec for app: %s'%app_name)
     return spec_list
+
+
+class DependencyHandler(BaseHandler):
+
+    @oide.lib.decorators.authenticated
+    def get(self):
+        dep_list = []
+        for app_spec in get_installed_app_specs():
+            dep_list.append(app_spec['NG_MODULE_NAME'])
+        
+        resp = {
+            'dependencies': dep_list
+        }
+        self.write(resp)
