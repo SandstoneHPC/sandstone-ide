@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="oide" lang="en">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -72,40 +72,8 @@
     <script src="/static/core/bower_components/angular-ui-ace/ui-ace.js"></script>
     <script src="/static/core/bower_components/angular-tree-control/angular-tree-control.js"></script>
     <script src="/static/core/bower_components/term.js/src/term.js"></script>
-    <script>
-    'use strict';
-
-    // Declare app level module which depends on views, and components
-    angular.module('oide', [
-      'ui.router',
-      {% for module_spec in get_ng_module_spec() %}
-      "oide.{{module_spec['module_name']}}",
-      {% end %}
-      'oide.acemodes',
-      // 'oide.states',
-      'ui.bootstrap'
-      // 'oide.version'
-    ]).
-    config(['$urlRouterProvider', function($urlRouterProvider) {
-      $urlRouterProvider.otherwise('/editor');
-    }])
-    // .run(function(StateService,$log) {
-    //   $log.debug('StateService initialized.');
-    // })
-    .controller('PageCtrl', ['$location','PageService',function($location,PageService) {
-      var self = this;
-      self.currentUrl = PageService.getCurrentUrl;
-    }])
-    .factory('PageService', ['$location',function($location) {
-      return {
-        getCurrentUrl: function () {
-          return '/#'+$location.path();
-        }
-      };
-    }]);
-    </script>
+    <script src="/static/core/oide.js"></script>
     <script src="/static/core/components/acemodes/acemodes.js"></script>
-    <!--<script src="/static/core/components/states/states.js"></script>-->
     {% for module_spec in get_ng_module_spec() %}
       {% for mod_dep in module_spec['scripts'] %}
         <script src="/static/{{module_spec['module_name']}}/{{mod_dep}}"></script>
