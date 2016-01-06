@@ -1,20 +1,22 @@
 module.exports = function(config){
   config.set({
 
-    basePath : './',
+    basePath : '../',
 
     files : [
-      'oide/bower_components/angular/angular.js',
-      'oide/bower_components/angular-route/angular-route.js',
-      'oide/bower_components/angular-mocks/angular-mocks.js',
-      'oide/bower_components/angular-ui-bootstrap/dist/ui-bootstrap-tpls-0.12.0.min.js',
-      'oide/bower_components/ace-builds/src-min-noconflict/ace.js',
-      'oide/bower_components/angular-ui-ace/ui-ace.js',
-      'oide/bower_components/angular-tree-control/angular-tree-control.js',
-      'oide/editor/**/*.js',
-      'oide/terminal/**/*.js'
-      // 'oide/components/**/*.js',
-      // 'oide/view*/**/*.js'
+      'client/oide/bower_components/angular/angular.js',
+      'client/oide/bower_components/angular-ui-router/release/angular-ui-router.js',
+      'client/oide/bower_components/angular-mocks/angular-mocks.js',
+      'client/oide/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
+      'client/oide/bower_components/ace-builds/src-min-noconflict/ace.js',
+      'client/oide/bower_components/angular-ui-ace/ui-ace.js',
+      'client/oide/bower_components/angular-tree-control/angular-tree-control.js',
+      'client/oide/bower_components/term.js/src/term.js',
+      'client/oide/components/**/*.js',
+      'client/oide/*test.js',
+      'apps/codeeditor/static/editor.js',
+      'apps/webterminal/static/terminal.js',
+      'apps/**/static/*.js'
     ],
 
     autoWatch : true,
