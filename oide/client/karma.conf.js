@@ -13,10 +13,13 @@ module.exports = function(config){
       'client/oide/bower_components/angular-tree-control/angular-tree-control.js',
       'client/oide/bower_components/term.js/src/term.js',
       'client/oide/components/**/*.js',
-      'client/oide/*test.js',
+      'client/oide/oide.test.js',
       'apps/codeeditor/static/editor.js',
       'apps/webterminal/static/terminal.js',
-      'apps/**/static/*.js'
+      'apps/**/static/*.js',
+      // test files
+      'client/oide/oide_test.js',
+      'apps/**/tests/js/*.js'
     ],
 
     autoWatch : true,
