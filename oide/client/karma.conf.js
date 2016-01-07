@@ -11,11 +11,14 @@ module.exports = function(config){
       'client/oide/bower_components/ace-builds/src-min-noconflict/ace.js',
       'client/oide/bower_components/angular-ui-ace/ui-ace.js',
       'client/oide/bower_components/angular-tree-control/angular-tree-control.js',
+      'client/oide/bower_components/angular-smart-table/dist/smart-table.js',
+      'client/oide/bower_components/angular-file-upload/dist/angular-file-upload.js',
       'client/oide/bower_components/term.js/src/term.js',
       'client/oide/components/**/*.js',
       'client/oide/*test.js',
       'apps/codeeditor/static/editor.js',
       'apps/webterminal/static/terminal.js',
+      'apps/filebrowser/static/filebrowser.js',
       'apps/**/static/*.js'
     ],
 
