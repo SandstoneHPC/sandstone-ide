@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('oide.editor')
+angular.module('oide.filebrowser')
 
-.factory('FiletreeService', ['$document', '$q', '$log', '$rootScope', 'FilesystemService', function($document,$q,$log, $rootScope, FilesystemService) {
+.factory('FBFiletreeService', ['$http', '$document', '$q', '$log', '$rootScope', 'FilesystemService', function($http,$document,$q,$log, $rootScope, FilesystemService) {
   var treeData, selectionDesc;
   treeData = {
     filetreeContents: [
@@ -16,7 +16,7 @@ angular.module('oide.editor')
   };
   var clipboard = [];
 
-  var populateTreeData = function(data, status, headers, config) {
+  var populateTreeData = function(data, status, headers, config){
     for (var i=0;i<data.length;i++) {
       data[i].children = [];
     }
@@ -24,7 +24,7 @@ angular.module('oide.editor')
   };
 
   var initializeFiletree = function () {
-    FilesystemService.getFiles('', populateTreeData);
+    FilesystemService.getFolders('', populateTreeData);
   };
   initializeFiletree();
   var getNodeFromPath = function (filepath, nodeList) {
@@ -37,13 +37,16 @@ angular.module('oide.editor')
       if(filepath.charAt(filepath.length - 1) == '/') {
         strippedFilepath = filepath.substr(0, filepath.length - 1);
       }
-      if(nodeList[i].type == 'dir') {
+      if(nodeList[i].type == 'dir' && folderName.charAt(filepath.length - 1) == '/') {
         folderName = folderName.substr(0, folderName.length - 1);
       }
       if (strippedFilepath.lastIndexOf(folderName,0) === 0) {
         if (strippedFilepath === folderName) {
           return nodeList[i];
         } else if (nodeList[i].type === 'dir') {
+          if(nodeList[i].children.length == 0) {
+            continue;
+          }
           return getNodeFromPath(filepath, nodeList[i].children);
         }
       }
@@ -96,34 +99,64 @@ angular.module('oide.editor')
     return false;
   };
 
-  var populatetreeContents = function(data, status, headers, config, node) {
-      var matchedNode;
-      var currContents = getFilepathsForDir(node.filepath);
-      for (var i=0;i<data.length;i++) {
-        if (currContents.indexOf(data[i].filepath) >= 0) {
-          matchedNode = getNodeFromPath(data[i].filepath,treeData.filetreeContents);
-          if ((data[i].type === 'dir')&&isExpanded(data[i].filepath)) {
-            getDirContents(matchedNode);
+  var getNodePath = function(filepath, nodeList, node) {
+    var matchedNode;
+    var folderName;
+    var strippedFilepath;
+    var nodes = node.children;
+    for (var i=0;i<nodes.length;i++) {
+      folderName = nodes[i].filepath;
+      strippedFilepath = filepath;
+      if(filepath.charAt(filepath.length - 1) == '/') {
+        strippedFilepath = filepath.substr(0, filepath.length - 1);
+      }
+      if(nodeList[i].type == 'dir' && folderName.charAt(filepath.length - 1) == '/') {
+        folderName = folderName.substr(0, folderName.length - 1);
+      }
+      if (strippedFilepath.lastIndexOf(folderName,0) === 0) {
+        if (strippedFilepath === folderName) {
+          return nodes[i];
+        } else if (nodes[i].type === 'dir') {
+          if(nodes[i].children.length == 0) {
+            continue;
           }
-          currContents.splice(currContents.indexOf(data[i].filepath), 1);
-        } else {
-          data[i].children = [];
-          node.children.push(data[i]);
+          return getNodePath(filepath, nodes, nodes[i].children);
         }
       }
-      var index;
-      for (var i=0;i<currContents.length;i++) {
-        matchedNode = getNodeFromPath(currContents[i],treeData.filetreeContents);
-        removeNodeFromFiletree(matchedNode);
+    }
+  }
+
+  // Callback for getting directory contents
+  // For filebrowser, only the folders are returned in this call
+  var populatetreeContents = function(data, status, headers, config, node) {
+    var matchedNode;
+    var currContents = getFilepathsForDir(node.filepath);
+    for (var i=0;i<data.length;i++) {
+      if (currContents.indexOf(data[i].filepath) >= 0) {
+        matchedNode = getNodePath(data[i].filepath,treeData.filetreeContents, node);
+        if ((data[i].type === 'dir')&&isExpanded(data[i].filepath)) {
+          getDirContents(matchedNode);
+        }
+        currContents.splice(currContents.indexOf(data[i].filepath), 1);
+      } else {
+        data[i].children = [];
+        node.children.push(data[i]);
       }
-    };
+    }
+    var index;
+    for (var i=0;i<currContents.length;i++) {
+      matchedNode = getNodeFromPath(currContents[i],treeData.filetreeContents);
+      removeNodeFromFiletree(matchedNode);
+    }
+  };
 
   // Invoke Filesystem service to get the folders in the selected directory
   // Invoked when a node is expanded
+  var currentlyExpandingNode;
   var getDirContents = function (node) {
-    FilesystemService.getFiles(node, populatetreeContents);
+    currentlyExpandingNode = node;
+    FilesystemService.getFolders(node, populatetreeContents);
   };
-
   var updateFiletree = function () {
     var filepath, node;
     for (var i=0;i<treeData.expandedNodes.length;i++) {
@@ -157,7 +190,8 @@ angular.module('oide.editor')
     // Post back new file to backend
     FilesystemService.createNewFile(newFilePath, createFileCallback);
   };
-  // Callback for invocation to FilesystemService renameFile method
+
+  // Callback for invocation to FilesystemService rename method
   var fileRenamed = function(data, status, headers, config, node) {
     $rootScope.$emit('fileRenamed', node.filepath, data.result);
     removeNodeFromFiletree(node);
@@ -165,7 +199,7 @@ angular.module('oide.editor')
     $log.debug('POST: ', data.result);
   };
 
-  // Callback for invocation to FilesystemService pasteFile method
+  // Callback for invocation to FilesystemService paste method
   var pastedFiles = function(data, status, headers, config, node){
     $log.debug('POST: ', data.result);
   };
@@ -258,7 +292,7 @@ angular.module('oide.editor')
       }
       $log.debug('Copied ', i, ' files to clipboard: ', clipboard)
     },
-    // Invoke the Filesystem Service to paste a file
+    // Invoke the Filesystem Service to paste a file from the clipboard
     pasteFiles: function () {
       var i;
       var newDirPath = treeData.selectedNodes[0].filepath;
@@ -273,9 +307,20 @@ angular.module('oide.editor')
       updateFiletree();
     },
     // Invoke the Filesystem Service to rename a file
-    renameFile: function (newFileName) {
-      var node = treeData.selectedNodes[0];
-      FilesystemService.renameFile(newFileName, node, fileRenamed);
+    renameFile: function(newFilename, node, callback) {
+      $http({
+        url: '/filebrowser/a/fileutil',
+        method: 'POST',
+        params: {
+          _xsrf:getCookie('_xsrf'),
+          operation: 'RENAME',
+          filepath: node.filepath,
+          newFileName: newFilename
+        }
+        })
+        .success(function(data, status, headers, config){
+          callback(data, status, headers, config, node);
+        });
     }
   };
 }]);

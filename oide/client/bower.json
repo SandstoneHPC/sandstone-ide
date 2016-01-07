@@ -15,7 +15,9 @@
     "angular-ui-ace": "",
     "ng-context-menu": "",
     "angular-tree-control": "",
-    "term.js": ""
+    "term.js": "",
+    "angular-file-upload": "https://github.com/ResearchComputing/angular-file-upload.git#2.2.1",
+    "angular-smart-table": "~2.1.6"
   },
   "resolutions": {
     "angular": "1.4.x"
