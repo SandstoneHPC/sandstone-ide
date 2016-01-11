@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('oide.filebrowser', ['smart-table', 'angularFileUpload'])
+angular.module('oide.filebrowser', ['smart-table', 'angularFileUpload', 'ui.router'])
 
 .config(['$stateProvider', '$urlRouterProvider' ,function($stateProvider, $urlRouterProvider){
   $stateProvider.state('filebrowser', {

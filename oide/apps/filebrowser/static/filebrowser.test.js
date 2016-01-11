@@ -1,17 +1,17 @@
 describe('Filebrowser', function() {
+  var scope;
+  var controller;
   beforeEach(module('oide.filebrowser'));
 
   describe('FilebrowserController Test', function() {
-    var $controller, $rootScope;
-
-    beforeEach(inject(function(_$controller_, _$rootScope_){
+    var httpBackend;
+    beforeEach(inject(function($controller, $rootScope, $httpBackend, $http){
       // The injector unwraps the underscores (_) from around the parameter names when matching
-      $controller = _$controller_;
-      $rootScope = _$rootScope_;
-    }));
+      httpBackend = $httpBackend;
+      scope = $rootScope.$new();
+      controller = $controller;
+      // httpBackend.when('GET', )
 
-    beforeEach(function() {
-      $scope = $rootScope.$new();
       // Mock FileService
       var currentDirectory = ['/', 'home', 'saurabh'];
       var currentFile = '/home/saurabh/testfile';
@@ -33,10 +33,11 @@ describe('Filebrowser', function() {
         getRootDirectory: function() {
           return rootDirectory;
         },
-        volumeInfo: function() {
+        getVolumeInfo: function() {
           return volume_info;
         }
       };
+
       // Mock FilesystemService
       mockFilesystemService = {
         getGroups: function() {
@@ -46,14 +47,15 @@ describe('Filebrowser', function() {
       // Mock FiletreeService
       mockFiletreeService = {};
       controller = $controller(
-        'FilebrowserController', {
-          $scope: $scope,
+        'FilebrowserController as ctrl', {
+          $scope: scope,
           FileService: mockFileService,
           FilesystemService: mockFilesystemService,
           FBFiletreeService: mockFiletreeService,
           $modal: {}
         });
-    });
+        scope.$apply();
+    }));
 
     function is_same(arr1, arr2) {
       return (arr1.length == arr2.length) && arr1.every(function(element, index){
@@ -66,6 +68,22 @@ describe('Filebrowser', function() {
       var ref = ['/', 'home', 'saurabh'];
       var are_directories_same = is_same(currentDirectory, ref);
       expect(are_directories_same).toBeTruthy();
+    });
+
+    it('checks if volume info is set', function(){
+      expect(mockFileService.getVolumeInfo().used).toBe('10');
+    });
+
+    it('checks if root directory is set', function(){
+      expect(mockFileService.getRootDirectory()).toBe('/home/saurabh')
+    });
+
+    it('should form a correct current dir path', function(){
+      var currentDirectory = scope.ctrl.currentDirectory;
+      var ref = ['/', 'home', 'saurabh'];
+      var are_directories_same = is_same(currentDirectory, ref);
+      expect(are_directories_same).toBeTruthy();
+      expect(scope.ctrl.formDirPath()).toBe('/home/saurabh/');
     });
 
   });
