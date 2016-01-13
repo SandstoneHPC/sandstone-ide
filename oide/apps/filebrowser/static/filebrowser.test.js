@@ -1,15 +1,28 @@
+function getCookie(name) {
+  var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+  return r ? r[1] : undefined;
+};
+
 describe('Filebrowser', function() {
   var scope;
   var controller;
   beforeEach(module('oide.filebrowser'));
+  beforeEach(module('oide.filesystemservice'));
 
   describe('FilebrowserController Test', function() {
     var httpBackend;
     var http;
     var files;
-    beforeEach(inject(function($controller, $rootScope, $httpBackend, $http){
+    var groups = ['saurabh', 'sudo', 'adm'];
+    beforeEach(inject(function($controller, $rootScope, $httpBackend, $http, FilesystemService){
       // The injector unwraps the underscores (_) from around the parameter names when matching
       httpBackend = $httpBackend;
+      httpBackend.whenGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){
+        return [200, files];
+      });
+      httpBackend.whenGET('/filebrowser/a/fileutil?operation=GET_GROUPS').respond(function(){
+        return [200, groups];
+      });
       scope = $rootScope.$new();
       controller = $controller;
       http = $http;
@@ -53,7 +66,7 @@ describe('Filebrowser', function() {
         "type": "file"
       }];
       var fileData;
-      var groups = ['saurabh', 'sudo', 'adm'];
+
 
       mockFileService = {
         getCurrentDirectory: function() {
@@ -77,21 +90,22 @@ describe('Filebrowser', function() {
       };
 
       // Mock FilesystemService
-      mockFilesystemService = {
-        getGroups: function() {
-          return groups;
-        },
-        getFiles: function() {
-          http.get('/filebrowser/filetree/a/dir')
-          .success(function(data){
-            mockFileService.setFileData(data);
-          })
-          .error(function(data){
-            console.log(data);
-          });
-        }
-
-      };
+      // mockFilesystemService = {
+      //   getGroups: function() {
+      //     return groups;
+      //   },
+      //   getFiles: function() {
+      //     http.get('/filebrowser/filetree/a/dir')
+      //     .success(function(data){
+      //       mockFileService.setFileData(data);
+      //     })
+      //     .error(function(data){
+      //       console.log(data);
+      //     });
+      //   }
+      //
+      // };
+      mockFilesystemService = FilesystemService;
       // Mock FiletreeService
       mockFiletreeService = {};
       controller = $controller(
@@ -105,11 +119,6 @@ describe('Filebrowser', function() {
         scope.ctrl = controller;
         scope.$apply();
     }));
-
-    afterEach(function(){
-      httpBackend.verifyNoOutstandingExpectation();
-      httpBackend.verifyNoOutstandingRequest();
-    });
 
     it('checks if current directory is set', function() {
       var currentDirectory = mockFileService.getCurrentDirectory();
@@ -141,9 +150,11 @@ describe('Filebrowser', function() {
     });
 
     it('should fetch files for a particular directory', function(){
-      mockFilesystemService.getFiles();
-      httpBackend.whenGET('/filebrowser/filetree/a/dir').respond(function(){
-        return [200, files];
+      mockFilesystemService.getFiles({
+        filepath: '/home/saurabh'
+      }, function(data){
+        // scope.ctrl.fileData = data;
+        mockFileService.setFileData(data);
       });
       httpBackend.flush();
       expect(scope.ctrl.fileData).toBeDefined();
@@ -167,6 +178,36 @@ describe('Filebrowser', function() {
       expect(scope.ctrl.show_details).not.toBeTruthy();
       // populatePermissions should not have been called
       expect(scope.ctrl.populatePermissions).not.toHaveBeenCalled();
+    });
+
+    it('should populate permissions for the selected file', function(){
+      // Set a file as the selected file on the scope
+      scope.ctrl.selectedFile = files[0];
+      scope.ctrl.populatePermissions();
+      // Expect that self.currentFilePermissions would be defined
+      expect(scope.ctrl.currentFilePermissions).toBeDefined();
+      // Permission should be as expected
+      expect(scope.ctrl.currentFilePermissions['user']['r']).toBeTruthy();
+      expect(scope.ctrl.currentFilePermissions['user']['w']).toBeTruthy();
+      expect(scope.ctrl.currentFilePermissions['user']['x']).not.toBeTruthy();
+      expect(scope.ctrl.currentFilePermissions['group']['r']).toBeTruthy();
+      expect(scope.ctrl.currentFilePermissions['group']['w']).toBeTruthy();
+      expect(scope.ctrl.currentFilePermissions['group']['x']).not.toBeTruthy();
+      expect(scope.ctrl.currentFilePermissions['others']['r']).toBeTruthy();
+      expect(scope.ctrl.currentFilePermissions['others']['w']).not.toBeTruthy();
+      expect(scope.ctrl.currentFilePermissions['others']['x']).not.toBeTruthy();
+    });
+
+    it('should refresh the directory', function(){
+      // set current directory
+      scope.ctrl.currentDirectory = ['/', 'home', 'saurabh'];
+      spyOn(mockFilesystemService, 'getFiles');
+      scope.ctrl.refreshDirectory();
+      httpBackend.flush();
+      // Expect the FilesystemService.getFiles method to be called
+      expect(mockFilesystemService.getFiles).toHaveBeenCalled();
+      // Expect self.fileData to be defined
+      expect(scope.ctrl.fileData).toBeDefined();
     });
 
   });
