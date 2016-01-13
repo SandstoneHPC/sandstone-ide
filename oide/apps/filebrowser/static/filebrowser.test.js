@@ -11,7 +11,7 @@ describe('Filebrowser', function() {
       httpBackend = $httpBackend;
       scope = $rootScope.$new();
       controller = $controller;
-      http = $http
+      http = $http;
 
       // Mock FileService
       var currentDirectory = ['/', 'home', 'saurabh'];
@@ -50,7 +50,17 @@ describe('Filebrowser', function() {
       mockFilesystemService = {
         getGroups: function() {
           return groups;
+        },
+        getFiles: function() {
+          http.get('/filebrowser/filetree/a/dir')
+          .success(function(data){
+            mockFileService.setFileData(data);
+          })
+          .error(function(data){
+            console.log(data);
+          });
         }
+
       };
       // Mock FiletreeService
       mockFiletreeService = {};
@@ -101,13 +111,7 @@ describe('Filebrowser', function() {
     });
 
     it('should fetch files for a particular directory', function(){
-      http.get('/filebrowser/filetree/a/dir')
-      .success(function(data){
-        mockFileService.setFileData(data);
-      })
-      .error(function(data){
-        console.log(data);
-      });
+      mockFilesystemService.getFiles();
       httpBackend.whenGET('/filebrowser/filetree/a/dir').respond(function(){
         var files = [{
           "filepath": "/home/saurabh/file1",
@@ -142,6 +146,8 @@ describe('Filebrowser', function() {
       });
       httpBackend.flush();
       expect(scope.ctrl.fileData).toBeDefined();
+      // Length of filedata should be 3
+      expect(scope.ctrl.fileData.length).toBe(3);
     });
 
   });
