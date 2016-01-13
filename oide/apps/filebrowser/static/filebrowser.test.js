@@ -6,6 +6,7 @@ describe('Filebrowser', function() {
   describe('FilebrowserController Test', function() {
     var httpBackend;
     var http;
+    var files;
     beforeEach(inject(function($controller, $rootScope, $httpBackend, $http){
       // The injector unwraps the underscores (_) from around the parameter names when matching
       httpBackend = $httpBackend;
@@ -22,6 +23,35 @@ describe('Filebrowser', function() {
         'used': '10',
         'size': '100'
       };
+      files = [{
+        "filepath": "/home/saurabh/file1",
+        "filename": "file1",
+        "group": "saurabh",
+        "is_accessible": true,
+        "perm": "-rw-rw-r--",
+        "perm_string": "664",
+        "size": "0.0 KiB",
+        "type": "file"
+      }, {
+        "filepath": "/home/saurabh/file2",
+        "filename": "file2",
+        "group": "root",
+        "is_accessible": false,
+        "perm": "-rw-r--r--",
+        "perm_string": "644",
+        "size": "0.0 KiB",
+        "type": "file"
+      },
+      {
+        "filepath": "/home/saurabh/file3",
+        "filename": "file3",
+        "group": "saurabh",
+        "is_accessible": true,
+        "perm": "-rw-rw-r--",
+        "perm_string": "664",
+        "size": "0.0 KiB",
+        "type": "file"
+      }];
       var fileData;
       var groups = ['saurabh', 'sudo', 'adm'];
 
@@ -113,41 +143,30 @@ describe('Filebrowser', function() {
     it('should fetch files for a particular directory', function(){
       mockFilesystemService.getFiles();
       httpBackend.whenGET('/filebrowser/filetree/a/dir').respond(function(){
-        var files = [{
-          "filepath": "/home/saurabh/file1",
-          "filename": "file1",
-          "group": "saurabh",
-          "is_accessible": true,
-          "perm": "-rw-rw-r--",
-          "perm_string": "664",
-          "size": "0.0 KiB",
-          "type": "file"
-        }, {
-          "filepath": "/home/saurabh/file2",
-          "filename": "file2",
-          "group": "root",
-          "is_accessible": false,
-          "perm": "-rw-r--r--",
-          "perm_string": "644",
-          "size": "0.0 KiB",
-          "type": "file"
-        },
-        {
-          "filepath": "/home/saurabh/file3",
-          "filename": "file3",
-          "group": "saurabh",
-          "is_accessible": true,
-          "perm": "-rw-rw-r--",
-          "perm_string": "664",
-          "size": "0.0 KiB",
-          "type": "file"
-        }];
         return [200, files];
       });
       httpBackend.flush();
       expect(scope.ctrl.fileData).toBeDefined();
       // Length of filedata should be 3
       expect(scope.ctrl.fileData.length).toBe(3);
+    });
+
+    it('should show details of an accessible file', function(){
+      spyOn(scope.ctrl, 'populatePermissions');
+      scope.ctrl.ShowDetails(files[0]);
+      // show_details should be set to true
+      expect(scope.ctrl.show_details).toBeTruthy();
+      // populatePermissions to have been called
+      expect(scope.ctrl.populatePermissions).toHaveBeenCalled();
+    });
+
+    it('should not show details of an inaccessible file', function(){
+      spyOn(scope.ctrl, 'populatePermissions');
+      scope.ctrl.ShowDetails(files[1]);
+      // show_details should be set to false
+      expect(scope.ctrl.show_details).not.toBeTruthy();
+      // populatePermissions should not have been called
+      expect(scope.ctrl.populatePermissions).not.toHaveBeenCalled();
     });
 
   });
