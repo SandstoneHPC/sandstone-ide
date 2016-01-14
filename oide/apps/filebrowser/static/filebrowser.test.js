@@ -33,6 +33,9 @@ describe('Filebrowser', function() {
       httpBackend.whenPOST(/\/filebrowser\/a\/fileutil\?newpath=.*&operation=COPY&origpath=.*/).respond(function(){
         return [200, {'status': 'copied file'}];
       });
+      httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?filepath=.*&operation=GET_NEXT_DUPLICATE/).respond(function(){
+        return [200, []];
+      });
       scope = $rootScope.$new();
       controller = $controller;
       http = $http;
@@ -261,6 +264,29 @@ describe('Filebrowser', function() {
       scope.ctrl.pasteFile();
       httpBackend.flush();
       expect(scope.ctrl.isCopied).not.toBeTruthy();
+    });
+
+    it('should be able to duplicate a file', function(){
+      // Set current Directory
+      scope.ctrl.setCurrentDirectory = ['/', 'home', 'saurabh'];
+      scope.ctrl.refreshDirectory();
+      httpBackend.flush();
+      scope.ctrl.selectedFile = files[0];
+      // Get length of current array
+      var initial_length = scope.ctrl.fileData.length;
+      // Duplicate file
+
+      httpBackend.expectPOST(/\/filebrowser\/a\/fileutil\?operation=COPY&origpath=.*/).respond(function(){
+        // Duplicate first element of files
+        var element = files[0];
+        files.push(element);
+        return [200, {'status': 'copied file'}];
+      });
+
+      scope.ctrl.duplicateFile();
+      httpBackend.flush();
+      var new_length = scope.ctrl.fileData.length;
+      expect(initial_length).toBe(new_length - 1);
     });
 
   });
