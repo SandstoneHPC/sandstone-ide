@@ -30,6 +30,9 @@ describe('Filebrowser', function() {
       httpBackend.whenGET('/filebrowser/a/fileutil?operation=GET_GROUPS').respond(function(){
         return [200, groups];
       });
+      httpBackend.whenPOST(/\/filebrowser\/a\/fileutil\?newpath=.*&operation=COPY&origpath=.*/).respond(function(){
+        return [200, {'status': 'copied file'}];
+      });
       scope = $rootScope.$new();
       controller = $controller;
       http = $http;
@@ -230,6 +233,34 @@ describe('Filebrowser', function() {
       httpBackend.flush();
       // Expect the current directory to be /home/saurabh
       expect(scope.ctrl.formDirPath()).toBe("/home/saurabh/");
+    });
+
+    it('should not be able to navigate below the root directory', function(){
+      // Set the current directory
+      scope.ctrl.currentDirectory = ['/', 'home', 'saurabh', 'workspace', 'oide'];
+      // navigate to /home/
+      scope.ctrl.changeDir(1);
+      // Expect the current directory to be /home/saurabh/workspace/oide
+      expect(scope.ctrl.formDirPath()).toBe('/home/saurabh/workspace/oide/');
+    });
+
+    it('should be able to copy a file', function(){
+      scope.ctrl.selectedFile = files[0];
+      scope.ctrl.copyFile();
+      //expect isCopied to be true
+      expect(scope.ctrl.isCopied).toBeTruthy();
+      //expect copied file to be same as selected file
+      expect(scope.ctrl.copiedFile).toBe(scope.ctrl.selectedFile);
+    });
+
+    it('should be able to paste a file', function(){
+      scope.ctrl.currentDirectory = ['/', 'home', 'saurabh'];
+      scope.ctrl.selectedFile = files[0];
+      scope.ctrl.copyFile();
+      // Paste file
+      scope.ctrl.pasteFile();
+      httpBackend.flush();
+      expect(scope.ctrl.isCopied).not.toBeTruthy();
     });
 
   });
