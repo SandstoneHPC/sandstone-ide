@@ -36,6 +36,12 @@ describe('Filebrowser', function() {
       httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?filepath=.*&operation=GET_NEXT_DUPLICATE/).respond(function(){
         return [200, []];
       });
+      httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?dirpath=.*&operation=GET_NEXT_UNTITLED_FILE/).respond(function(){
+        return [200, []];
+      });
+      httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?dirpath=.*&operation=GET_NEXT_UNTITLED_DIR/).respond(function(){
+        return [200, []];
+      });
       scope = $rootScope.$new();
       controller = $controller;
       http = $http;
@@ -284,6 +290,52 @@ describe('Filebrowser', function() {
       });
 
       scope.ctrl.duplicateFile();
+      httpBackend.flush();
+      var new_length = scope.ctrl.fileData.length;
+      expect(initial_length).toBe(new_length - 1);
+    });
+
+    it('should be able to create a new file', function(){
+      // Set current Directory
+      scope.ctrl.setCurrentDirectory = ['/', 'home', 'saurabh'];
+      scope.ctrl.refreshDirectory();
+      httpBackend.flush();
+      scope.ctrl.selectedFile = files[0];
+      // Get length of current array
+      var initial_length = scope.ctrl.fileData.length;
+      // Create New file
+
+      httpBackend.expectPOST(/\/filebrowser\/localfiles.*/).respond(function(){
+        // Duplicate first element of files
+        var element = {filepath: '/home/saurabh', filename: 'newfile'};
+        files.push(element);
+        return [200, {'status': 'created new file'}];
+      });
+
+      scope.ctrl.createNewFile();
+      httpBackend.flush();
+      var new_length = scope.ctrl.fileData.length;
+      expect(initial_length).toBe(new_length - 1);
+    });
+
+    it('should be able to create a new directory', function(){
+      // Set current Directory
+      scope.ctrl.setCurrentDirectory = ['/', 'home', 'saurabh'];
+      scope.ctrl.refreshDirectory();
+      httpBackend.flush();
+      scope.ctrl.selectedFile = files[0];
+      // Get length of current array
+      var initial_length = scope.ctrl.fileData.length;
+      // Create New file
+
+      httpBackend.expectPOST(/\/filebrowser\/localfiles.*\?isDir=true/).respond(function(){
+        // Duplicate first element of files
+        var element = {filepath: '/home/saurabh', filename: 'newfolder'};
+        files.push(element);
+        return [200, {'status': 'created new file'}];
+      });
+
+      scope.ctrl.createNewDirectory();
       httpBackend.flush();
       var new_length = scope.ctrl.fileData.length;
       expect(initial_length).toBe(new_length - 1);
