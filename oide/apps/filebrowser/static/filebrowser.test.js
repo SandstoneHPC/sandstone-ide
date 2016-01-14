@@ -8,13 +8,20 @@ describe('Filebrowser', function() {
   var controller;
   beforeEach(module('oide.filebrowser'));
   beforeEach(module('oide.filesystemservice'));
+  // beforeEach(module('FileService'));
 
   describe('FilebrowserController Test', function() {
     var httpBackend;
     var http;
     var files;
     var groups = ['saurabh', 'sudo', 'adm'];
-    beforeEach(inject(function($controller, $rootScope, $httpBackend, $http, FilesystemService){
+    var volume_info = {
+      'percent': '10',
+      'used': '10',
+      'size': '100'
+    };
+    beforeEach(inject(function($controller, $rootScope, $httpBackend, $http, FilesystemService, FileService){
+      mockFileService = FileService;
       // The injector unwraps the underscores (_) from around the parameter names when matching
       httpBackend = $httpBackend;
       httpBackend.whenGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){
@@ -30,12 +37,7 @@ describe('Filebrowser', function() {
       // Mock FileService
       var currentDirectory = ['/', 'home', 'saurabh'];
       var currentFile = '/home/saurabh/testfile';
-      var rootDirectory = '/home/saurabh';
-      var volume_info = {
-        'percent': '10',
-        'used': '10',
-        'size': '100'
-      };
+      var rootDirectory = ['/', 'home', 'saurabh'];
       files = [{
         "filepath": "/home/saurabh/file1",
         "filename": "file1",
@@ -68,26 +70,26 @@ describe('Filebrowser', function() {
       var fileData;
 
 
-      mockFileService = {
-        getCurrentDirectory: function() {
-          return currentDirectory;
-        },
-        getFileData: function() {
-          return currentFile;
-        },
-        getRootDirectory: function() {
-          return rootDirectory;
-        },
-        getVolumeInfo: function() {
-          return volume_info;
-        },
-        setFileData: function(data) {
-          fileData = data;
-        },
-        getFileData: function(){
-          return fileData;
-        }
-      };
+      // mockFileService = {
+      //   getCurrentDirectory: function() {
+      //     return currentDirectory;
+      //   },
+      //   getFileData: function() {
+      //     return currentFile;
+      //   },
+      //   getRootDirectory: function() {
+      //     return rootDirectory;
+      //   },
+      //   getVolumeInfo: function() {
+      //     return volume_info;
+      //   },
+      //   setFileData: function(data) {
+      //     fileData = data;
+      //   },
+      //   getFileData: function(){
+      //     return fileData;
+      //   }
+      // };
 
       // Mock FilesystemService
       // mockFilesystemService = {
@@ -121,6 +123,8 @@ describe('Filebrowser', function() {
     }));
 
     it('checks if current directory is set', function() {
+      mockFileService.setCurrentDirectory("/home/saurabh/");
+      scope.$apply();
       var currentDirectory = mockFileService.getCurrentDirectory();
       var ref = ['/', 'home', 'saurabh'];
       var are_directories_same = is_same(currentDirectory, ref);
@@ -128,11 +132,17 @@ describe('Filebrowser', function() {
     });
 
     it('checks if volume info is set', function(){
+      mockFileService.setVolumeInfo(volume_info);
+      scope.$apply();
       expect(scope.ctrl.volumeUsed).toBe('10');
     });
 
     it('checks if root directory is set', function(){
-      expect(mockFileService.getRootDirectory()).toBe('/home/saurabh')
+      mockFileService.setRootDirectory('/home/saurabh/');
+      scope.$apply();
+      var ref = ['/', 'home', 'saurabh'];
+      var are_directories_same = is_same(scope.ctrl.rootDirectory, ref);
+      expect(are_directories_same).toBeTruthy();
     });
 
     function is_same(arr1, arr2) {
@@ -142,6 +152,8 @@ describe('Filebrowser', function() {
     }
 
     it('should form a correct current dir path', function(){
+      mockFileService.setCurrentDirectory('/home/saurabh/');
+      scope.$apply();
       var currentDirectory = scope.ctrl.currentDirectory;
       var ref = ['/', 'home', 'saurabh'];
       var are_directories_same = is_same(currentDirectory, ref);
@@ -207,7 +219,17 @@ describe('Filebrowser', function() {
       // Expect the FilesystemService.getFiles method to be called
       expect(mockFilesystemService.getFiles).toHaveBeenCalled();
       // Expect self.fileData to be defined
-      expect(scope.ctrl.fileData).toBeDefined();
+      // expect(scope.ctrl.fileData).toBeDefined();
+    });
+
+    it('should be able to change the directory', function(){
+      // Set the current directory
+      scope.ctrl.currentDirectory = ['/', 'home', 'saurabh', 'workspace', 'oide'];
+      // Navigate to /home/saurabh
+      scope.ctrl.changeDir(2);
+      httpBackend.flush();
+      // Expect the current directory to be /home/saurabh
+      expect(scope.ctrl.formDirPath()).toBe("/home/saurabh/");
     });
 
   });
