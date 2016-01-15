@@ -67,7 +67,9 @@ angular.module('oide.filebrowser')
     FiletreeService.describeSelection(node, selected);
   };
   self.getDirContents = function (node, expanded) {
-    FiletreeService.getDirContents(node);
+    if(expanded) {
+      FiletreeService.getDirContents(node);  
+    }
   };
   self.showSelected = function(node, selected) {
     console.log(node);
