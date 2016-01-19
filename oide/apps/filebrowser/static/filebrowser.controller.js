@@ -16,7 +16,10 @@ angular.module('oide.filebrowser')
     }, function (newValue) {
     self.currentDirectory = newValue;
     self.show_details = false;
-    document.querySelector('.scrollable-table').scrollTop = 0;
+    var scrollableDiv = document.querySelector('.scrollable-table')
+    if(scrollableDiv) {
+      scrollableDiv.scrollTop = 0;
+    }
   });
 
   $scope.$watch(function(){
