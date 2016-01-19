@@ -37,7 +37,7 @@ angular.module('oide.filebrowser')
       if(filepath.charAt(filepath.length - 1) == '/') {
         strippedFilepath = filepath.substr(0, filepath.length - 1);
       }
-      if(nodeList[i].type == 'dir' && folderName.charAt(filepath.length - 1) == '/') {
+      if(nodeList[i].type == 'dir' && folderName.charAt(folderName.length - 1) == '/') {
         folderName = folderName.substr(0, folderName.length - 1);
       }
       if (strippedFilepath.lastIndexOf(folderName,0) === 0) {
@@ -110,7 +110,7 @@ angular.module('oide.filebrowser')
       if(filepath.charAt(filepath.length - 1) == '/') {
         strippedFilepath = filepath.substr(0, filepath.length - 1);
       }
-      if(nodeList[i].type == 'dir' && folderName.charAt(filepath.length - 1) == '/') {
+      if(nodeList[i] && nodeList[i].type == 'dir' && folderName.charAt(folderName.length - 1) == '/') {
         folderName = folderName.substr(0, folderName.length - 1);
       }
       if (strippedFilepath.lastIndexOf(folderName,0) === 0) {
