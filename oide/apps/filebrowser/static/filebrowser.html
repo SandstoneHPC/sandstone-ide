@@ -13,24 +13,30 @@
     <div class="row">
       <ol class="breadcrumb">
         <li ng-click="ctrl.changeDir($index)" ng-repeat="pathComponent in ctrl.currentDirectory" ng-class="{active: $last}">{{pathComponent}}</li>
-        <div class="directory-options">
-          <div class="btn-toolbar" role="toolbar">
+        <!-- <div class="directory-options"> -->
+          <div class="btn-group btn-group-sm dir-controls directory-options" role="group">
             <div class="btn-group btn-group-sm" role="group">
-              <button type="button" ng-disabled="!ctrl.isCopied || ctrl.selectedFile == ''" ng-click="ctrl.pasteFile()" class="btn btn-default" tooltip="Paste" style="margin-left: 0px;">
+              <button type="button" ng-disabled="!ctrl.isCopied || ctrl.selectedFile == ''" ng-click="ctrl.pasteFile()" class="btn btn-default" tooltip="Paste" style="margin-left: 0px; background-color: rgb(62, 63, 58);" tooltip-trigger="mouseenter" tooltip-placement="bottom">
                 <i class="fa fa-2x fa-paste dir-option"></i>
               </button>
-              <button type="button" class="btn btn-default" style="margin-left: 0px;" tooltip="Upload" ng-click="ctrl.openUploadModal()" ng-disabled="ctrl.currentDirectory.length == 0">
+            </div>
+            <div class="btn-group btn-group-sm" role="group">
+              <button type="button" class="btn btn-default" style="margin-left: 0px; background-color: rgb(62, 63, 58);" tooltip="Upload" ng-click="ctrl.openUploadModal()" ng-disabled="ctrl.currentDirectory.length == 0" tooltip-trigger="mouseenter" tooltip-placement="bottom">
                 <i class="fa fa-2x fa-upload dir-option"></i>
               </button>
-              <button type="button" ng-click="ctrl.createNewFile()" ng-disabled="ctrl.currentDirectory.length == 0" class="btn btn-default" tooltip="New File" style="margin-left: 0px;">
+            </div>
+            <div class="btn-group btn-group-sm" role="group">
+              <button type="button" ng-click="ctrl.createNewFile()" ng-disabled="ctrl.currentDirectory.length == 0" class="btn btn-default" tooltip="New File" style="margin-left: 0px; background-color: rgb(62, 63, 58);" tooltip-trigger="mouseenter" tooltip-placement="bottom">
                 <i class="fa fa-2x fa-file-o dir-option"></i>
               </button>
-              <button type="button" ng-click="ctrl.createNewDirectory()" ng-disabled="ctrl.currentDirectory.length == 0"  class="btn btn-default" tooltip="New Directory" style="margin-left: 0px;">
+            </div>
+            <div class="btn-group btn-group-sm" role="group">
+              <button type="button" ng-click="ctrl.createNewDirectory()" ng-disabled="ctrl.currentDirectory.length == 0"  class="btn btn-default" tooltip="New Dir" style="margin-left: 0px; background-color: rgb(62, 63, 58);" tooltip-trigger="mouseenter" tooltip-placement="bottom">
                 <i class="fa fa-2x fa-folder-o dir-option"></i>
               </button>
             </div>
           </div>
-        </div>
+        <!-- </div> -->
       </ol>
     </div>
     <div class="row">
@@ -137,7 +143,7 @@
           </tr>
         </tbody>
       </table>
-      <div class="btn-group btn-group-sm" role="group" style="float: right;">
+      <div class="btn-group btn-group-sm dir-controls" role="group" style="float: right;">
         <div class="btn-group btn-group-sm" role="group">
           <button type="button" ng-click="ctrl.copyFile()" tooltip="Copy" class="btn btn-default filedetails-bottom-actions">
             <i class="fa fa-files-o dir-option" style="font-size:18px;"></i>
