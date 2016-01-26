@@ -78,6 +78,7 @@ describe('filetree', function(){
     //Expect Filetree service to be defined
     it('Controller initialization should be proper', function(){
       httpBackend.flush();
+      expect(scope.ctrl).toBeDefined();
       expect($filetreeService).toBeDefined();
       expect(scope.ctrl.treeData).toBeDefined();
       expect(scope.ctrl.treeData.filetreeContents).toBeDefined();
