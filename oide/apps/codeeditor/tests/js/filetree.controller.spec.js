@@ -4,8 +4,8 @@ describe('filetree', function(){
   var filetreeCtrl;
   var httpBackend;
   var dirs = [{
-        "filepath": "/home/saurabh/dir2",
-        "filename": "dir2",
+        "filepath": "/home/saurabh/dir1",
+        "filename": "dir1",
         "group": "saurabh",
         "is_accessible": true,
         "perm": "-rw-rw-r--",
@@ -55,6 +55,7 @@ describe('filetree', function(){
 
   beforeEach(module('oide'));
   beforeEach(module('oide.editor'));
+  beforeEach(module('oide.filesystemservice'));
 
   beforeEach(inject(function($controller, $rootScope, $log, $document, FiletreeService, $httpBackend){
     scope = $rootScope.$new();

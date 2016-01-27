@@ -54,6 +54,7 @@ describe('filetree.service', function(){
 
     beforeEach(module('oide'));
     beforeEach(module('oide.editor'));
+    beforeEach(module('oide.filesystemservice'));
 
     beforeEach(inject(function(FiletreeService, $httpBackend){
       $filetreeService = FiletreeService;
