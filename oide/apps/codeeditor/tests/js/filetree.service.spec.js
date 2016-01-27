@@ -73,5 +73,17 @@ describe('filetree.service', function(){
         expect($filetreeService.treeData.filetreeContents).toBeDefined();
         expect($filetreeService.treeData.filetreeContents.length).toBe(3);
       });
+      it('should list the directory contents', function(){
+        httpBackend.flush();
+        httpBackend.whenGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){
+          return [200, files];
+        });
+        $filetreeService.getDirContents($filetreeService.treeData.filetreeContents[0]);
+        httpBackend.flush();
+        // Retrieved files should be set as the childrens object of the 0th node
+        expect($filetreeService.treeData.filetreeContents[0].children).toBeDefined();
+        // Length of the children for the node should be 2
+        expect($filetreeService.treeData.filetreeContents[0].children.length).toBe(2);
+      });
     });
 });
