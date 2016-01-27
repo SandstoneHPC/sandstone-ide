@@ -85,5 +85,12 @@ describe('filetree.service', function(){
         // Length of the children for the node should be 2
         expect($filetreeService.treeData.filetreeContents[0].children.length).toBe(2);
       });
+      it('should be able to copy a file to the clipboard', function(){
+        httpBackend.flush();
+        //$filetreeService.describeSelection($filetreeService.treeData.filetreeContents[0], true);
+        $filetreeService.treeData.selectedNodes = [$filetreeService.treeData.filetreeContents[0]];
+        $filetreeService.copyFiles();
+        expect($filetreeService.clipboardEmpty()).not.toBeTruthy();
+      });
     });
 });
