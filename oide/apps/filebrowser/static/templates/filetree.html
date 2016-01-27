@@ -1,0 +1,14 @@
+<div id="filetree-container">
+  <treecontrol
+    class="tree-oide"
+    tree-model="ctrl.treeData.filetreeContents"
+    options="ctrl.treeOptions"
+    order-by="type+filename"
+    selected-nodes="ctrl.treeData.selectedNodes"
+    expanded-nodes="ctrl.treeData.expandedNodes"
+    on-selection="ctrl.describeSelection(node, selected)"
+    on-node-toggle="ctrl.getDirContents(node,expanded)">
+    {{node.filename}}
+    <span class="filetree-permissions">{{node.permissions}}</span>
+  </treecontrol>
+</div>

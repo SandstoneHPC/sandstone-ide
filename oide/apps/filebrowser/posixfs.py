@@ -4,8 +4,9 @@ import stat
 import pwd
 import shutil
 import logging
-
 import oide.apps.filebrowser.settings as app_settings
+import grp
+import subprocess
 
 
 
@@ -108,3 +109,42 @@ class PosixFS():
                 filepath = filepath + '/'
             contents.append( ( i,filepath,is_dir ) )
         return contents
+
+    @staticmethod
+    def get_dir_folders(dirpath):
+        contents = []
+        for i in os.listdir(dirpath):
+            filepath = os.path.join(dirpath,i)
+            is_dir = os.path.isdir(filepath)
+            if is_dir:
+                filepath = filepath + '/'
+            else:
+                continue
+            contents.append( ( i,filepath,is_dir ) )
+        return contents
+
+    @staticmethod
+    def change_permisions(filepath, perm_string):
+        os.chmod(filepath, int(perm_string, 8))
+
+    @staticmethod
+    def get_groups():
+        return subprocess.check_output(["id", "--name", "-G"]).strip().split()
+
+    @staticmethod
+    def change_group(filepath, group_name):
+        # Get uid
+        uid = os.stat(filepath).st_uid
+        # Get GID of new group
+        gid = grp.getgrnam(group_name).gr_gid
+        # change group
+        os.chown(filepath, uid, gid)
+
+    @staticmethod
+    def get_volume_info(filepath):
+        df = subprocess.Popen(['df', filepath], stdout=subprocess.PIPE)
+        output = df.communicate()[0]
+        device, size, used, available, percent, mountpoint = output.split("\n")[1].split()
+        size = int(size) / (1024 * 1024)
+        used = int(used) / (1024 * 1024)
+        return {'percent': float(percent.strip('%')), 'used': used, 'size': size}

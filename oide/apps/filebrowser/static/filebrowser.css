@@ -1,0 +1,167 @@
+.volume-info {
+  margin-left: 20px;
+}
+
+.directory-options {
+  float: right;
+  text-align: center;
+}
+
+.dir-option {
+  display: inline;
+  padding: 5px;
+}
+
+.dir-controls {
+  color: #93c54b;
+  margin-bottom: 25px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 300px;
+}
+
+.breadcrumb {
+  margin-bottom: 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  height: 64px;
+}
+
+.breadcrumb a {
+  color: #555;
+}
+
+.breadcrumb > .active {
+  color: #93c54b;
+}
+
+.progress {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 0;
+}
+
+.side {
+  background-color: #FFFFFF;
+}
+
+.file-details {
+  border-left: 1px solid #eee;
+  background-color: #FFFFFF;
+  overflow-y: scroll;
+  margin-top: 70px;
+  position: absolute;
+  right: 15px;
+  bottom: 30px;
+  top: 20px;
+}
+
+.file-upload {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+}
+.file-upload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+.filedetails-filename {
+  font-size: 36px;
+  font-weight: 400;
+  border-right: 0;
+  border-left: 0;
+  border-top: 0;
+  background-color: #FFFFFF !important;
+  width: 90%;
+}
+
+.filedetails-filename[disabled] {
+  cursor: not-allowed;
+}
+
+.filetable-filename {
+  cursor: pointer;
+}
+
+.filedetails-bottom-actions {
+  height:40px;
+  bottom: 5px;
+  position: absolute;
+}
+
+.filetable-filename-selected {
+  color: #93c54b;
+  font-weight: bold;
+}
+
+.main {
+  padding-right: 0;
+  overflow: hidden;
+}
+
+.scrollable-table {
+  overflow-y: scroll;
+  margin-top: 70px;
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  bottom: 30px;
+  top: 20px;
+}
+
+td.perm {
+  padding: 10px;
+  text-align: center;
+}
+
+.filetree-btn {
+  /*border-top: 1px solid #93c54b;*/
+  border-bottom: 2px solid #93c54b;
+  /*color: inherit;*/
+}
+.filetree-control-label {
+  font-size: 10px;
+  margin-right: 5px;
+}
+.filetree-dropdown {
+  color: white;
+  background-color: #3e3f3a;
+  border: 1px solid #3e3f3a;
+}
+.filetree-dropdown > li > a:hover {
+  color: white;
+  background-color: #3e3f3a;
+}
+
+#filetree-container {
+  margin-top: 70px;
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  bottom: 30px;
+  top: 20px;
+  /* max-height: 80%; */
+  overflow-x: scroll;
+  overflow-y: scroll;
+}
+#filetree-container li {
+  white-space: nowrap;
+}
+
+.st-sort-ascent:before{
+    content: '\25B2';
+}
+
+.st-sort-descent:before{
+    content: '\25BC';
+}

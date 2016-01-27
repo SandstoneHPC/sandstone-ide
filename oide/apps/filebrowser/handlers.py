@@ -6,6 +6,7 @@ import logging
 import operator
 import tornado.web
 import tornado.ioloop
+import tempfile
 
 from tornado.concurrent import Future
 from tornado import gen
@@ -15,7 +16,11 @@ import oide.settings as global_settings
 import oide.apps.filebrowser.settings as app_settings
 from oide.lib.handlers.base import BaseHandler
 from oide.apps.filebrowser.mixins.fs_mixin import FSMixin
-
+from os import stat
+from stat import *
+from pwd import getpwuid
+from permissions import *
+import grp
 
 
 class LocalFileHandler(BaseHandler,FSMixin):
@@ -116,6 +121,22 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
                     newFilePath = ''.join([filepath,'-duplicate%s'%index])
                 fileExists = self.fs.file_exists(newFilePath)
             self.write({'result':newFilePath})
+        if operation == "GET_GROUPS":
+            res = self.fs.get_groups()
+            self.write(json.dumps(res))
+        if operation == "GET_ROOT_DIR":
+            list_of_root_dirs = self.fs.list_root_paths(self.current_user)
+            dirpath = self.get_argument('filepath')
+            root_dir = ""
+            for root in list_of_root_dirs:
+                if dirpath.startswith(root):
+                    root_dir = root
+                    break
+            self.write({'result': root_dir})
+        if operation == 'GET_VOLUME_INFO':
+            filepath = self.get_argument('filepath')
+            res = self.fs.get_volume_info(filepath)
+            self.write(json.dumps({'result': res}))
 
     @oide.lib.decorators.authenticated
     def post(self):
@@ -138,8 +159,72 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
         elif operation=='MAKE_EXEC':
             filepath = self.get_argument('filepath')
             result = self.fs.make_executable(filepath)
-
+        elif operation=='CHANGE_PERMISSIONS':
+            result = self.change_permissions()
+        elif operation == 'CHANGE_GROUP':
+            filepath = self.get_argument('filepath')
+            group = self.get_argument('group')
+            self.fs.change_group(filepath, group)
+            result = "Changed Group"
         self.write({'result':result})
+
+    @oide.lib.decorators.authenticated
+    def change_permissions(self):
+        perm_string = self.get_argument('permissions')
+        filepath = self.get_argument('filepath')
+        self.fs.change_permisions(filepath, perm_string)
+        result = "Changed permission of ", filepath, " to ", perm_string
+        return result
+
+@tornado.web.stream_request_body
+class SimpleUploadHandler(BaseHandler, FSMixin):
+
+    @tornado.web.authenticated
+    def post(self):
+        fp = self.request.headers['Uploaddir']
+        dest_path = os.path.join(fp,self.filename)
+        self.fd.close()
+        # shutil.move(self.fd.name,dest_path)
+        self.fs.move_file(self.fd.name, dest_path)
+
+    @tornado.web.authenticated
+    def prepare(self):
+        self.tmp_cache = ''
+        self.stream_started = False
+        self.request.connection.set_max_body_size(2*1024**3)
+        fd_info = tempfile.mkstemp()
+        self.fd = open(fd_info[1],'w')
+
+    def data_received(self, data):
+        self.tmp_cache += data
+        pdata = self._process(data)
+        self.fd.write(pdata)
+
+    def _process(self, data):
+        trimmed = data.splitlines()
+        tmp = data.splitlines(True)
+
+        if not self.stream_started:
+            self.boundary = trimmed[0].strip()
+            tmp = tmp[1:]
+            trimmed = trimmed[1:]
+            self.stream_started = True
+
+            try:
+                first_elem = trimmed[:5].index("")
+                metadata = trimmed[:first_elem]
+                self.filename = metadata[0].split(';')[-1].split('=')[-1][1:-1]
+                tmp = tmp[first_elem + 1:]
+                trimmed = trimmed[first_elem + 1:]
+            except ValueError:
+                pass
+
+        try:
+            last_elem = trimmed.index(self.boundary + "--")
+            self.stream_started = False
+            return "".join(tmp[:last_elem - 1])
+        except ValueError:
+            return "".join(tmp)
 
 class FilesystemUploadHandler(BaseHandler,FSMixin):
 
@@ -167,6 +252,45 @@ class FileTreeHandler(BaseHandler,FSMixin):
 
     @oide.lib.decorators.authenticated
     def get(self):
+        is_folders = self.get_argument('folders', '')
+        if is_folders == "true":
+            self.get_folders()
+        else:
+            dirpath = self.get_argument('dirpath','')
+            dir_contents = []
+            if dirpath == '':
+                for r in self.fs.list_root_paths(self.current_user):
+                    dir_contents.append({
+                        'type':'dir',
+                        'filename':r,
+                        'filepath':r})
+            else:
+                for i in self.fs.get_dir_contents(dirpath):
+                    curr_file = {}
+                    if i[0].startswith('.'):
+                        continue
+                    if i[2]:
+                        curr_file['type'] = 'dir'
+                    else:
+                        curr_file['type'] = 'file'
+                    # Get owner information
+                    stat_object = stat(i[1])
+                    owner = getpwuid(stat_object.st_uid).pw_name
+                    file_size = str((float(stat_object.st_size) / 1024)) + " KiB"
+                    curr_file['filename'] = i[0]
+                    curr_file['filepath'] = i[1]
+                    curr_file['owner'] = owner
+                    curr_file['size'] = file_size
+                    curr_file['perm'] = filemode(stat_object[ST_MODE])
+                    curr_file['perm_string'] = oct(stat_object[ST_MODE])[-3:]
+                    curr_file['group'] = grp.getgrgid(stat_object.st_gid).gr_name
+                    curr_file['is_accessible'] = os.access(i[1], os.W_OK)
+                    dir_contents.append(curr_file)
+
+            self.write(json.dumps(dir_contents))
+
+    @oide.lib.decorators.authenticated
+    def get_folders(self):
         dirpath = self.get_argument('dirpath','')
         dir_contents = []
         if dirpath == '':
@@ -176,7 +300,7 @@ class FileTreeHandler(BaseHandler,FSMixin):
                     'filename':r,
                     'filepath':r})
         else:
-            for i in self.fs.get_dir_contents(dirpath):
+            for i in self.fs.get_dir_folders(dirpath):
                 curr_file = {}
                 if i[0].startswith('.'):
                     continue
@@ -184,8 +308,18 @@ class FileTreeHandler(BaseHandler,FSMixin):
                     curr_file['type'] = 'dir'
                 else:
                     curr_file['type'] = 'file'
+                # Get owner information
+                stat_object = stat(i[1])
+                # owner = getpwuid(stat_object.st_uid).pw_name
+                file_size = str((float(stat_object.st_size) / 1024)) + " KiB"
                 curr_file['filename'] = i[0]
                 curr_file['filepath'] = i[1]
+                # curr_file['owner'] = owner
+                curr_file['size'] = file_size
+                curr_file['perm'] = filemode(stat_object[ST_MODE])
+                curr_file['perm_string'] = oct(stat_object[ST_MODE])[-3:]
+                curr_file['group'] = grp.getgrgid(stat_object.st_gid).gr_name
+                curr_file['is_accessible'] = os.access(i[1], os.W_OK)
                 dir_contents.append(curr_file)
 
         self.write(json.dumps(dir_contents))
