@@ -63,8 +63,23 @@ describe('oide.filesystemservice', function(){
       httpBackend.whenGET('/filebrowser/filetree/a/dir').respond(function(){
         return [200, dirs];
       });
+      httpBackend.whenGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*&folders=true/).respond(function(){
+        return [200, dirs];
+      });
       httpBackend.whenGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){
         return [200, files];
+      });
+      httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?dirpath=.*&operation=GET_NEXT_UNTITLED_FILE/).respond(function(){
+        return [200, {'filepath': '/home/saurabh/Untitled1'}];
+      });
+      httpBackend.whenPOST(/\/filebrowser\/localfiles.*/).respond(function(){
+        return [200, {'filepath': '/home/saurabh/Untitled1'}];
+      });
+      httpBackend.whenPOST(/\/filebrowser\/localfiles.*/).respond(function(){
+        return [200, {'filepath': '/home/saurabh/Untitled1'}];
+      });
+      httpBackend.whenPOST(/\/filebrowser\/a\/fileutil\?filepath=.*&newFileName=.*&operation=RENAME/).respond(function(){
+        return [200, {'filepath': '/home/saurabh/somefile'}];
       });
     }));
 
@@ -72,6 +87,30 @@ describe('oide.filesystemservice', function(){
       it('should be able to get files', function(){
         $filesystemservice.getFiles(dirs[0], function(data){
           expect(data.length).toBe(2);
+        });
+        httpBackend.flush();
+      });
+      it('should be able to get folders', function(){
+        $filesystemservice.getFolders(dirs[0], function(data){
+          expect(data.length).toBe(3);
+        });
+        httpBackend.flush();
+      });
+      it('should be able to get the next untitled file', function(){
+        $filesystemservice.getNextUntitledFile(dirs[0], function(data){
+          expect(data.filepath).toBeDefined();
+        });
+        httpBackend.flush();
+      });
+      it('should be able to create a new file', function(){
+        $filesystemservice.createNewFile(files[0].filename, function(data){
+          expect(data.filepath).toBeDefined();
+        });
+        httpBackend.flush();
+      });
+      it('should be able to rename a file', function(){
+        $filesystemservice.renameFile("somefile", files[0], function(data){
+          expect(data.filepath).toBeDefined();
         });
         httpBackend.flush();
       });
