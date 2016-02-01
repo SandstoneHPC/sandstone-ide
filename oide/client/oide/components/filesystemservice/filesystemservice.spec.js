@@ -96,6 +96,9 @@ describe('oide.filesystemservice', function(){
       httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?operation=GET_GROUPS/).respond(function(){
         return [200, ['users', 'ldap']];
       });
+      httpBackend.whenPOST(/\/filebrowser\/a\/fileutil\?newpath=.*&operation=COPY&origpath=.*/).respond(function(){
+        return [200, {'result': '/home/saurabh/Untitled1-duplicate'}];
+      });
     }));
 
     describe('Functionality of FilesystemService', function(){
@@ -142,27 +145,34 @@ describe('oide.filesystemservice', function(){
         });
         httpBackend.flush();
       });
-    });
-    it('should be able to get the volume info', function(){
-      $filesystemservice.getVolumeInfo(files[0].filepath, function(data){
-        expect(data.result).toBeDefined();
-        expect(data.result.percent).toBe(28);
-        expect(data.result.size).toBe(429);
-        expect(data.result.used).toBe(117);
+      it('should be able to duplicate a file', function(){
+        $filesystemservice.duplicateFile(files[0].filepath, '/home/saurabh/Untitled1-duplicate', function(data){
+          expect(data.result).toBeDefined();
+          expect(data.result).toBe('/home/saurabh/Untitled1-duplicate');
+        });
+        httpBackend.flush();
       });
-      httpBackend.flush();
-    });
-    it('should be able to get the root directories', function(){
-      $filesystemservice.getRootDirectory(files[0].filepath, function(data){
-        expect(data.result).toBeDefined();
+      it('should be able to get the volume info', function(){
+        $filesystemservice.getVolumeInfo(files[0].filepath, function(data){
+          expect(data.result).toBeDefined();
+          expect(data.result.percent).toBe(28);
+          expect(data.result.size).toBe(429);
+          expect(data.result.used).toBe(117);
+        });
+        httpBackend.flush();
       });
-      httpBackend.flush();
-    });
-    it('should be able to fetch the groups', function(){
-      $filesystemservice.getGroups(function(data){
-        expect(data).toBeDefined();
-        expect(data.length).toBe(2);
+      it('should be able to get the root directories', function(){
+        $filesystemservice.getRootDirectory(files[0].filepath, function(data){
+          expect(data.result).toBeDefined();
+        });
+        httpBackend.flush();
       });
-      httpBackend.flush();
+      it('should be able to fetch the groups', function(){
+        $filesystemservice.getGroups( function(data){
+          expect(data).toBeDefined();
+          expect(data.length).toBe(2);
+        });
+        httpBackend.flush();
+      });
     });
 });
