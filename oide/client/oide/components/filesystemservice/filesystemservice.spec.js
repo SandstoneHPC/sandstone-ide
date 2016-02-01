@@ -200,7 +200,7 @@ describe('oide.filesystemservice', function(){
         });
         httpBackend.flush();
       });
-      it('should be able to change groups', function(){
+      it('should be able to change permissions', function(){
         $filesystemservice.changePermissions(files[0].filepath, "0666", function(data){
           expect(data.result).toBeDefined();
           expect(data.result.permissions).toBe("0666");
