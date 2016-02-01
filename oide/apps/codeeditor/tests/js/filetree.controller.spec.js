@@ -52,6 +52,11 @@ describe('filetree', function(){
           "size": "4.0 KiB",
           "type": "dir"
         }];
+  var injectClasses = {
+    iExpanded: "filetree-icon fa fa-folder-open",
+    iCollapsed: "filetree-icon fa fa-folder",
+    iLeaf: "filetree-icon fa fa-file",
+  }
 
   beforeEach(module('oide'));
   beforeEach(module('oide.editor'));
@@ -97,6 +102,13 @@ describe('filetree', function(){
       expect(scope.ctrl.treeData.filetreeContents[0].children).toBeDefined();
       // Length of the children for the node should be 2
       expect(scope.ctrl.treeData.filetreeContents[0].children.length).toBe(2);
+    });
+
+    it('should have valid default treeOptions loaded', function(){
+      httpBackend.flush();
+      expect(scope.ctrl.treeOptions).toBeDefined();
+      expect(scope.ctrl.treeOptions.multiSelection).toBeTruthy();
+      expect(scope.ctrl.treeOptions.injectClasses).toEqual(injectClasses);
     });
 
   });
