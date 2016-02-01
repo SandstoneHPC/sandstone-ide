@@ -84,6 +84,9 @@ describe('oide.filesystemservice', function(){
       httpBackend.when('DELETE', /\/filebrowser\/localfiles.*/).respond(function(){
         return [200, {'result': 'DELETED file'}];
       });
+      httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?filepath=.*&operation=GET_NEXT_DUPLICATE/).respond(function(){
+        return [200, {'filepath': '/home/saurabh/Untitled12'}];
+      });
     }));
 
     describe('Functionality of FilesystemService', function(){
@@ -120,6 +123,13 @@ describe('oide.filesystemservice', function(){
       it('should be able to delete a file', function(){
         $filesystemservice.deleteFile(files[0].filepath, function(data){
           expect(data.result).toBeDefined();
+        });
+        httpBackend.flush();
+      });
+      it('should be able to get the next duplicate filename', function(){
+        $filesystemservice.getNextDuplicate(files[0].filepath, function(data){
+          expect(data.originalFile).toBeDefined();
+          expect(data.filepath).toBe('/home/saurabh/Untitled12');
         });
         httpBackend.flush();
       });
