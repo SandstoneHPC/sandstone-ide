@@ -90,6 +90,9 @@ describe('oide.filesystemservice', function(){
       httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?filepath=.*&operation=GET_VOLUME_INFO/).respond(function(){
         return [200, {'result': {'percent': 28, 'size': 429, 'used': 117}}];
       });
+      httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?filepath=.*&operation=GET_ROOT_DIR/).respond(function(){
+        return [200, {'result': '/home/saurabh/'}];
+      });
     }));
 
     describe('Functionality of FilesystemService', function(){
@@ -143,6 +146,12 @@ describe('oide.filesystemservice', function(){
         expect(data.result.percent).toBe(28);
         expect(data.result.size).toBe(429);
         expect(data.result.used).toBe(117);
+      });
+      httpBackend.flush();
+    });
+    it('should be able to get the root directories', function(){
+      $filesystemservice.getRootDirectory(files[0].filepath, function(data){
+        expect(data.result).toBeDefined();
       });
       httpBackend.flush();
     });
