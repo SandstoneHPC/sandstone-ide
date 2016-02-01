@@ -73,10 +73,7 @@ describe('oide.filesystemservice', function(){
         return [200, {'filepath': '/home/saurabh/Untitled1'}];
       });
       httpBackend.whenPOST(/\/filebrowser\/localfiles.*/).respond(function(){
-        return [200, {'filepath': '/home/saurabh/Untitled1'}];
-      });
-      httpBackend.whenPOST(/\/filebrowser\/localfiles.*/).respond(function(){
-        return [200, {'filepath': '/home/saurabh/Untitled1'}];
+        return [200, {'result': '/home/saurabh/Untitled1'}];
       });
       httpBackend.whenPOST(/\/filebrowser\/a\/fileutil\?filepath=.*&newFileName=.*&operation=RENAME/).respond(function(){
         return [200, {'filepath': '/home/saurabh/somefile'}];
@@ -125,7 +122,7 @@ describe('oide.filesystemservice', function(){
       });
       it('should be able to create a new file', function(){
         $filesystemservice.createNewFile(files[0].filename, function(data){
-          expect(data.filepath).toBeDefined();
+          expect(data.result).toBeDefined();
         });
         httpBackend.flush();
       });
@@ -181,6 +178,13 @@ describe('oide.filesystemservice', function(){
         $filesystemservice.getNextUntitledDir(dirs[0].filepath, function(data){
           expect(data).toBeDefined();
           expect(data.filepath).toBe('/home/saurabh/dir2-duplicate');
+        });
+        httpBackend.flush();
+      });
+      it('should be able to create a new dir', function(){
+        $filesystemservice.createNewDir(dirs[0].filepath, function(data){
+          console.log(data);
+          expect(data.result).toBeDefined();
         });
         httpBackend.flush();
       });
