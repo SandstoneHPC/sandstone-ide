@@ -93,6 +93,9 @@ describe('oide.filesystemservice', function(){
       httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?filepath=.*&operation=GET_ROOT_DIR/).respond(function(){
         return [200, {'result': '/home/saurabh/'}];
       });
+      httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?operation=GET_GROUPS/).respond(function(){
+        return [200, ['users', 'ldap']];
+      });
     }));
 
     describe('Functionality of FilesystemService', function(){
@@ -152,6 +155,13 @@ describe('oide.filesystemservice', function(){
     it('should be able to get the root directories', function(){
       $filesystemservice.getRootDirectory(files[0].filepath, function(data){
         expect(data.result).toBeDefined();
+      });
+      httpBackend.flush();
+    });
+    it('should be able to fetch the groups', function(){
+      $filesystemservice.getGroups(function(data){
+        expect(data).toBeDefined();
+        expect(data.length).toBe(2);
       });
       httpBackend.flush();
     });
