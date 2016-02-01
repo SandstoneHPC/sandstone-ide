@@ -39,7 +39,7 @@ angular.module('oide.editor')
   };
   self.getDirContents = function (node, expanded) {
     if(expanded) {
-      FiletreeService.getDirContents(node);  
+      FiletreeService.getDirContents(node);
     }
   };
   self.showSelected = function(node, selected) {

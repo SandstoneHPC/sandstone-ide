@@ -96,7 +96,7 @@ describe('filetree', function(){
       httpBackend.whenGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){
         return [200, files];
       });
-      scope.ctrl.getDirContents(scope.ctrl.treeData.filetreeContents[0]);
+      scope.ctrl.getDirContents(scope.ctrl.treeData.filetreeContents[0], true);
       httpBackend.flush();
       // Retrieved files should be set as the childrens object of the 0th node
       expect(scope.ctrl.treeData.filetreeContents[0].children).toBeDefined();
@@ -109,6 +109,18 @@ describe('filetree', function(){
       expect(scope.ctrl.treeOptions).toBeDefined();
       expect(scope.ctrl.treeOptions.multiSelection).toBeTruthy();
       expect(scope.ctrl.treeOptions.injectClasses).toEqual(injectClasses);
+    });
+
+    it('should add the node to selected nodes if selected', function(){
+      httpBackend.flush();
+      // Select a file
+      scope.ctrl.describeSelection(files[0], true);
+      // Should be added to selectedNodes
+      expect(scope.ctrl.treeData.selectedNodes.length).toBe(1);
+      // Unselect files
+      scope.ctrl.describeSelection(files[0], false);
+      // selectedNodes should be empty
+      expect(scope.ctrl.treeData.selectedNodes.length).toBe(0);
     });
 
   });
