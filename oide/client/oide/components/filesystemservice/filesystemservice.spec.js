@@ -99,6 +99,9 @@ describe('oide.filesystemservice', function(){
       httpBackend.whenPOST(/\/filebrowser\/a\/fileutil\?newpath=.*&operation=COPY&origpath=.*/).respond(function(){
         return [200, {'result': '/home/saurabh/Untitled1-duplicate'}];
       });
+      httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?dirpath=.*&operation=GET_NEXT_UNTITLED_DIR/).respond(function(){
+        return [200, {'filepath': '/home/saurabh/dir2-duplicate'}];
+      });
     }));
 
     describe('Functionality of FilesystemService', function(){
@@ -171,6 +174,13 @@ describe('oide.filesystemservice', function(){
         $filesystemservice.getGroups( function(data){
           expect(data).toBeDefined();
           expect(data.length).toBe(2);
+        });
+        httpBackend.flush();
+      });
+      it('should be able to get next untitled directory', function(){
+        $filesystemservice.getNextUntitledDir(dirs[0].filepath, function(data){
+          expect(data).toBeDefined();
+          expect(data.filepath).toBe('/home/saurabh/dir2-duplicate');
         });
         httpBackend.flush();
       });
