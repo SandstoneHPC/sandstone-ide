@@ -99,6 +99,12 @@ describe('oide.filesystemservice', function(){
       httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?dirpath=.*&operation=GET_NEXT_UNTITLED_DIR/).respond(function(){
         return [200, {'filepath': '/home/saurabh/dir2-duplicate'}];
       });
+      httpBackend.whenPOST(/\/filebrowser\/a\/fileutil\?filepath=.*&group=.*&operation=CHANGE_GROUP/).respond(function(){
+        return [200, {'result': 'Changed Group'}];
+      });
+      httpBackend.whenPOST(/\/filebrowser\/a\/fileutil\?filepath=.*&operation=CHANGE_PERMISSIONS&permissions=.*/).respond(function(){
+        return [200, {'result': {permissions: '0666'}}];
+      });
     }));
 
     describe('Functionality of FilesystemService', function(){
@@ -185,6 +191,19 @@ describe('oide.filesystemservice', function(){
         $filesystemservice.createNewDir(dirs[0].filepath, function(data){
           console.log(data);
           expect(data.result).toBeDefined();
+        });
+        httpBackend.flush();
+      });
+      it('should be able to change groups', function(){
+        $filesystemservice.changeGroup(files[0].filepath, "ldap", function(data){
+          expect(data.result).toBeDefined();
+        });
+        httpBackend.flush();
+      });
+      it('should be able to change groups', function(){
+        $filesystemservice.changePermissions(files[0].filepath, "0666", function(data){
+          expect(data.result).toBeDefined();
+          expect(data.result.permissions).toBe("0666");
         });
         httpBackend.flush();
       });
