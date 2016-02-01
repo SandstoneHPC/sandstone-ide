@@ -81,6 +81,9 @@ describe('oide.filesystemservice', function(){
       httpBackend.whenPOST(/\/filebrowser\/a\/fileutil\?filepath=.*&newFileName=.*&operation=RENAME/).respond(function(){
         return [200, {'filepath': '/home/saurabh/somefile'}];
       });
+      httpBackend.when('DELETE', /\/filebrowser\/localfiles.*/).respond(function(){
+        return [200, {'result': 'DELETED file'}];
+      });
     }));
 
     describe('Functionality of FilesystemService', function(){
@@ -111,6 +114,12 @@ describe('oide.filesystemservice', function(){
       it('should be able to rename a file', function(){
         $filesystemservice.renameFile("somefile", files[0], function(data){
           expect(data.filepath).toBeDefined();
+        });
+        httpBackend.flush();
+      });
+      it('should be able to delete a file', function(){
+        $filesystemservice.deleteFile(files[0].filepath, function(data){
+          expect(data.result).toBeDefined();
         });
         httpBackend.flush();
       });
