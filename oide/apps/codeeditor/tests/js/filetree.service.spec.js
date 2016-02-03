@@ -7,14 +7,15 @@ describe('filetree.service', function(){
       dirSelected: false
     };
   var dirs = [{
-        "filepath": "/home/saurabh/dir2",
-        "filename": "dir2",
+        "filepath": "/home/saurabh/dir1",
+        "filename": "dir1",
         "group": "saurabh",
         "is_accessible": true,
         "perm": "-rw-rw-r--",
         "perm_string": "664",
         "size": "4.0 KiB",
-        "type": "dir"
+        "type": "dir",
+        "children": []
       }, {
         "filepath": "/home/saurabh/dir2",
         "filename": "dir2",
@@ -23,7 +24,8 @@ describe('filetree.service', function(){
         "perm": "-rw-r--r--",
         "perm_string": "644",
         "size": "4.0 KiB",
-        "type": "dir"
+        "type": "dir",
+        "children": []
       },
       {
         "filepath": "/home/saurabh/dir3",
@@ -33,7 +35,8 @@ describe('filetree.service', function(){
         "perm": "-rw-rw-r--",
         "perm_string": "664",
         "size": "4.0 KiB",
-        "type": "dir"
+        "type": "dir",
+        "children": []
       }];
 
     var files = [{
@@ -135,6 +138,23 @@ describe('filetree.service', function(){
         httpBackend.flush();
         $filetreeService.treeData.selectedNodes = [$filetreeService.treeData.filetreeContents[0], $filetreeService.treeData.filetreeContents[1]];
         expect($filetreeService.openFilesInEditor().length).toBe(2);
+      });
+      it('should be able to create a new file', function(){
+        httpBackend.flush();
+        $filetreeService.treeData.selectedNodes = [dirs[0]];
+        $filetreeService.treeData.expandedNodes = [dirs[0]];
+        httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?dirpath=.*&operation=GET_NEXT_UNTITLED_FILE/).respond(function(){
+          return [200, {result: '/home/saurabh/Untitled3'}];
+        });
+        httpBackend.whenPOST(/\/filebrowser\/localfiles.*/).respond(function(){
+          return [200, {result: 'Created New File'}];
+        });
+        httpBackend.whenGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){
+          return [200, files];
+        });
+        $filetreeService.createNewFile();
+        httpBackend.flush();
+        expect(dirs[0].children.length).toBe(2);
       });
     });
 });
