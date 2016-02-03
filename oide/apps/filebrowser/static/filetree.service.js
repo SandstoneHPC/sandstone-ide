@@ -24,7 +24,7 @@ angular.module('oide.filebrowser')
   };
 
   var initializeFiletree = function () {
-    FilesystemService.getFolders('', populateTreeData);
+    FilesystemService.getFolders({filepath: ''}, populateTreeData);
   };
   initializeFiletree();
   var getNodeFromPath = function (filepath, nodeList) {
