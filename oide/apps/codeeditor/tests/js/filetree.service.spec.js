@@ -121,5 +121,15 @@ describe('filetree.service', function(){
         expect($filetreeService.selectionDesc.noSelections).not.toBeTruthy();
         expect($filetreeService.selectionDesc.dirSelected).toBeTruthy();
       });
+      it('should be able to update the filetree', function(){
+        httpBackend.flush();
+        $filetreeService.treeData.expandedNodes = [$filetreeService.treeData.filetreeContents[0]];
+        httpBackend.whenGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){
+          return [200, files];
+        });
+        $filetreeService.updateFiletree();
+        httpBackend.flush();
+        expect($filetreeService.treeData.filetreeContents[0].children.length).toBe(2);
+      });
     });
 });
