@@ -1,7 +1,11 @@
 describe('filetree.service', function(){
   var $filetreeService;
   var httpBackend;
-
+  var selectionDesc = {
+      noSelections: true,
+      multipleSelections: false,
+      dirSelected: false
+    };
   var dirs = [{
         "filepath": "/home/saurabh/dir2",
         "filename": "dir2",
@@ -40,7 +44,7 @@ describe('filetree.service', function(){
           "perm": "-rw-rw-r--",
           "perm_string": "664",
           "size": "4.0 KiB",
-          "type": "dir"
+          "type": "file"
         }, {
           "filepath": "/home/saurabh/file2",
           "filename": "file2",
@@ -49,7 +53,7 @@ describe('filetree.service', function(){
           "perm": "-rw-r--r--",
           "perm_string": "644",
           "size": "4.0 KiB",
-          "type": "dir"
+          "type": "file"
         }];
 
     beforeEach(module('oide'));
@@ -72,6 +76,7 @@ describe('filetree.service', function(){
         expect($filetreeService.treeData).toBeDefined();
         expect($filetreeService.treeData.filetreeContents).toBeDefined();
         expect($filetreeService.treeData.filetreeContents.length).toBe(3);
+        expect($filetreeService.selectionDesc).toEqual(selectionDesc);
       });
       it('should list the directory contents', function(){
         httpBackend.flush();
@@ -91,6 +96,30 @@ describe('filetree.service', function(){
         $filetreeService.treeData.selectedNodes = [$filetreeService.treeData.filetreeContents[0]];
         $filetreeService.copyFiles();
         expect($filetreeService.clipboardEmpty()).not.toBeTruthy();
+      });
+      it('should be able to describe the selection for single selection', function(){
+        httpBackend.flush();
+        $filetreeService.treeData.selectedNodes = [$filetreeService.treeData.filetreeContents[0]];
+        $filetreeService.describeSelection();
+        expect($filetreeService.selectionDesc.multipleSelections).not.toBeTruthy();
+        expect($filetreeService.selectionDesc.noSelections).not.toBeTruthy();
+        expect($filetreeService.selectionDesc.dirSelected).toBeTruthy();
+      });
+      it('should be able to describe the selection for single selected file', function(){
+        httpBackend.flush();
+        $filetreeService.treeData.selectedNodes = [files[0]];
+        $filetreeService.describeSelection();
+        expect($filetreeService.selectionDesc.multipleSelections).not.toBeTruthy();
+        expect($filetreeService.selectionDesc.noSelections).not.toBeTruthy();
+        expect($filetreeService.selectionDesc.dirSelected).not.toBeTruthy();
+      });
+      it('should be able to describe the selection for multiple selection', function(){
+        httpBackend.flush();
+        $filetreeService.treeData.selectedNodes = [$filetreeService.treeData.filetreeContents[0], $filetreeService.treeData.filetreeContents[1]];
+        $filetreeService.describeSelection();
+        expect($filetreeService.selectionDesc.multipleSelections).toBeTruthy();
+        expect($filetreeService.selectionDesc.noSelections).not.toBeTruthy();
+        expect($filetreeService.selectionDesc.dirSelected).toBeTruthy();
       });
     });
 });
