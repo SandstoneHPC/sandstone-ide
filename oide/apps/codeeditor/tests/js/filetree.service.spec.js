@@ -131,5 +131,10 @@ describe('filetree.service', function(){
         httpBackend.flush();
         expect($filetreeService.treeData.filetreeContents[0].children.length).toBe(2);
       });
+      it('should open files in editor', function(){
+        httpBackend.flush();
+        $filetreeService.treeData.selectedNodes = [$filetreeService.treeData.filetreeContents[0], $filetreeService.treeData.filetreeContents[1]];
+        expect($filetreeService.openFilesInEditor().length).toBe(2);
+      });
     });
 });
