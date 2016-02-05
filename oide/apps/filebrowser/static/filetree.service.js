@@ -308,19 +308,7 @@ angular.module('oide.filebrowser')
     },
     // Invoke the Filesystem Service to rename a file
     renameFile: function(newFilename, node, callback) {
-      $http({
-        url: '/filebrowser/a/fileutil',
-        method: 'POST',
-        params: {
-          _xsrf:getCookie('_xsrf'),
-          operation: 'RENAME',
-          filepath: node.filepath,
-          newFileName: newFilename
-        }
-        })
-        .success(function(data, status, headers, config){
-          callback(data, status, headers, config, node);
-        });
+      FilesystemService.renameFile(newFilename, node, callback);
     }
   };
 }]);

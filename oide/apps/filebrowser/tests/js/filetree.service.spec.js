@@ -1,5 +1,6 @@
 describe('fbfiletree.service', function(){
   var $filetreeService;
+  var $filesystemService;
   var httpBackend;
   var selectionDesc = {
       noSelections: true,
@@ -63,9 +64,9 @@ describe('fbfiletree.service', function(){
     beforeEach(module('oide.filebrowser'));
     beforeEach(module('oide.filesystemservice'));
 
-    beforeEach(inject(function(FBFiletreeService, $httpBackend){
+    beforeEach(inject(function(FBFiletreeService, $httpBackend, FilesystemService){
       $filetreeService = FBFiletreeService;
-
+      $filesystemService = FilesystemService;
       httpBackend = $httpBackend;
       httpBackend.whenGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*&folders=true/).respond(function(){
         return [200, dirs];
@@ -155,6 +156,60 @@ describe('fbfiletree.service', function(){
         $filetreeService.createNewFile();
         httpBackend.flush();
         expect(dirs[0].children.length).toBe(3);
+      });
+      it('should be able to create a new directory', function(){
+        httpBackend.flush();
+        $filetreeService.treeData.selectedNodes = [dirs[0]];
+        $filetreeService.treeData.expandedNodes = [dirs[1]];
+        spyOn($filesystemService, 'createNewDir');
+        httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?dirpath=.*&operation=GET_NEXT_UNTITLED_DIR/).respond(function(){
+          return [200, {result: '/home/saurabh/UntitledDir3'}];
+        });
+        $filetreeService.createNewDir();
+        httpBackend.flush();
+        expect($filesystemService.createNewDir).toHaveBeenCalled();
+      });
+      it('should be able to create a duplicate file or folder', function(){
+        httpBackend.flush();
+        $filetreeService.treeData.selectedNodes = [files[0]];
+        $filetreeService.treeData.expandedNodes = [files[0]];
+        spyOn($filesystemService, 'duplicateFile');
+        httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?filepath=.*&operation=GET_NEXT_DUPLICATE/).respond(function(){
+          return [200, {result: '/home/saurabh/file1-duplicate'}];
+        });
+        $filetreeService.createDuplicate();
+        httpBackend.flush();
+        expect($filesystemService.duplicateFile).toHaveBeenCalled();
+      });
+      it('should be able to delete files', function(){
+        httpBackend.flush();
+        // If no file is selected, then the deleteFile method of FilesystemService will not be called
+        $filetreeService.treeData.selectedNodes = [];
+        spyOn($filesystemService, 'deleteFile');
+        $filetreeService.deleteFiles();
+        expect($filesystemService.deleteFile).not.toHaveBeenCalled();
+        // If at least one file is selected, then the deleteFile method of FilesystemService will be called
+        $filetreeService.treeData.selectedNodes = [files[0]];
+        $filetreeService.deleteFiles();
+        expect($filesystemService.deleteFile).toHaveBeenCalled();
+      });
+      it('should be able to paste files', function(){
+        httpBackend.flush();
+        $filetreeService.treeData.selectedNodes = [dirs[0]];
+        $filetreeService.treeData.expandedNodes = [dirs[0]];
+        // Create spies
+        spyOn($filesystemService, 'pasteFile');
+        spyOn($filetreeService, 'updateFiletree');
+        // Add some files to the clipboard
+        $filetreeService.copyFiles();
+        $filetreeService.pasteFiles();
+        expect($filesystemService.pasteFile).toHaveBeenCalled();
+      });
+      it('should be able to rename files', function(){
+        httpBackend.flush();
+        spyOn($filesystemService, 'renameFile');
+        $filetreeService.renameFile("newfile", files[0]);
+        expect($filesystemService.renameFile).toHaveBeenCalled();
       });
     });
 });
