@@ -1,5 +1,6 @@
 describe('filetree.service', function(){
   var $filetreeService;
+  var filesystemService;
   var httpBackend;
   var selectionDesc = {
       noSelections: true,
@@ -63,9 +64,9 @@ describe('filetree.service', function(){
     beforeEach(module('oide.editor'));
     beforeEach(module('oide.filesystemservice'));
 
-    beforeEach(inject(function(FiletreeService, $httpBackend){
+    beforeEach(inject(function(FiletreeService, $httpBackend, FilesystemService){
       $filetreeService = FiletreeService;
-
+      $filesystemService = FilesystemService;
       httpBackend = $httpBackend;
       httpBackend.whenGET('/filebrowser/filetree/a/dir').respond(function(){
         return [200, dirs];
@@ -95,7 +96,7 @@ describe('filetree.service', function(){
       });
       it('should be able to copy a file to the clipboard', function(){
         httpBackend.flush();
-        //$filetreeService.describeSelection($filetreeService.treeData.filetreeContents[0], true);
+        expect($filetreeService.clipboardEmpty).toBeTruthy();
         $filetreeService.treeData.selectedNodes = [$filetreeService.treeData.filetreeContents[0]];
         $filetreeService.copyFiles();
         expect($filetreeService.clipboardEmpty()).not.toBeTruthy();
@@ -155,6 +156,30 @@ describe('filetree.service', function(){
         $filetreeService.createNewFile();
         httpBackend.flush();
         expect(dirs[0].children.length).toBe(2);
+      });
+      it('should be able to create a new directory', function(){
+        httpBackend.flush();
+        $filetreeService.treeData.selectedNodes = [dirs[0]];
+        $filetreeService.treeData.expandedNodes = [dirs[1]];
+        spyOn($filesystemService, 'createNewDir');
+        httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?dirpath=.*&operation=GET_NEXT_UNTITLED_DIR/).respond(function(){
+          return [200, {result: '/home/saurabh/UntitledDir3'}];
+        });
+        $filetreeService.createNewDir();
+        httpBackend.flush();
+        expect($filesystemService.createNewDir).toHaveBeenCalled();
+      });
+      it('should be able to create a duplicate file or folder', function(){
+        httpBackend.flush();
+        $filetreeService.treeData.selectedNodes = [files[0]];
+        $filetreeService.treeData.expandedNodes = [files[0]];
+        spyOn($filesystemService, 'duplicateFile');
+        httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?filepath=.*&operation=GET_NEXT_DUPLICATE/).respond(function(){
+          return [200, {result: '/home/saurabh/file1-duplicate'}];
+        });
+        $filetreeService.createDuplicate();
+        httpBackend.flush();
+        expect($filesystemService.duplicateFile).toHaveBeenCalled();
       });
     });
 });
