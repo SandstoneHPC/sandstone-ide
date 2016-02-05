@@ -181,5 +181,36 @@ describe('filetree.service', function(){
         httpBackend.flush();
         expect($filesystemService.duplicateFile).toHaveBeenCalled();
       });
+      it('should be able to delete files', function(){
+        httpBackend.flush();
+        // If no file is selected, then the deleteFile method of FilesystemService will not be called
+        $filetreeService.treeData.selectedNodes = [];
+        spyOn($filesystemService, 'deleteFile');
+        $filetreeService.deleteFiles();
+        expect($filesystemService.deleteFile).not.toHaveBeenCalled();
+        // If at least one file is selected, then the deleteFile method of FilesystemService will be called
+        $filetreeService.treeData.selectedNodes = [files[0]];
+        $filetreeService.deleteFiles();
+        expect($filesystemService.deleteFile).toHaveBeenCalled();
+      });
+      it('should be able to paste files', function(){
+        httpBackend.flush();
+        $filetreeService.treeData.selectedNodes = [dirs[0]];
+        $filetreeService.treeData.expandedNodes = [dirs[0]];
+        // Create spies
+        spyOn($filesystemService, 'pasteFile');
+        spyOn($filetreeService, 'updateFiletree');
+        // Add some files to the clipboard
+        $filetreeService.copyFiles();
+        $filetreeService.pasteFiles();
+        expect($filesystemService.pasteFile).toHaveBeenCalled();
+      });
+      it('should be able to rename files', function(){
+        httpBackend.flush();
+        $filetreeService.treeData.selectedNodes = [files[0]];
+        spyOn($filesystemService, 'renameFile');
+        $filetreeService.renameFile();
+        expect($filesystemService.renameFile).toHaveBeenCalled();
+      });
     });
 });
