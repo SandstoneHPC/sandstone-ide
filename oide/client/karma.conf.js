@@ -18,6 +18,7 @@ module.exports = function(config){
       'client/oide/oide.test.js',
       'apps/codeeditor/static/editor.js',
       'apps/webterminal/static/terminal.js',
+      'apps/filebrowser/static/filebrowser.js',
       'apps/**/static/*.js',
       // test files
       'client/oide/oide_test.js',

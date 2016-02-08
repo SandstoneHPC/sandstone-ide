@@ -37,7 +37,7 @@ angular.module('oide.editor')
       if(filepath.charAt(filepath.length - 1) == '/') {
         strippedFilepath = filepath.substr(0, filepath.length - 1);
       }
-      if(nodeList[i].type == 'dir') {
+      if(nodeList[i].type == 'dir' && folderName.charAt(folderName.length - 1) == '/') {
         folderName = folderName.substr(0, folderName.length - 1);
       }
       if (strippedFilepath.lastIndexOf(folderName,0) === 0) {

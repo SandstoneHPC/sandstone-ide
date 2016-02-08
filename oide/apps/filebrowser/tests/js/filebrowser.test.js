@@ -121,7 +121,11 @@ describe('Filebrowser', function() {
       // };
       mockFilesystemService = FilesystemService;
       // Mock FiletreeService
-      mockFiletreeService = {};
+      mockFiletreeService = {
+        updateFiletree: function() {
+          console.log('Filetree Refreshed');
+        }
+      };
       controller = $controller(
         'FilebrowserController as ctrl', {
           $scope: scope,
