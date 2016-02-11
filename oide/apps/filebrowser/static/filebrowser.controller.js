@@ -413,11 +413,12 @@ angular.module('oide.filebrowser')
   var self = this;
   self.dirpath = selectedDirectory;
   var uploader = self.uploader = new FileUploader({
-       url: '/supl/a/upload',
-       headers: {
-         'X-XSRFToken': getCookie('_xsrf'),
-         'basepath': self.dirpath
-       }
+      autoUpload: true,
+      url: '/supl/a/upload',
+      headers: {
+        'X-XSRFToken': getCookie('_xsrf'),
+        'basepath': self.dirpath
+      }
    });
 
   uploader.filters.push({

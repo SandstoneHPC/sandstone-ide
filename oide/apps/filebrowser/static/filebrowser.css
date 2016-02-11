@@ -165,3 +165,9 @@ td.perm {
 .st-sort-descent:before{
     content: '\25BC';
 }
+
+/* Upload Modal styles */
+input.upload {
+  color: transparent;
+  margin-left: -25px;
+}

@@ -1,13 +1,12 @@
 <div class="modal-header">
-    <h3 class="modal-title"><i class="fa fa-exclamation fa-border"></i> Upload</h3>
+    <h3 class="modal-title">Upload to {{ ctrl.dirpath}}</h3>
 </div>
 <div class="modal-body">
-  <span>Upload to {{ctrl.dirpath}}</span>
   <div class="row fill">
     <div class="col-md-12 main fill">
-      <div class="col-md-3">
-        <div
-          class="file-upload btn btn-success">
+      <div class="col-md-12 main fill">
+        <!-- <div
+          class="file-upload btn btn-success col-centered">
           <span>Choose files</span>
           <input
             type="file"
@@ -16,14 +15,19 @@
             multiple
             class="upload"
            />
-          <br/>
-        </div>
+        </div> -->
+        <input
+          type="file"
+          nv-file-select=""
+          uploader="ctrl.uploader"
+          multiple
+          class="upload"
+         />
       </div>
 
-      <div class="col-md-9" style="margin-bottom: 40px">
+      <div class="col-md-12" style="margin-bottom: 40px">
 
-        <h3>Upload queue</h3>
-        <p>Queue length: {{ ctrl.uploader.queue.length }}</p>
+        <h3>Queue</h3>
 
         <table class="table">
           <thead>
@@ -31,7 +35,6 @@
               <th width="50%">Name</th>
               <th ng-show="ctrl.uploader.isHTML5">Size</th>
               <th ng-show="ctrl.uploader.isHTML5">Progress</th>
-              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -41,60 +44,43 @@
               <td ng-show="ctrl.uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
               <td ng-show="ctrl.uploader.isHTML5">
                 <div class="progress" style="margin-bottom: 0;">
-                  <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                  <div
+                    class="progress-bar"
+                    ng-class="{'progress-bar-success':item.progress === 100,'progress-bar-danger':item.isError}"
+                    role="progressbar"
+                    ng-style="{ 'width': item.progress + '%' }">
+                  </div>
                 </div>
-              </td>
-              <td class="text-center">
-                <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
-                <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
-                <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
               </td>
               <td nowrap>
                 <button
                   type="button"
-                  class="btn btn-success btn-xs"
+                  class="btn btn-warning btn-xs"
                   ng-click="item.upload()"
-                  ng-disabled="item.isReady || item.isUploading || item.isSuccess"
+                  ng-hide="!item.isCancel&&item.isUploading"
                 >
-                  <span class="fa fa-arrow-circle-o-up"></span> Upload
+                  <span class="fa fa-ban"></span> Restart
                 </button>
                 <button
                   type="button"
                   class="btn btn-warning btn-xs"
                   ng-click="item.cancel()"
-                  ng-disabled="!item.isUploading"
+                  ng-hide="!item.isUploading"
                 >
                   <span class="fa fa-ban"></span> Cancel
                 </button>
                 <button
                   type="button"
-                  class="btn btn-danger btn-xs"
+                  class="btn btn-success btn-xs"
                   ng-click="item.remove()"
+                  ng-hide="!item.isCancel&&item.isUploading"
                 >
-                  <span class="fa fa-trash-o"></span> Remove
+                  <span class="fa fa-check"></span> Done
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
-
-        <div>
-          <div>
-            Queue progress:
-            <div class="progress" style="">
-              <div class="progress-bar" role="progressbar" ng-style="{ 'width': ctrl.uploader.progress + '%' }"></div>
-            </div>
-          </div>
-          <button type="button" class="btn btn-success btn-sm" ng-click="ctrl.uploader.uploadAll()" ng-disabled="!ctrl.uploader.getNotUploadedItems().length">
-            <span class="fa fa-arrow-circle-o-up"></span> Upload all
-          </button>
-          <button type="button" class="btn btn-warning btn-sm" ng-click="ctrl.uploader.cancelAll()" ng-disabled="!ctrl.uploader.isUploading">
-            <span class="fa fa-ban"></span> Cancel all
-          </button>
-          <button type="button" class="btn btn-danger btn-sm" ng-click="ctrl.uploader.clearQueue()" ng-disabled="!ctrl.uploader.queue.length">
-            <span class="fa fa-trash-o"></span> Remove all
-          </button>
-        </div>
       </div>
     </div>
   </div>
