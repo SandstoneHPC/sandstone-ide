@@ -171,3 +171,9 @@ input.upload {
   color: transparent;
   margin-left: -25px;
 }
+
+/* File detail styles */
+.file-detail {
+  margin-top: 30px;
+  margin-bottom: 0;
+}
