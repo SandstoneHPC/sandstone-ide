@@ -68,7 +68,7 @@
         <button type="button" class="btn btn-default"><i class="fa fa-pencil"></i></button> -->
         <div class="row">
           <div class="col-sm-12">
-            <input type="text" style="margin: 5px;" class="filedetails-filename" ng-disabled="!ctrl.isEditing" ng-model="ctrl.editedFileName" ng-blur="ctrl.renameFile()" sync-focus-with="ctrl.isEditing">
+            <input type="text" class="filedetails-filename" ng-disabled="!ctrl.isEditing" ng-model="ctrl.editedFileName" ng-blur="ctrl.renameFile()" sync-focus-with="ctrl.isEditing">
             <i class="fa fa-pencil" ng-click="ctrl.editFileName()" style="cursor: pointer;"></i>
           </div>
         </div>

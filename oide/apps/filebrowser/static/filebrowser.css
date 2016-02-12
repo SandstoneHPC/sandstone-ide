@@ -76,13 +76,18 @@
 }
 
 .filedetails-filename {
-  font-size: 36px;
+  font-size: 24px;
   font-weight: 400;
+  color: #93c54b;
   border-right: 0;
   border-left: 0;
   border-top: 0;
   background-color: #FFFFFF !important;
   width: 90%;
+}
+
+.filedetails-filename:focus {
+  color: black !important;
 }
 
 .filedetails-filename[disabled] {
