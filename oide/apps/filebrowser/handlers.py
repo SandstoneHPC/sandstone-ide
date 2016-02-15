@@ -186,6 +186,7 @@ class SimpleUploadHandler(BaseHandler, FSMixin):
         self.fd.close()
         # shutil.move(self.fd.name,dest_path)
         self.fs.move_file(self.fd.name, dest_path)
+        os.chmod(dest_path, 0644)
 
     @tornado.web.authenticated
     def prepare(self):
