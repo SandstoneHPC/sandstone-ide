@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('oide.editor')
-.controller('FiletreeCtrl', ['$modal', '$log', 'EditorService', '$rootScope', function($modal,$log, EditorService, $rootScope){
+.controller('FiletreeCtrl', ['$modal', '$log', 'EditorService', '$rootScope', 'FilesystemService', function($modal,$log, EditorService, $rootScope, FilesystemService){
   var self = this;
   self.treeData = {
     filetreeContents: [
@@ -9,7 +9,7 @@ angular.module('oide.editor')
     ]
   };
 
-  self.selectionDesc = {
+  self.sd = {
     noSelections: true,
     multipleSelections: false,
     dirSelected: false

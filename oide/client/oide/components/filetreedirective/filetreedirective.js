@@ -4,7 +4,8 @@ angular.module('oide.filetreedirective', [])
   return {
     restrict: 'A',
     scope: {
-      treeData: '='
+      treeData: '=',
+      selectionDesc: '='
     },
     templateUrl: '/static/core/components/filetreedirective/templates/filetree.html',
     controller: ['$scope', '$document', '$element', '$timeout', 'FilesystemService', '$rootScope', function($scope, $document, $element, $timeout, FilesystemService, $rootScope) {
