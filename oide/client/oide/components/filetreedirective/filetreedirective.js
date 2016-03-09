@@ -225,8 +225,8 @@ angular.module('oide.filetreedirective', [])
             self.treeData.selectedNodes = [];
           }
         }
-        self.selectionDesc.multipleSelections = treeData.selectedNodes.length > 1;
-        self.selectionDesc.noSelections = treeData.selectedNodes.length === 0;
+        self.selectionDesc.multipleSelections = self.treeData.selectedNodes.length > 1;
+        self.selectionDesc.noSelections = self.treeData.selectedNodes.length === 0;
         var dirSelected = false;
         for (var i in self.treeData.selectedNodes) {
           if (self.treeData.selectedNodes[i].type==='dir') {
