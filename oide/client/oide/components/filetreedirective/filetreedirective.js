@@ -35,6 +35,7 @@ angular.module('oide.filetreedirective', [])
         $rootScope.$on('refreshFiletree', function() {
           self.updateFiletree();
         });
+        $rootScope.$on('deletedFile', self.deletedFile);
       };
       self.initializeFiletree();
       self.getNodeFromPath = function (filepath, nodeList) {
@@ -84,7 +85,7 @@ angular.module('oide.filetreedirective', [])
           filepath = node.filepath;
         }
         dirpath = filepath.substring(0,filepath.lastIndexOf('/')+1);
-        parentNode = self.getNodeFromPath(dirpath,treeData.filetreeContents);
+        parentNode = self.getNodeFromPath(dirpath,self.treeData.filetreeContents);
         index = parentNode.children.indexOf(node);
         parentNode.children.splice(index,1);
         self.describeSelection();
@@ -135,21 +136,6 @@ angular.module('oide.filetreedirective', [])
         }
       };
 
-      // Callback of invocation to FilesystemService to create a file
-      // Update the filetree to show the new file
-      self.createFileCallback = function(data, status, headers, config){
-        $log.debug('POST: ', data);
-        self.updateFiletree();
-      };
-
-      // Callback of invocation to FilesystemService to get the next Untitled FIle
-      // Invoke the FilesystemService to create the new file
-      self.gotNewUntitledFile = function(data, status, headers, config) {
-        $log.debug('GET: ', data);
-        var newFilePath = data.result;
-        // Post back new file to backend
-        FilesystemService.createNewFile(newFilePath, self.createFileCallback);
-      };
       // Callback for invocation to FilesystemService renameFile method
       self.fileRenamed = function(data, status, headers, config, node) {
         $rootScope.$emit('fileRenamed', node.filepath, data.result);

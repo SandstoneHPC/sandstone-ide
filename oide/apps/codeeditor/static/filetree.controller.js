@@ -36,6 +36,23 @@ angular.module('oide.editor')
       $log.debug('Opened document: ', treeData[i].filepath);
     }
   };
+
+  // Callback of invocation to FilesystemService to create a file
+  // Update the filetree to show the new file
+  self.createFileCallback = function(data, status, headers, config){
+    $log.debug('POST: ', data);
+    $rootScope.$emit('refreshFiletree');
+  };
+
+  // Callback of invocation to FilesystemService to get the next Untitled FIle
+  // Invoke the FilesystemService to create the new file
+  self.gotNewUntitledFile = function(data, status, headers, config) {
+    $log.debug('GET: ', data);
+    var newFilePath = data.result;
+    // Post back new file to backend
+    FilesystemService.createNewFile(newFilePath, self.createFileCallback);
+  };
+
   self.createNewFile = function () {
     //Invokes filesystem service to create a new file
     var selectedDir = self.treeData.selectedNodes[0].filepath;
@@ -57,6 +74,10 @@ angular.module('oide.editor')
   $rootScope.$on('fileDeleted', function(event, path){
     EditorService.fileDeleted(path);
   });
+
+  self.deletedFile = function(data, status, headers, config, node) {
+    $rootScope.$emit('deletedFile', data, status, headers, config, node);
+  };
 
   self.deleteFiles = function () {
     var deleteModalInstance = $modal.open({
