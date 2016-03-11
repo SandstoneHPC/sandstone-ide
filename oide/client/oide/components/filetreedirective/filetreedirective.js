@@ -35,7 +35,9 @@ angular.module('oide.filetreedirective', [])
         $rootScope.$on('refreshFiletree', function() {
           self.updateFiletree();
         });
-        $rootScope.$on('deletedFile', self.deletedFile);
+        $rootScope.$on('deletedFile', function(e, data, status, headers, config, node){
+          self.deletedFile(data, status, headers, config, node);
+        });
       };
       self.initializeFiletree();
       self.getNodeFromPath = function (filepath, nodeList) {
@@ -151,7 +153,7 @@ angular.module('oide.filetreedirective', [])
 
       // Callback for invocation to FilesystemService deleteFile method
       self.deletedFile = function(data, status, headers, config, node) {
-        $log.debug('DELETE: ', data.result);
+        // $log.debug('DELETE: ', data.result);
         var node = self.getNodeFromPath(data.filepath,self.treeData.filetreeContents);
         self.removeNodeFromFiletree(node);
         $rootScope.$emit('fileDeleted', data.filepath);
