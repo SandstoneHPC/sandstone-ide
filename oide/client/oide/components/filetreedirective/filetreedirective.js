@@ -32,6 +32,9 @@ angular.module('oide.filetreedirective', [])
 
       self.initializeFiletree = function () {
         FilesystemService.getFiles('', self.populateTreeData);
+        $rootScope.$on('refreshFiletree', function() {
+          self.updateFiletree();
+        });
       };
       self.initializeFiletree();
       self.getNodeFromPath = function (filepath, nodeList) {
@@ -108,7 +111,7 @@ angular.module('oide.filetreedirective', [])
           var currContents = self.getFilepathsForDir(node.filepath);
           for (var i=0;i<data.length;i++) {
             if (currContents.indexOf(data[i].filepath) >= 0) {
-              matchedNode = self.getNodeFromPath(data[i].filepath,treeData.filetreeContents);
+              matchedNode = self.getNodeFromPath(data[i].filepath,self.treeData.filetreeContents);
               if ((data[i].type === 'dir') && self.isExpanded(data[i].filepath)) {
                 self.getDirContents(matchedNode);
               }
@@ -128,7 +131,7 @@ angular.module('oide.filetreedirective', [])
       self.updateFiletree = function () {
         var filepath, node;
         for (var i=0;i<self.treeData.expandedNodes.length;i++) {
-          self.getDirContents(treeData.expandedNodes[i]);
+          self.getDirContents(self.treeData.expandedNodes[i], true);
         }
       };
 

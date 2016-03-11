@@ -20,10 +20,12 @@ angular.module('oide.editor')
   self.clipboardEmpty = function(){
     return self.clipboard.length === 0;
   };
+
   self.updateFiletree = function () {
-    for (var i=0;i<self.treeData.expandedNodes.length;i++) {
-      self.getDirContents(self.treeData.expandedNodes[i]);
-    }
+    // for (var i=0;i<self.treeData.expandedNodes.length;i++) {
+    //   self.getDirContents(self.treeData.expandedNodes[i]);
+    // }
+    $rootScope.$emit('refreshFiletree');
   };
 
   self.openFilesInEditor = function () {
