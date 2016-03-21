@@ -38,6 +38,9 @@ angular.module('oide.filetreedirective', [])
         $rootScope.$on('deletedFile', function(e, data, status, headers, config, node){
           self.deletedFile(data, status, headers, config, node);
         });
+        $rootScope.$on('pastedFiles', function(e, newDirPath){
+          self.pastedFiles(newDirPath);
+        });
       };
       self.initializeFiletree();
       self.getNodeFromPath = function (filepath, nodeList) {
@@ -100,6 +103,15 @@ angular.module('oide.filetreedirective', [])
         }
         return false;
       };
+
+      self.pastedFiles = function(newDirPath) {
+        if (!self.isExpanded(newDirPath)) {
+          var node = self.getNodeFromPath(newDirPath,self.treeData.filetreeContents);
+          self.treeData.expandedNodes.push(node);
+        }
+        self.updateFiletree();
+      };
+
       self.isDisplayed = function (filepath) {
         for (var i=0;i<self.treeData.filetreeContents.length;i++) {
           if (self.treeData.filetreeContents[i].filepath === filepath) {
@@ -143,11 +155,6 @@ angular.module('oide.filetreedirective', [])
         $rootScope.$emit('fileRenamed', node.filepath, data.result);
         self.removeNodeFromFiletree(node);
         self.updateFiletree();
-        $log.debug('POST: ', data.result);
-      };
-
-      // Callback for invocation to FilesystemService pasteFile method
-      self.pastedFiles = function(data, status, headers, config, node){
         $log.debug('POST: ', data.result);
       };
 

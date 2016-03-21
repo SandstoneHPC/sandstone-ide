@@ -64,7 +64,7 @@ angular.module('oide.editor')
   self.duplicatedFile = function(data, status, headers, config) {
     $log.debug('Copied: ', data.result);
     self.updateFiletree();
-  };    
+  };
 
   self.createNewFile = function () {
     //Invokes filesystem service to create a new file
@@ -126,6 +126,12 @@ angular.module('oide.editor')
     }
     $log.debug('Copied ', i, ' files to clipboard: ', self.clipboard);
   };
+
+  // Callback for invocation to FilesystemService pasteFile method
+  self.pastedFiles = function(data, status, headers, config, node){
+    $log.debug('POST: ', data.result);
+  };
+
   self.pasteFiles = function () {
     var i;
     var newDirPath = self.treeData.selectedNodes[0].filepath;
@@ -133,11 +139,7 @@ angular.module('oide.editor')
       FilesystemService.pasteFile(self.clipboard[i].filepath, newDirPath + self.clipboard[i].filename, self.pastedFiles);
     }
     self.clipboard = [];
-    if (!self.isExpanded(newDirPath)) {
-      var node = self.getNodeFromPath(newDirPath,self.treeData.filetreeContents);
-      self.treeData.expandedNodes.push(node);
-    }
-    self.updateFiletree();
+    $rootScope.$emit('pastedFiles', newDirPath);
   };
   self.renameFile = function () {
     var renameModalInstance = $modal.open({
