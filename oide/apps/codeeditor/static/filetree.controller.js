@@ -53,6 +53,19 @@ angular.module('oide.editor')
     FilesystemService.createNewFile(newFilePath, self.createFileCallback);
   };
 
+  // Callback for getting the next duplicated file for selected file
+  self.gotNextDuplicateFile = function(data, status, headers, config) {
+    $log.debug('GET: ', data);
+     var newFilePath = data.result;
+     FilesystemService.duplicateFile(data.originalFile, newFilePath, self.duplicatedFile);
+  };
+
+  // Callback for duplicating a file
+  self.duplicatedFile = function(data, status, headers, config) {
+    $log.debug('Copied: ', data.result);
+    self.updateFiletree();
+  };    
+
   self.createNewFile = function () {
     //Invokes filesystem service to create a new file
     var selectedDir = self.treeData.selectedNodes[0].filepath;

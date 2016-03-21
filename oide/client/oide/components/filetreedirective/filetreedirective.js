@@ -160,19 +160,6 @@ angular.module('oide.filetreedirective', [])
         self.updateFiletree();
       };
 
-      // Callback for getting the next duplicated file for selected file
-      self.gotNextDuplicateFile = function(data, status, headers, config) {
-        $log.debug('GET: ', data);
-         var newFilePath = data.result;
-         FilesystemService.duplicateFile(data.originalFile, newFilePath, self.duplicatedFile);
-      };
-
-      // Callback for duplicating a file
-      self.duplicatedFile = function(data, status, headers, config) {
-        $log.debug('Copied: ', data.result);
-        self.updateFiletree();
-      };
-
       // Callback for getting a new untitled directory name from FilesystemService
       self.gotNewUntitledDir = function(data, status, headers, config) {
         $log.debug('GET: ', data);
@@ -185,7 +172,6 @@ angular.module('oide.filetreedirective', [])
         $log.debug('POST: ', data);
         self.updateFiletree();
       };
-
 
       self.multiSelection = false;
       $document.on('keydown', (function (e) {
