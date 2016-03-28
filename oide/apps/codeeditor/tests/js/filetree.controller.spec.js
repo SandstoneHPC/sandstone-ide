@@ -58,7 +58,6 @@ describe('filetree', function(){
   beforeEach(module('oide.editor'));
   beforeEach(module('oide.filesystemservice'));
   beforeEach(module('oide.templates'));
-  // angular.mock.module('templates');
   beforeEach(module('oide.filetreedirective'));
 
   beforeEach(inject(function($controller, $rootScope, $log, $document, $httpBackend, _$compile_){
@@ -76,9 +75,7 @@ describe('filetree', function(){
       $log: $log
     });
     scope.ctrl = controller;
-
     scope.$apply();
-    // angular.mock.module('templates');
   }));
 
   describe('Whether the filetree is working as expected or not', function(){
@@ -88,15 +85,11 @@ describe('filetree', function(){
       el = $compile(element)(scope);
       scope.$digest();
       httpBackend.flush();
-      // scope.$apply();
-      // console.log(scope.ctrl);
       expect(scope.ctrl).toBeDefined();
       expect(scope.ctrl.treeData).toBeDefined();
       expect(scope.ctrl.treeData.filetreeContents).toBeDefined();
-      // console.log("Contents: " + scope.ctrl.treeData.filetreeContents);
       expect(scope.ctrl.treeData.filetreeContents.length).toBe(3);
     });
-    //
     it('should have valid default treeOptions loaded', function(){
       var element = angular.element('<div oide-filetree tree-data="ctrl.treeData" selection-desc="ctrl.sd"></div>');
       el = $compile(element)(scope);
@@ -106,19 +99,6 @@ describe('filetree', function(){
       expect(scope.ctrl.sd).toBeDefined();
       expect(scope.ctrl.sd.multiSelection).toBeTruthy();
     });
-    //
-    // it('should add the node to selected nodes if selected', function(){
-    //   httpBackend.flush();
-    //   // Select a file
-    //   scope.ctrl.describeSelection(files[0], true);
-    //   // Should be added to selectedNodes
-    //   expect(scope.ctrl.treeData.selectedNodes.length).toBe(1);
-    //   // Unselect files
-    //   scope.ctrl.describeSelection(files[0], false);
-    //   // selectedNodes should be empty
-    //   expect(scope.ctrl.treeData.selectedNodes.length).toBe(0);
-    // });
-
   });
 
 });
