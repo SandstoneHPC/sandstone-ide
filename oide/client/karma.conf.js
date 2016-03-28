@@ -22,7 +22,8 @@ module.exports = function(config){
       'apps/**/static/*.js',
       // test files
       'client/oide/oide_test.js',
-      'apps/**/tests/js/*.js'
+      'apps/**/tests/js/*.js',
+      'client/oide/components/filetreedirective/templates/filetree.html'
     ],
 
     autoWatch : true,
@@ -36,12 +37,21 @@ module.exports = function(config){
             'karma-firefox-launcher',
             'karma-jasmine',
             'karma-junit-reporter',
-            'karma-phantomjs-launcher'
+            'karma-phantomjs-launcher',
+            'karma-ng-html2js-preprocessor'
             ],
 
     junitReporter : {
       outputFile: 'test_out/unit.xml',
       suite: 'unit'
+    },
+    preprocessors : {
+      'client/oide/components/filetreedirective/templates/filetree.html': 'ng-html2js'
+    },
+    ngHtml2JsPreprocessor : {
+      stripPrefix: 'client/oide/components/filetreedirective/templates/filetree.html',
+      prependPrefix: '/static/core/components/filetreedirective/templates/filetree.html',
+      moduleName: 'oide.templates'
     }
 
   });
