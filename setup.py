@@ -4,7 +4,7 @@ from setuptools import find_packages
 
 setup(
     name='oide',
-    version='0.1.dev0',
+    version='0.11.0',
     author=u'Zebula Sampedro',
     author_email='sampedro@colorado.edu',
     packages=find_packages(),
@@ -20,7 +20,7 @@ setup(
         'terminado',
     ],
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'Operating System :: Unix',
