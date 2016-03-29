@@ -65,7 +65,6 @@ angular.module('oide.editor')
       saveAsModalInstance.result.then(function (newFile) {
         EditorService.fileRenamed(newFile.oldFilepath,newFile.filepath);
         EditorService.saveDocument(newFile.filepath);
-        FiletreeService.updateFiletree();
         $log.debug('Saved files at: ' + new Date());
       }, function () {
         $log.debug('Modal dismissed at: ' + new Date());
@@ -105,10 +104,13 @@ angular.module('oide.editor')
   };
 
   $scope.$watch(function(){
-    return $scope.treeData;
+    return $scope.treeData.selectedNodes;
   }, function(newValue){
-    // $scope.newFile.filepath = newValue;
-    console.log(newValue);
+    if(newValue.length > 0) {
+      $scope.newFile.filepath = newValue[0].filepath;
+      console.log(newValue);
+      $scope.invalidFilepath = false;
+    }
   });
 
   $scope.sd = {
