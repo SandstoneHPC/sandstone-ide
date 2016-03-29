@@ -26,7 +26,7 @@ angular.module('oide.editor')
             }
           }
         });
-  
+
         unsavedModalInstance.result.then(function (file) {
           if (file.saveFile) {
             if (tab.filepath.substring(0,2) !== '-/') {
@@ -54,13 +54,14 @@ angular.module('oide.editor')
         keyboard: false,
         size: 'lg',
         controller: 'SaveAsModalCtrl',
+        controllerAs: 'ctrl',
         resolve: {
           file: function () {
             return tab;
           }
         }
       });
-  
+
       saveAsModalInstance.result.then(function (newFile) {
         EditorService.fileRenamed(newFile.oldFilepath,newFile.filepath);
         EditorService.saveDocument(newFile.filepath);
@@ -96,7 +97,25 @@ angular.module('oide.editor')
     };
   }])
 .controller('SaveAsModalCtrl', function ($scope, $modalInstance, $http, file) {
-  $scope.treeData = {};
+  $scope.treeData = {
+    filetreeContents: [
+      // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
+    ],
+    selectedNodes: []
+  };
+
+  $scope.$watch(function(){
+    return $scope.treeData;
+  }, function(newValue){
+    // $scope.newFile.filepath = newValue;
+    console.log(newValue);
+  });
+
+  $scope.sd = {
+    noSelections: true,
+    multipleSelections: false,
+    dirSelected: false
+  };
   var initialContents = $http
     .get('/filebrowser/filetree/a/dir')
     .success(function(data, status, headers, config) {
@@ -140,18 +159,19 @@ angular.module('oide.editor')
   $scope.newFile.filename = file.filename;
   $scope.newFile.oldFilename = file.filename;
   $scope.newFile.oldFilepath = file.filepath;
-  $scope.updateSaveName = function (node, selected) {
-    $scope.invalidFilepath = false;
-    if (node.type === 'dir') {
-      $scope.newFile.filepath = node.filepath;
-    } else {
-      var index = node.filepath.lastIndexOf('/')+1;
-      var filepath = node.filepath.substring(0,index);
-      var filename = node.filepath.substring(index,node.filepath.length);
-      $scope.newFile.filepath = filepath;
-      $scope.newFile.filename = filename;
-    }
-  };
+  // $scope.updateSaveName = function (node, selected) {
+  //   $scope.invalidFilepath = false;
+  //   if (node.type === 'dir') {
+  //     $scope.newFile.filepath = node.filepath;
+  //   } else {
+  //     var index = node.filepath.lastIndexOf('/')+1;
+  //     var filepath = node.filepath.substring(0,index);
+  //     var filename = node.filepath.substring(index,node.filepath.length);
+  //     $scope.newFile.filepath = filepath;
+  //     $scope.newFile.filename = filename;
+  //   }
+  // };
+
   $scope.treeOptions = {
     multiSelection: false,
     isLeaf: function(node) {
@@ -191,4 +211,3 @@ angular.module('oide.editor')
     $modalInstance.dismiss('cancel');
   };
 });
-

@@ -14,7 +14,8 @@ angular.module('oide.filetreedirective', [])
       self.treeData = {
         filetreeContents: [
           // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
-        ]
+        ],
+        selectedNodes: []
       };
       self.selectionDesc = {
         noSelections: true,

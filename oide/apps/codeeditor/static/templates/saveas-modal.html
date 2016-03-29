@@ -19,7 +19,7 @@
       </div>
     </form>
     <div class="col-sm-7 col-sm-offset-2">
-      <treecontrol
+      <!-- <treecontrol
         class="tree-oide"
         tree-model="treeData.filetreeContents"
         options="treeOptions"
@@ -30,7 +30,10 @@
         on-selection="updateSaveName(node, selected)">
         {{node.filename}}
         <span class="filetree-permissions">{{node.permissions}}</span>
-      </treecontrol>
+      </treecontrol> -->
+      <div
+        oide-filetree
+        tree-data="ctrl.treeData" selection-desc="ctrl.sd"></div>
     </div>
   </div>
 </div>
