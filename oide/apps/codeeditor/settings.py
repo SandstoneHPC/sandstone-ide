@@ -23,3 +23,11 @@ APP_SPECIFICATION = {
         'filetree.controller.js',
     ),
 }
+
+try:
+    local_settings_file = os.environ['OIDE_SETTINGS']
+    if local_settings_file not in sys.path:
+        sys.path.insert(0,local_settings_file)
+    __import__('oide_settings', globals(), locals(), ['*'])
+except:
+    pass
