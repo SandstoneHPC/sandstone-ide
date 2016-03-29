@@ -2,6 +2,7 @@ include AUTHORS CHANGES README.md INSTALL LICENSE
 prune .git
 prune .gitignore
 recursive-exclude oide *.pyc
+prune oide/client/node_modules
 recursive-include oide/apps *.py *.js *.html *.css
 recursive-include oide/lib *.py *.js *.html *.css
-recursive-include oide/client/oide
+graft oide/client/oide

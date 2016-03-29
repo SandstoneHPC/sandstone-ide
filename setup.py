@@ -12,7 +12,7 @@ setup(
     url='https://github.com/ResearchComputing/OIDE',
     license='AGPLv3, see LICENSE',
     description="Online Integrated Development Environment (OIDE)",
-    long_description=open('README.md').read(),
+    long_description=open('DESCRIPTION.rst').read(),
     zip_safe=False,
     install_requires=[
         'simplepam',
