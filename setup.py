@@ -4,7 +4,7 @@ from setuptools import find_packages
 
 setup(
     name='oide',
-    version='0.11.0',
+    version='0.11.3',
     author=u'Zebula Sampedro',
     author_email='sampedro@colorado.edu',
     packages=find_packages(),
@@ -12,7 +12,7 @@ setup(
     url='https://github.com/ResearchComputing/OIDE',
     license='AGPLv3, see LICENSE',
     description="Online Integrated Development Environment (OIDE)",
-    long_description=open('README.md').read(),
+    long_description=open('DESCRIPTION.rst').read(),
     zip_safe=False,
     install_requires=[
         'simplepam',
