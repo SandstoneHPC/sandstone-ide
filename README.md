@@ -1,7 +1,14 @@
 OIDE
 ====
 
-Online Integrated Development Environment
+The Online Integrated Development Environment (OIDE) is a consolidated set of web-based, visual utilities that facilitate access to HPC resources.
+
+This repo contains the OIDE Core components: a code editor, a filebrowser, and a basic web terminal.
+
+For the Slurm scheduler assistant app, install [oide-slurm-assist](https://github.com/ResearchComputing/oide-slurm-assist)
+
+For a combination web terminal and Jupyter BASH notebook, install [oide-nb-term](https://github.com/ResearchComputing/oide-nb-term)
+
 ## Installing the OIDE using PIP
 
 To install the OIDE using PIP, run:
