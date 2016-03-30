@@ -75,6 +75,9 @@ angular.module('oide.filetreedirective', [])
         return filepaths;
       };
       self.removeNodeFromFiletree = function (node){
+        if(!node) {
+          return;
+        }
         var index;
         index = self.treeData.selectedNodes.indexOf(node);
         if (index >= 0) {

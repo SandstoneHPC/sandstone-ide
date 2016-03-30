@@ -2,8 +2,8 @@
 
 angular.module('oide.editor')
 
-.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', 'FiletreeService',
-  function ($scope, $modal, $log, EditorService, FiletreeService) {
+.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', 'FiletreeService', '$rootScope',
+  function ($scope, $modal, $log, EditorService, FiletreeService, $rootScope) {
     var self = this;
     self.getOpenDocs = function() {
       return EditorService.getOpenDocs();
@@ -66,6 +66,7 @@ angular.module('oide.editor')
         EditorService.fileRenamed(newFile.oldFilepath,newFile.filepath);
         EditorService.saveDocument(newFile.filepath);
         $log.debug('Saved files at: ' + new Date());
+        $rootScope.$emit('refreshFiletree');
       }, function () {
         $log.debug('Modal dismissed at: ' + new Date());
       });
@@ -108,8 +109,9 @@ angular.module('oide.editor')
   }, function(newValue){
     if(newValue.length > 0) {
       $scope.newFile.filepath = newValue[0].filepath;
-      console.log(newValue);
       $scope.invalidFilepath = false;
+    } else {
+      $scope.invalidFilepath = true;
     }
   });
 
