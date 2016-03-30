@@ -9,18 +9,7 @@ For the Slurm scheduler assistant app, install [oide-slurm-assist](https://githu
 
 For a combination web terminal and Jupyter BASH notebook, install [oide-nb-term](https://github.com/ResearchComputing/oide-nb-term)
 
-## Installing the OIDE using PIP
 
-To install the OIDE using PIP, run:
-```
-pip install oide
-```
-
-The OIDE can now be run with the following command:
-```
-oide
-```
-To use the OIDE, point your browser to `localhost:8888`.
 
 ## Installing the OIDE from source
 
