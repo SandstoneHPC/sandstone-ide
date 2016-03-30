@@ -1,4 +1,4 @@
-include AUTHORS CHANGES README.md INSTALL LICENSE
+include AUTHORS CHANGES README.md INSTALL LICENSE DESCRIPTION.rst
 prune .git
 prune .gitignore
 recursive-exclude oide *.pyc
