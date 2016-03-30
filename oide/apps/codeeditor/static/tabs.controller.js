@@ -71,7 +71,11 @@ angular.module('oide.editor')
       });
     };
     self.saveDocument = function (tab) {
-      EditorService.saveDocument(tab.filepath);
+      if(tab.filepath.startsWith('-/')) {
+        self.saveDocumentAs(tab);
+      } else {
+        EditorService.saveDocument(tab.filepath);
+      }
     };
     self.undoChanges = function (tab) {
       EditorService.undoChanges(tab.filepath);
