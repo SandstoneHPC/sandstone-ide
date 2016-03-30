@@ -66,7 +66,6 @@ angular.module('oide.editor')
         EditorService.fileRenamed(newFile.oldFilepath,newFile.filepath);
         EditorService.saveDocument(newFile.filepath);
         $log.debug('Saved files at: ' + new Date());
-        $rootScope.$emit('refreshFiletree');
       }, function () {
         $log.debug('Modal dismissed at: ' + new Date());
       });
@@ -159,6 +158,7 @@ angular.module('oide.editor')
     var index = file.filepath.lastIndexOf('/')+1;
     var filepath = file.filepath.substring(0,index);
     $scope.newFile.filepath = filepath;
+    $scope.invalidFilepath = false;
   }
   $scope.newFile.filename = file.filename;
   $scope.newFile.oldFilename = file.filename;
