@@ -1,14 +1,41 @@
 'use strict';
 
 angular.module('oide.filebrowser')
-.controller('FilebrowserController', ['FBFiletreeService', '$rootScope', 'FileService', '$scope', 'FilesystemService', '$modal', function(FiletreeService, $rootScope, FileService, $scope, FilesystemService, $modal){
+.controller('FilebrowserController', ['$rootScope', 'FileService', '$scope', 'FilesystemService', '$modal', function($rootScope, FileService, $scope, FilesystemService, $modal){
   var self = this;
+
+  self.treeData = {
+    filetreeContents: [],
+    selectedNodes: []
+  };
+
+  self.sd = {
+    noSelections: true,
+    multipleSelections: false,
+    dirSelected: false
+  };
 
   $scope.$watch(function(){
       return FileService.getFileData();
     }, function (newValue) {
     self.fileData = newValue;
     self.displayData = [].concat(self.fileData);
+  });
+
+  $scope.$watch(function(){
+    return self.treeData.selectedNodes;
+  }, function(node){
+    if(!self.multiSelection) {
+      if(!self.treeData.selectedNodes.length == 0) {
+        // Set the current directory
+        FileService.setCurrentDirectory(node[0].filepath);
+        // Get the list of files from FilesystemService
+        FilesystemService.getFiles(node[0], self.gotFiles);
+        // Get Root Directory
+        FilesystemService.getRootDirectory(node[0].filepath, self.gotRootDirectory);
+        FilesystemService.getVolumeInfo(node[0].filepath, self.gotVolumeInfo);
+      }
+    }
   });
 
   $scope.$watch(function(){
@@ -43,6 +70,19 @@ angular.module('oide.filebrowser')
   self.copyFile = function() {
     self.copiedFile = self.selectedFile;
     self.isCopied = true;
+  };
+
+  self.gotFiles = function(data, status, headers, config) {
+    FileService.setFileData(data);
+  };
+  self.gotRootDirectory = function(data, status, headers, config) {
+    var rootDirectory = data.result;
+    FileService.setRootDirectory(rootDirectory);
+  };
+
+  self.gotVolumeInfo = function(data, status, headers, config) {
+    var volumeInfo = data.result;
+    FileService.setVolumeInfo(volumeInfo);
   };
 
   self.formDirPath = function() {
@@ -102,7 +142,8 @@ angular.module('oide.filebrowser')
       self.selectedFile = "";
       self.show_details = false;
       self.refreshDirectory();
-      FiletreeService.updateFiletree();
+      $rootScope.emit('refreshFiletree');
+      // FiletreeService.updateFiletree();
     });
 
   };
@@ -157,7 +198,8 @@ angular.module('oide.filebrowser')
       // Post back new file to backend
       FilesystemService.createNewDir(newFolderPath, function(data){
         self.refreshDirectory();
-        FiletreeService.updateFiletree();
+        // FiletreeService.updateFiletree();
+        $rootScope.emit('refreshFiletree');
       });
     });
   };
