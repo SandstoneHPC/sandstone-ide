@@ -4,7 +4,7 @@ from setuptools import find_packages
 
 setup(
     name='oide',
-    version='0.11.0',
+    version='0.11.3',
     author=u'Zebula Sampedro',
     author_email='sampedro@colorado.edu',
     packages=find_packages(),
