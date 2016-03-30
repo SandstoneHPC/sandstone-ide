@@ -1,5 +1,8 @@
 argparse==1.2.1
-backports.ssl-match-hostname==3.4.0.2
+backports-abc==0.4
+backports.ssl-match-hostname==3.5.0.1
 simplepam==0.1.5
-tornado==3.2.2
+six==1.10.0
+terminado==0.6
+tornado==4.3
 wsgiref==0.1.2
