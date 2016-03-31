@@ -375,7 +375,8 @@ angular.module('oide.filebrowser')
     if(selectedFile.type == 'file') {
       return;
     }
-    FileService.setSelectionPath(selectedFile.filepath);
+    // FileService.setSelectionPath(selectedFile.filepath);
+    self.treeData.selectedNodes = [selectedFile];
     self.show_details = false;
   };
 
