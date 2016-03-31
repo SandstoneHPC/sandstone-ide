@@ -5,7 +5,8 @@ angular.module('oide.filetreedirective', [])
     restrict: 'A',
     scope: {
       treeData: '=',
-      selectionDesc: '='
+      selectionDesc: '=',
+      leafLevel: '@'
     },
     templateUrl: '/static/core/components/filetreedirective/templates/filetree.html',
     controller: ['$scope', '$document', '$element', '$timeout', 'FilesystemService', '$rootScope', function($scope, $document, $element, $timeout, FilesystemService, $rootScope) {
@@ -23,6 +24,7 @@ angular.module('oide.filetreedirective', [])
         dirSelected: false
       };
       self.clipboard = [];
+      // self.leafLevel = '';
 
       self.populateTreeData = function(data, status, headers, config) {
         for (var i=0;i<data.length;i++) {
@@ -32,7 +34,11 @@ angular.module('oide.filetreedirective', [])
       };
 
       self.initializeFiletree = function () {
-        FilesystemService.getFiles('', self.populateTreeData);
+        if(self.leafLevel == "file") {
+          FilesystemService.getFiles('', self.populateTreeData);
+        } else if(self.leafLevel == "dir") {
+          FilesystemService.getFolders({filepath: ''}, self.populateTreeData);
+        }
         $rootScope.$on('refreshFiletree', function() {
           self.updateFiletree();
         });
@@ -226,7 +232,11 @@ angular.module('oide.filetreedirective', [])
       };
       self.getDirContents = function (node, expanded) {
         if(expanded) {
-          FilesystemService.getFiles(node, self.populatetreeContents);
+          if(self.leafLevel == "dir") {
+            FilesystemService.getFolders(node, self.populatetreeContents);
+          } else if(self.leafLevel == "file") {
+            FilesystemService.getFiles(node, self.populatetreeContents);
+          }
         }
       };
       self.showSelected = function(node, selected) {
