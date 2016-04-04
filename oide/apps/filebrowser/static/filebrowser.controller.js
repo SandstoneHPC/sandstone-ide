@@ -142,7 +142,7 @@ angular.module('oide.filebrowser')
       self.selectedFile = "";
       self.show_details = false;
       self.refreshDirectory();
-      $rootScope.emit('refreshFiletree');
+      $rootScope.$emit('refreshFiletree');
       // FiletreeService.updateFiletree();
     });
 
