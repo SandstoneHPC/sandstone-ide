@@ -20,8 +20,7 @@ describe('oide.editor tabs', function(){
       $scope: scope,
       EditorService: EditorService,
       $modal: $modal,
-      $log: $log,
-      FiletreeService: FiletreeService
+      $log: $log
     });
     scope.ctrl = controller;
     scope.$apply();

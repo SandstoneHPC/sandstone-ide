@@ -65,7 +65,6 @@ describe('filetree', function(){
     $compile = _$compile_;
     httpBackend = $httpBackend;
     httpBackend.whenGET('/filebrowser/filetree/a/dir').respond(function(){
-      console.log("Called now");
       return [200, dirs];
     });
     controller = $controller;
@@ -97,7 +96,7 @@ describe('filetree', function(){
       httpBackend.flush();
       console.log(scope.ctrl.sd);
       expect(scope.ctrl.sd).toBeDefined();
-      expect(scope.ctrl.sd.multiSelection).toBeTruthy();
+      expect(scope.ctrl.sd.multipleSelections).not.toBeTruthy();
     });
   });
 

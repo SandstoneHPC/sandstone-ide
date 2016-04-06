@@ -2,8 +2,8 @@
 
 angular.module('oide.editor')
 
-.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', 'FiletreeService', '$rootScope',
-  function ($scope, $modal, $log, EditorService, FiletreeService, $rootScope) {
+.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', '$rootScope',
+  function ($scope, $modal, $log, EditorService, $rootScope) {
     var self = this;
     self.getOpenDocs = function() {
       return EditorService.getOpenDocs();
@@ -71,7 +71,7 @@ angular.module('oide.editor')
       });
     };
     self.saveDocument = function (tab) {
-      if(tab.filepath.startsWith('-/')) {
+      if(tab.filepath.substring(0,2) == '-/') {
         self.saveDocumentAs(tab);
       } else {
         EditorService.saveDocument(tab.filepath);
