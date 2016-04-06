@@ -81,7 +81,7 @@ describe('filetree', function(){
   describe('Whether the filetree is working as expected or not', function(){
     //Expect Filetree service to be defined
     it('Controller initialization should be proper', function(){
-      var element = angular.element('<div oide-filetree tree-data="ctrl.treeData" selection-desc="ctrl.sd"></div>');
+      var element = angular.element('<div oide-filetree tree-data="ctrl.treeData" leaf-level="file" selection-desc="ctrl.sd"></div>');
       el = $compile(element)(scope);
       scope.$digest();
       httpBackend.flush();
@@ -91,7 +91,7 @@ describe('filetree', function(){
       expect(scope.ctrl.treeData.filetreeContents.length).toBe(3);
     });
     it('should have valid default treeOptions loaded', function(){
-      var element = angular.element('<div oide-filetree tree-data="ctrl.treeData" selection-desc="ctrl.sd"></div>');
+      var element = angular.element('<div oide-filetree tree-data="ctrl.treeData" leaf-level="file" selection-desc="ctrl.sd"></div>');
       el = $compile(element)(scope);
       scope.$digest();
       httpBackend.flush();
