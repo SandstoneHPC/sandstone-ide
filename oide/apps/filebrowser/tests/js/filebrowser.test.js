@@ -6,8 +6,11 @@ function getCookie(name) {
 describe('Filebrowser', function() {
   var scope;
   var controller;
+  var $compile;
   beforeEach(module('oide.filebrowser'));
   beforeEach(module('oide.filesystemservice'));
+  beforeEach(module('oide.templates'));
+  beforeEach(module('oide.filetreedirective'));
   // beforeEach(module('FileService'));
 
   describe('FilebrowserController Test', function() {
@@ -20,8 +23,9 @@ describe('Filebrowser', function() {
       'used': '10',
       'size': '100'
     };
-    beforeEach(inject(function($controller, $rootScope, $httpBackend, $http, FilesystemService, FileService){
+    beforeEach(inject(function($controller, $rootScope, $httpBackend, $http, FilesystemService, FileService, _$compile_){
       mockFileService = FileService;
+      $compile = _$compile_;
       // The injector unwraps the underscores (_) from around the parameter names when matching
       httpBackend = $httpBackend;
       httpBackend.whenGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){

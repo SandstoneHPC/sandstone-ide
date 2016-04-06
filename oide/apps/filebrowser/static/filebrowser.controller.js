@@ -199,7 +199,7 @@ angular.module('oide.filebrowser')
       FilesystemService.createNewDir(newFolderPath, function(data){
         self.refreshDirectory();
         // FiletreeService.updateFiletree();
-        $rootScope.emit('refreshFiletree');
+        $rootScope.$emit('refreshFiletree');
       });
     });
   };
