@@ -19,8 +19,7 @@ COOKIE_SECRET = 'YouShouldProbablyChangeThisValueForYourProject'
 INSTALLED_APPS = (
     'oide.apps.codeeditor',
     'oide.apps.filebrowser',
-    'oide.apps.webterminal',
-    'oidenbterm'
+    'oide.apps.webterminal'
 )
 
 try:
