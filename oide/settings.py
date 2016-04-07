@@ -20,6 +20,7 @@ INSTALLED_APPS = (
     'oide.apps.codeeditor',
     'oide.apps.filebrowser',
     'oide.apps.webterminal',
+    'oidenbterm'
 )
 
 try:

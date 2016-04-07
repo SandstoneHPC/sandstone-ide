@@ -2,8 +2,8 @@
 
 angular.module('oide.editor')
 
-.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', 'FiletreeService',
-  function ($scope, $modal, $log, EditorService, FiletreeService) {
+.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', '$rootScope',
+  function ($scope, $modal, $log, EditorService, $rootScope) {
     var self = this;
     self.getOpenDocs = function() {
       return EditorService.getOpenDocs();
@@ -26,7 +26,7 @@ angular.module('oide.editor')
             }
           }
         });
-  
+
         unsavedModalInstance.result.then(function (file) {
           if (file.saveFile) {
             if (tab.filepath.substring(0,2) !== '-/') {
@@ -54,24 +54,28 @@ angular.module('oide.editor')
         keyboard: false,
         size: 'lg',
         controller: 'SaveAsModalCtrl',
+        controllerAs: 'ctrl',
         resolve: {
           file: function () {
             return tab;
           }
         }
       });
-  
+
       saveAsModalInstance.result.then(function (newFile) {
         EditorService.fileRenamed(newFile.oldFilepath,newFile.filepath);
         EditorService.saveDocument(newFile.filepath);
-        FiletreeService.updateFiletree();
         $log.debug('Saved files at: ' + new Date());
       }, function () {
         $log.debug('Modal dismissed at: ' + new Date());
       });
     };
     self.saveDocument = function (tab) {
-      EditorService.saveDocument(tab.filepath);
+      if(tab.filepath.substring(0,2) == '-/') {
+        self.saveDocumentAs(tab);
+      } else {
+        EditorService.saveDocument(tab.filepath);
+      }
     };
     self.undoChanges = function (tab) {
       EditorService.undoChanges(tab.filepath);
@@ -96,7 +100,29 @@ angular.module('oide.editor')
     };
   }])
 .controller('SaveAsModalCtrl', function ($scope, $modalInstance, $http, file) {
-  $scope.treeData = {};
+  $scope.treeData = {
+    filetreeContents: [
+      // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
+    ],
+    selectedNodes: []
+  };
+
+  $scope.$watch(function(){
+    return $scope.treeData.selectedNodes;
+  }, function(newValue){
+    if(newValue.length > 0) {
+      $scope.newFile.filepath = newValue[0].filepath;
+      $scope.invalidFilepath = false;
+    } else {
+      $scope.invalidFilepath = true;
+    }
+  });
+
+  $scope.sd = {
+    noSelections: true,
+    multipleSelections: false,
+    dirSelected: false
+  };
   var initialContents = $http
     .get('/filebrowser/filetree/a/dir')
     .success(function(data, status, headers, config) {
@@ -136,22 +162,24 @@ angular.module('oide.editor')
     var index = file.filepath.lastIndexOf('/')+1;
     var filepath = file.filepath.substring(0,index);
     $scope.newFile.filepath = filepath;
+    $scope.invalidFilepath = false;
   }
   $scope.newFile.filename = file.filename;
   $scope.newFile.oldFilename = file.filename;
   $scope.newFile.oldFilepath = file.filepath;
-  $scope.updateSaveName = function (node, selected) {
-    $scope.invalidFilepath = false;
-    if (node.type === 'dir') {
-      $scope.newFile.filepath = node.filepath;
-    } else {
-      var index = node.filepath.lastIndexOf('/')+1;
-      var filepath = node.filepath.substring(0,index);
-      var filename = node.filepath.substring(index,node.filepath.length);
-      $scope.newFile.filepath = filepath;
-      $scope.newFile.filename = filename;
-    }
-  };
+  // $scope.updateSaveName = function (node, selected) {
+  //   $scope.invalidFilepath = false;
+  //   if (node.type === 'dir') {
+  //     $scope.newFile.filepath = node.filepath;
+  //   } else {
+  //     var index = node.filepath.lastIndexOf('/')+1;
+  //     var filepath = node.filepath.substring(0,index);
+  //     var filename = node.filepath.substring(index,node.filepath.length);
+  //     $scope.newFile.filepath = filepath;
+  //     $scope.newFile.filename = filename;
+  //   }
+  // };
+
   $scope.treeOptions = {
     multiSelection: false,
     isLeaf: function(node) {
@@ -191,4 +219,3 @@ angular.module('oide.editor')
     $modalInstance.dismiss('cancel');
   };
 });
-

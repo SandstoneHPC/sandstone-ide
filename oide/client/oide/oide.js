@@ -15,6 +15,7 @@
       depList.push('oide.acemodes');
       depList.push('ui.bootstrap');
       depList.push('oide.filesystemservice');
+      depList.push('oide.filetreedirective');
       var oide = angular.module('oide', depList);
 
       oide.config(['$urlRouterProvider', function($urlRouterProvider) {

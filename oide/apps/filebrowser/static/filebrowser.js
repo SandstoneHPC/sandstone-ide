@@ -10,12 +10,12 @@ angular.module('oide.filebrowser', ['smart-table', 'angularFileUpload', 'ui.rout
         templateUrl: '/static/filebrowser/filebrowser.html',
         controller: 'FilebrowserController',
         controllerAs: 'ctrl'
-      },
-      'filetree@filebrowser': {
-        templateUrl: '/static/filebrowser/templates/filetree.html',
-        controller: 'FiletreeController',
-        controllerAs: 'ctrl'
-      }
+      }//,
+      // 'filetree@filebrowser': {
+      //   templateUrl: '/static/filebrowser/templates/filetree.html',
+      //   controller: 'FiletreeController',
+      //   controllerAs: 'ctrl'
+      // }
     }
   });
 }]);

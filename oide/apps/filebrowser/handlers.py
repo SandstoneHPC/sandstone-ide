@@ -275,7 +275,12 @@ class FileTreeHandler(BaseHandler,FSMixin):
                     else:
                         curr_file['type'] = 'file'
                     # Get owner information
-                    stat_object = stat(i[1])
+                    try:
+                        stat_object = stat(i[1])
+                    except OSError:
+                        # stat failed possibly due to broken file
+                        # ignore the current file
+                        continue
                     owner = getpwuid(stat_object.st_uid).pw_name
                     file_size = str((float(stat_object.st_size) / 1024)) + " KiB"
                     curr_file['filename'] = i[0]

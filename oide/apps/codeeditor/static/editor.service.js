@@ -9,7 +9,7 @@
  */
 angular.module('oide.editor')
 
-.factory('EditorService', ['$window', '$http', '$log', 'AceModeService', function ($window, $http,$log,AceModeService) {
+.factory('EditorService', ['$window', '$http', '$log', 'AceModeService','$rootScope', function ($window, $http,$log,AceModeService, $rootScope) {
   var editor = {};
 
   // clipboard will hold all copy/paste text for editor
@@ -292,6 +292,7 @@ angular.module('oide.editor')
             .success(function (data,status, headers, config) {
               $log.debug('Saved file: ', filepath);
               openDocs[filepath].unsaved = false;
+              $rootScope.$emit('refreshFiletree');
             });
           } else {
             $http({
@@ -313,6 +314,7 @@ angular.module('oide.editor')
               .success(function (data,status, headers, config) {
                 $log.debug('Saved file: ', filepath);
                 openDocs[filepath].unsaved = false;
+                $rootScope.$emit('refreshFiletree');
               });
             });
           }
