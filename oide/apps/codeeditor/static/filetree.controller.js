@@ -141,6 +141,13 @@ angular.module('oide.editor')
     self.clipboard = [];
     $rootScope.$emit('pastedFiles', newDirPath);
   };
+
+  self.fileRenamed = function(data, status, headers, config, node) {
+    $rootScope.$emit('fileRenamed', node.filepath, data.result);
+    self.updateFiletree();
+    $log.debug('POST: ', data.result);
+  };
+
   self.renameFile = function () {
     var renameModalInstance = $modal.open({
       templateUrl: '/static/editor/templates/rename-modal.html',
