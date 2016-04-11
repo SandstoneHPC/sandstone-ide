@@ -101,10 +101,14 @@ angular.module('oide.editor')
   }])
 .controller('SaveAsModalCtrl', function ($scope, $modalInstance, $http, file) {
   $scope.treeData = {
-    filetreeContents: [
-      // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
-    ],
+    filetreeContents: [],
     selectedNodes: []
+  };
+
+  $scope.sd = {
+    noSelections: true,
+    multipleSelections: false,
+    dirSelected: false
   };
 
   $scope.$watch(function(){
