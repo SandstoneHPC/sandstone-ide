@@ -23,6 +23,14 @@ oide
 ```
 To use the OIDE, point your browser to `localhost:8888`.
 
+## Running the OIDE with Docker
+
+To run the OIDE in a Docker container, run:
+```
+docker build -t oide .
+docker run -p 49160:8888 -d --user=oide oide
+```
+To use the OIDE, point your browser to `localhost:49160`. Login with username:pass `oide:oide`.
 
 ## Installing the OIDE from source
 
