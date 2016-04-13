@@ -4,6 +4,12 @@ import sys
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 # sys.path.insert(0,PROJECT_DIR)
 
+# If DEV set to True, OIDE will run in dev mode when invoked
+# directly.
+DEV = False
+# Absolute path for non-core apps, only used if DEV = True
+DEV_PATHS = ()
+
 # If USE_SSL is set to True, then both the SSL_CERT and SSL_KEY
 # options need to be configured.
 USE_SSL = False

@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 import logging
 import tornado.ioloop
 import tornado.options
@@ -11,13 +12,22 @@ from datetime import date
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(PROJECT_DIR,'client/oide')
 
-from oide.lib import ui_methods
-import oide.settings as global_settings
-from oide.lib.app_loader import get_installed_app_static_specs
-import oide.urls
-from oide.urls import URL_SCHEMA
+from lib import ui_methods
+import settings as global_settings
+from lib.app_loader import get_installed_app_static_specs
+import urls
+from urls import URL_SCHEMA
 
 
+
+# Set up sys.path for DEV mode, so that apps import
+# from local copy of OIDE
+if global_settings.DEV:
+    module_path = os.path.abspath(os.path.join(PROJECT_DIR,'..'))
+    sys.path.insert(0,module_path)
+    # Add non-core apps to path
+    for path in global_settings.DEV_PATHS:
+        sys.path.insert(0,path)
 
 class OIDEApplication(tornado.web.Application):
 
