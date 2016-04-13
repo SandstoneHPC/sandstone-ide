@@ -26,8 +26,9 @@ if global_settings.DEV:
     module_path = os.path.abspath(os.path.join(PROJECT_DIR,'..'))
     sys.path.insert(0,module_path)
     # Add non-core apps to path
-    for path in global_settings.DEV_PATHS:
-        sys.path.insert(0,path)
+    for app in global_settings.DEV_APPS:
+        if app[1]:
+            sys.path.insert(0,path)
 
 class OIDEApplication(tornado.web.Application):
 

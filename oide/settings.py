@@ -8,7 +8,7 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 # directly.
 DEV = False
 # Absolute path for non-core apps, only used if DEV = True
-DEV_PATHS = ()
+DEV_APPS = ()
 
 # If USE_SSL is set to True, then both the SSL_CERT and SSL_KEY
 # options need to be configured.
