@@ -12,14 +12,7 @@ from datetime import date
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(PROJECT_DIR,'client/oide')
 
-from lib import ui_methods
 import settings as global_settings
-from lib.app_loader import get_installed_app_static_specs
-import urls
-from urls import URL_SCHEMA
-
-
-
 # Set up sys.path for DEV mode, so that apps import
 # from local copy of OIDE
 if global_settings.DEV:
@@ -28,7 +21,12 @@ if global_settings.DEV:
     # Add non-core apps to path
     for app in global_settings.DEV_APPS:
         if app[1]:
-            sys.path.insert(0,path)
+            sys.path.insert(0,app[1])
+
+from lib import ui_methods
+from lib.app_loader import get_installed_app_static_specs
+import urls
+from urls import URL_SCHEMA
 
 class OIDEApplication(tornado.web.Application):
 
