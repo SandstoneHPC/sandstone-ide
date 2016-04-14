@@ -3,6 +3,7 @@ import os
 import shutil
 import importlib
 
+# clean up devtest
 if os.path.exists('../devtest'):
     shutil.rmtree("../devtest")
 os.makedirs("../devtest")
@@ -23,3 +24,7 @@ for app in spec_list:
     shutil.copytree(app[1] + '/static', "../devtest/" + app[0] + "/static")
     if os.path.exists(app[1] + '/tests'):
         shutil.copytree(app[1] + '/tests', "../devtest/" + app[0] + "/tests")
+
+# copy node_modules and bower_components
+shutil.copytree('../client/node_modules', '../devtest/node_modules')
+shutil.copytree('../client/oide/bower_components', '../devtest/bower_components')
