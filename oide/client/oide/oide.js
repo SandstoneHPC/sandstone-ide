@@ -16,22 +16,7 @@
       depList.push('ui.bootstrap');
       depList.push('oide.filesystemservice');
       depList.push('oide.filetreedirective');
-      var oide = angular.module('oide', depList);
-
-      oide.config(['$urlRouterProvider', function($urlRouterProvider) {
-        $urlRouterProvider.otherwise('/editor');
-      }])
-      .controller('PageCtrl', ['$location','PageService',function($location,PageService) {
-        var self = this;
-        self.currentUrl = PageService.getCurrentUrl;
-      }])
-      .factory('PageService', ['$location',function($location) {
-        return {
-          getCurrentUrl: function () {
-            return '/#'+$location.path();
-          }
-        };
-      }]);
+      var oide = getOideModule(depList);
 
       angular.element(document).ready(function() {
         angular.bootstrap(document, ['oide']);

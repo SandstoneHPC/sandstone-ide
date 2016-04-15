@@ -15,11 +15,9 @@ APP_SPECIFICATION = {
     'NG_MODULE_SCRIPTS': (
         'editor.js',
         'editor.service.js',
-        'filetree.service.js',
         'ace.controller.js',
         'tabs.controller.js',
         'settings.controller.js',
-        'filetree-controls.controller.js',
         'filetree.controller.js',
     ),
 }

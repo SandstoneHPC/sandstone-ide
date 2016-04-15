@@ -15,6 +15,7 @@ module.exports = function(config){
       'client/oide/bower_components/angular-file-upload/dist/angular-file-upload.js',
       'client/oide/bower_components/term.js/src/term.js',
       'client/oide/components/**/*.js',
+      'client/oide/oide.mod.js',
       'client/oide/oide.test.js',
       'apps/codeeditor/static/editor.js',
       'apps/webterminal/static/terminal.js',

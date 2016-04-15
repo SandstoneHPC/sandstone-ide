@@ -1,44 +1,15 @@
 .filetree-container {
   margin-top: 50px;
   /*position: absolute;*/
-  left: 15px;
+  /*left: 15px;
   right: 15px;
   bottom: 30px;
-  top: 20px;
-  /* max-height: 80%; */
+  top: 20px;*/
+  /*max-height: 80%;*/
+  height: 87vh;
   overflow-x: scroll;
   overflow-y: scroll;
 }
 .filetree-container li {
   white-space: nowrap;
-}
-.filetree-controls {
-  color: #93c54b;
-  margin-top: 5px;
-  margin-bottom: 25px;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 300px;
-  /*width: 100%;
-  position: absolute;
-  left: 30px;
-  right: 30px;*/
-}
-.filetree-btn {
-  /*border-top: 1px solid #93c54b;*/
-  border-bottom: 2px solid #93c54b;
-  /*color: inherit;*/
-}
-.filetree-control-label {
-  font-size: 10px;
-  margin-right: 5px;
-}
-.filetree-dropdown {
-  color: white;
-  background-color: #3e3f3a;
-  border: 1px solid #3e3f3a;
-}
-.filetree-dropdown > li > a:hover {
-  color: white;
-  background-color: #3e3f3a;
 }

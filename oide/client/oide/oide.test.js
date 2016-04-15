@@ -1,21 +1,20 @@
-angular.module('oide',[
-    'ui.router',
-    'oide.editor',
-    'oide.terminal',
-    'oide.acemodes',
-    'ui.bootstrap'
-  ])
-.config(['$urlRouterProvider', function($urlRouterProvider) {
-  $urlRouterProvider.otherwise('/editor');
-}])
-.controller('PageCtrl', ['$location','PageService',function($location,PageService) {
-  var self = this;
-  self.currentUrl = PageService.getCurrentUrl;
-}])
-.factory('PageService', ['$location',function($location) {
-  return {
-    getCurrentUrl: function () {
-      return '/#'+$location.path();
-    }
-  };
-}]);
+'use strict';
+
+(function() {
+  getDependencies();
+
+  function getDependencies() {
+    var depList = [
+        'ui.router',
+        'oide.editor',
+        'oide.terminal',
+        'oide.acemodes',
+        'ui.bootstrap'
+      ]
+    var oide = getOideModule(depList);
+
+    angular.element(document).ready(function() {
+      angular.bootstrap(document, ['oide']);
+    });
+  }
+}());
