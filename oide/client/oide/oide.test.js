@@ -4,13 +4,7 @@
   getDependencies();
 
   function getDependencies() {
-    var depList = [
-        'ui.router',
-        'oide.editor',
-        'oide.terminal',
-        'oide.acemodes',
-        'ui.bootstrap'
-      ]
+    var depList = %(dep_list)s;
     var oide = getOideModule(depList);
 
     angular.element(document).ready(function() {
