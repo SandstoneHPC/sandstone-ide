@@ -4,6 +4,7 @@ describe('Filetree directive', function(){
   var element;
   var httpBackend;
   var rootScope;
+  var filesystemservice;
   var dirs = [{
         "filepath": "/home/saurabh/dir1",
         "filename": "dir1",
@@ -60,11 +61,12 @@ describe('Filetree directive', function(){
   beforeEach(module('oide.templates'));
   beforeEach(module('oide.filetreedirective'));
 
-  beforeEach(inject(function($rootScope, _$compile_, $httpBackend){
+  beforeEach(inject(function($rootScope, _$compile_, $httpBackend, FilesystemService){
     $compile = _$compile_;
     scope = $rootScope.$new();
     rootScope = $rootScope;
     httpBackend = $httpBackend;
+    filesystemservice = FilesystemService;
 
     httpBackend.whenGET('/filebrowser/filetree/a/dir').respond(function(){
       return [200, dirs];
@@ -82,12 +84,58 @@ describe('Filetree directive', function(){
 
       // Get isolate scope and run expects
       var isolateScope = element.isolateScope();
+
+      // Create spies
+      spyOn(isolateScope, 'updateFiletree');
+      spyOn(isolateScope, 'deletedFile');
+      spyOn(isolateScope, 'pastedFiles');
+
       expect(isolateScope.leafLevel).toBe("file");
       expect(isolateScope.selectionDesc.noSelections).toBeTruthy();
       expect(isolateScope.selectionDesc.multipleSelections).not.toBeTruthy();
       expect(isolateScope.selectionDesc.dirSelected).not.toBeTruthy();
       expect(isolateScope.treeData.filetreeContents.length).toBe(3);
+      // Refresh
+      rootScope.$emit('refreshFiletree');
+      expect(isolateScope.updateFiletree).toHaveBeenCalled();
+      // Deleted File
+      rootScope.$emit('deletedFile', dirs[0]);
+      expect(isolateScope.deletedFile).toHaveBeenCalled();
+      // Pasted File
+      rootScope.$emit('pastedFiles', dirs[0].filepath);
+      expect(isolateScope.pastedFiles).toHaveBeenCalled();
     });
+
+    it('should show files on expanding', function(){
+      var el = angular.element('<div oide-filetree tree-data="ctrl.treeData" leaf-level="file" selection-desc="ctrl.sd"></div>');
+      element = $compile(el)(scope);
+      scope.$digest();
+      httpBackend.flush();
+
+      // Get isolate scope and run expects
+      var isolateScope = element.isolateScope();
+
+      spyOn(isolateScope, 'getDirContents');
+      spyOn(isolateScope, 'populatetreeContents');
+      // Click to toggle
+      element.find('i')['0'].click();
+      expect(isolateScope.getDirContents).toHaveBeenCalled();
+    });
+
+    it('should be able to get files for a folder', function(){
+      var el = angular.element('<div oide-filetree tree-data="ctrl.treeData" leaf-level="file" selection-desc="ctrl.sd"></div>');
+      element = $compile(el)(scope);
+      scope.$digest();
+      httpBackend.flush();
+
+      // Get isolate scope and run expects
+      var isolateScope = element.isolateScope();
+
+      spyOn(filesystemservice, 'getFiles');
+      isolateScope.getDirContents(dirs[0], true);
+      expect(filesystemservice.getFiles).toHaveBeenCalled();
+    });
+
   });
 
 });
