@@ -5,6 +5,7 @@ describe('Filetree directive', function(){
   var httpBackend;
   var rootScope;
   var filesystemservice;
+  var isolateScope;
   var dirs = [{
         "filepath": "/home/saurabh/dir1",
         "filename": "dir1",
@@ -71,20 +72,18 @@ describe('Filetree directive', function(){
     httpBackend.whenGET('/filebrowser/filetree/a/dir').respond(function(){
       return [200, dirs];
     });
-
     scope.$apply();
+    var el = angular.element('<div oide-filetree tree-data="ctrl.treeData" leaf-level="file" selection-desc="ctrl.sd"></div>');
+    element = $compile(el)(scope);
+    scope.$digest();
+    httpBackend.flush();
+
+    // Get isolate scope
+    isolateScope = element.isolateScope();
   }));
 
   describe('Filetreedirective tests', function(){
     it('should be initialized properly', function(){
-      var el = angular.element('<div oide-filetree tree-data="ctrl.treeData" leaf-level="file" selection-desc="ctrl.sd"></div>');
-      element = $compile(el)(scope);
-      scope.$digest();
-      httpBackend.flush();
-
-      // Get isolate scope and run expects
-      var isolateScope = element.isolateScope();
-
       // Create spies
       spyOn(isolateScope, 'updateFiletree');
       spyOn(isolateScope, 'deletedFile');
@@ -107,14 +106,6 @@ describe('Filetree directive', function(){
     });
 
     it('should show files on expanding', function(){
-      var el = angular.element('<div oide-filetree tree-data="ctrl.treeData" leaf-level="file" selection-desc="ctrl.sd"></div>');
-      element = $compile(el)(scope);
-      scope.$digest();
-      httpBackend.flush();
-
-      // Get isolate scope and run expects
-      var isolateScope = element.isolateScope();
-
       spyOn(isolateScope, 'getDirContents');
       spyOn(isolateScope, 'populatetreeContents');
       // Click to toggle
@@ -123,14 +114,6 @@ describe('Filetree directive', function(){
     });
 
     it('should be able to get files for a folder', function(){
-      var el = angular.element('<div oide-filetree tree-data="ctrl.treeData" leaf-level="file" selection-desc="ctrl.sd"></div>');
-      element = $compile(el)(scope);
-      scope.$digest();
-      httpBackend.flush();
-
-      // Get isolate scope and run expects
-      var isolateScope = element.isolateScope();
-
       spyOn(filesystemservice, 'getFiles');
       isolateScope.getDirContents(dirs[0], true);
       expect(filesystemservice.getFiles).toHaveBeenCalled();
