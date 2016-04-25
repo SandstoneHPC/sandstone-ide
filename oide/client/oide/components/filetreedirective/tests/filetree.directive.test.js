@@ -37,6 +37,17 @@ describe('Filetree directive', function(){
         "size": "4.0 KiB",
         "type": "dir",
         "children": []
+      },
+      {
+        "filepath": "/home/saurabh/dir4",
+        "filename": "dir4",
+        "group": "saurabh",
+        "is_accessible": true,
+        "perm": "-rw-rw-r--",
+        "perm_string": "664",
+        "size": "4.0 KiB",
+        "type": "dir",
+        "children": []
       }];
 
     var files = [{
@@ -50,6 +61,16 @@ describe('Filetree directive', function(){
           "type": "dir"
         }, {
           "filepath": "/home/saurabh/file2",
+          "filename": "file2",
+          "group": "root",
+          "is_accessible": false,
+          "perm": "-rw-r--r--",
+          "perm_string": "644",
+          "size": "4.0 KiB",
+          "type": "dir"
+        },
+        {
+          "filepath": "/home/saurabh/dir4/file2",
           "filename": "file2",
           "group": "root",
           "is_accessible": false,
@@ -96,7 +117,7 @@ describe('Filetree directive', function(){
       expect(isolateScope.selectionDesc.noSelections).toBeTruthy();
       expect(isolateScope.selectionDesc.multipleSelections).not.toBeTruthy();
       expect(isolateScope.selectionDesc.dirSelected).not.toBeTruthy();
-      expect(isolateScope.treeData.filetreeContents.length).toBe(3);
+      expect(isolateScope.treeData.filetreeContents.length).toBe(4);
       // Refresh
       rootScope.$emit('refreshFiletree');
       expect(isolateScope.updateFiletree).toHaveBeenCalled();
@@ -147,7 +168,17 @@ describe('Filetree directive', function(){
       isolateScope.getDirContents(isolateScope.treeData.filetreeContents[0], true);
       httpBackend.flush();
       var node = isolateScope.getNodeFromPath(isolateScope.treeData.filetreeContents[0].filepath, isolateScope.treeData.filetreeContents);
-      expect(node.children.length).toBe(2);
+      expect(node.children.length).toBe(3);
+    });
+
+    it('should remove a node from the filetree', function(){
+      var node = isolateScope.treeData.filetreeContents[3];
+      node.children[0] = files[2];
+      var childNode = node.children[0];
+      isolateScope.treeData.selectedNodes = [childNode];
+      isolateScope.removeNodeFromFiletree(childNode);
+      expect(isolateScope.treeData.filetreeContents[3].children.length).toBe(0);
+      expect(isolateScope.treeData.selectedNodes.length).toBe(0);
     });
 
   });
