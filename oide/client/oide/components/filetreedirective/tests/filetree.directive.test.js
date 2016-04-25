@@ -132,6 +132,11 @@ describe('Filetree directive', function(){
       expect(node.size).toBe('4.0 KiB');
     });
 
+    it('should return null in case node doesnt exist', function(){
+      var node = isolateScope.getNodeFromPath('/home/saurabh/dir111', isolateScope.treeData.filetreeContents);
+      expect(node).not.toBeDefined();
+    });
+
   });
 
 });
