@@ -82,7 +82,7 @@ describe('Filetree directive', function(){
     isolateScope = element.isolateScope();
   }));
 
-  describe('Filetreedirective tests', function(){
+  describe('Filetreedirective controller tests', function(){
     it('should be initialized properly', function(){
       // Create spies
       spyOn(isolateScope, 'updateFiletree');
@@ -105,18 +105,31 @@ describe('Filetree directive', function(){
       expect(isolateScope.pastedFiles).toHaveBeenCalled();
     });
 
-    it('should show files on expanding', function(){
-      spyOn(isolateScope, 'getDirContents');
-      spyOn(isolateScope, 'populatetreeContents');
-      // Click to toggle
-      element.find('i')['0'].click();
-      expect(isolateScope.getDirContents).toHaveBeenCalled();
-    });
+    // These should be part of the E2E tests
+    // it('should show files on expanding', function(){
+    //   spyOn(isolateScope, 'getDirContents');
+    //   spyOn(isolateScope, 'populatetreeContents');
+    //   // Click to toggle
+    //   element.find('i')['0'].click();
+    //   expect(isolateScope.getDirContents).toHaveBeenCalled();
+    // });
 
     it('should be able to get files for a folder', function(){
       spyOn(filesystemservice, 'getFiles');
       isolateScope.getDirContents(dirs[0], true);
       expect(filesystemservice.getFiles).toHaveBeenCalled();
+    });
+
+    it('should return the node given a filepath', function() {
+      var node = isolateScope.getNodeFromPath('/home/saurabh/dir1', isolateScope.treeData.filetreeContents);
+      // Expect node parameters to match
+      expect(node.filepath).toBe('/home/saurabh/dir1');
+      expect(node.filename).toBe('dir1');
+      expect(node.group).toBe('saurabh');
+      expect(node.is_accessible).toBeTruthy();
+      expect(node.perm).toBe('-rw-rw-r--');
+      expect(node.perm_string).toBe('664');
+      expect(node.size).toBe('4.0 KiB');
     });
 
   });
