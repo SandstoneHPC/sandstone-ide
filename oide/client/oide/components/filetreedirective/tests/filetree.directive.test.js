@@ -129,15 +129,6 @@ describe('Filetree directive', function(){
       expect(isolateScope.pastedFiles).toHaveBeenCalled();
     });
 
-    // These should be part of the E2E tests
-    // it('should show files on expanding', function(){
-    //   spyOn(isolateScope, 'getDirContents');
-    //   spyOn(isolateScope, 'populatetreeContents');
-    //   // Click to toggle
-    //   element.find('i')['0'].click();
-    //   expect(isolateScope.getDirContents).toHaveBeenCalled();
-    // });
-
     it('should be able to get files for a folder', function(){
       spyOn(filesystemservice, 'getFiles');
       isolateScope.getDirContents(dirs[0], true);
@@ -178,6 +169,23 @@ describe('Filetree directive', function(){
       isolateScope.treeData.selectedNodes = [childNode];
       isolateScope.removeNodeFromFiletree(childNode);
       expect(isolateScope.treeData.filetreeContents[3].children.length).toBe(0);
+      expect(isolateScope.treeData.selectedNodes.length).toBe(0);
+    });
+
+    it('should return true if given filepath is expanded', function(){
+      isolateScope.treeData.expandedNodes = [dirs[0]];
+      expect(isolateScope.isExpanded(dirs[0].filepath)).toBeTruthy();
+    });
+
+    it('should return false if given filepath is not expanded', function(){
+      expect(isolateScope.isExpanded(dirs[0].filepath)).not.toBeTruthy();
+    });
+
+    it('should describe the selection', function(){
+      var node = isolateScope.treeData.filetreeContents[0];
+      isolateScope.describeSelection(node, true);
+      expect(isolateScope.treeData.selectedNodes.length).toBe(1);
+      isolateScope.describeSelection(node, false);
       expect(isolateScope.treeData.selectedNodes.length).toBe(0);
     });
 
