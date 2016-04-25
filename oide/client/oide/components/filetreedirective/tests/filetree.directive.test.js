@@ -14,7 +14,8 @@ describe('Filetree directive', function(){
         "perm": "-rw-rw-r--",
         "perm_string": "664",
         "size": "4.0 KiB",
-        "type": "dir"
+        "type": "dir",
+        "children": []
       }, {
         "filepath": "/home/saurabh/dir2",
         "filename": "dir2",
@@ -23,7 +24,8 @@ describe('Filetree directive', function(){
         "perm": "-rw-r--r--",
         "perm_string": "644",
         "size": "4.0 KiB",
-        "type": "dir"
+        "type": "dir",
+        "children": []
       },
       {
         "filepath": "/home/saurabh/dir3",
@@ -33,7 +35,8 @@ describe('Filetree directive', function(){
         "perm": "-rw-rw-r--",
         "perm_string": "664",
         "size": "4.0 KiB",
-        "type": "dir"
+        "type": "dir",
+        "children": []
       }];
 
     var files = [{
@@ -135,6 +138,16 @@ describe('Filetree directive', function(){
     it('should return null in case node doesnt exist', function(){
       var node = isolateScope.getNodeFromPath('/home/saurabh/dir111', isolateScope.treeData.filetreeContents);
       expect(node).not.toBeDefined();
+    });
+
+    it('should return file paths for a given directory', function(){
+      httpBackend.expectGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){
+        return [200, files];
+      });
+      isolateScope.getDirContents(isolateScope.treeData.filetreeContents[0], true);
+      httpBackend.flush();
+      var node = isolateScope.getNodeFromPath(isolateScope.treeData.filetreeContents[0].filepath, isolateScope.treeData.filetreeContents);
+      expect(node.children.length).toBe(2);
     });
 
   });
