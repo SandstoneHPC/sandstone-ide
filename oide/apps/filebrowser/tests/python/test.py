@@ -180,3 +180,48 @@ class PosixFSTestCase(unittest.TestCase):
         self.assertEqual(fp,new_fp)
         self.assertTrue(os.path.exists(new_fp))
         self.assertFalse(os.path.exists(rel_fp))
+
+    def test_copy_file(self):
+        abs_dp = os.path.join(self.test_dir,'testDir')
+        os.mkdir(abs_dp)
+        open(os.path.join(abs_dp,'testfile.txt'),'w').close()
+        rel_fp = os.path.join(self.test_dir,'..',self.test_dir,'testfile.txt')
+        open(rel_fp,'w').close()
+        new_dp = os.path.join(self.test_dir,'newDir')
+        new_fp = os.path.join(self.test_dir,'newFile.txt')
+
+        self.assertRaises(IOError,PosixFS.copy_file,'/fake/fp',new_dp)
+        self.assertRaises(OSError,PosixFS.copy_file,abs_dp,'/fake/fp')
+
+        fp = PosixFS.copy_file(abs_dp,new_dp)
+        self.assertEqual(fp,new_dp)
+        self.assertTrue(os.path.exists(new_dp))
+        self.assertTrue(os.path.exists(os.path.join(new_dp,'testfile.txt')))
+        self.assertTrue(os.path.exists(abs_dp))
+
+        fp = PosixFS.copy_file(rel_fp,new_fp)
+        self.assertEqual(fp,new_fp)
+        self.assertTrue(os.path.exists(new_fp))
+        self.assertTrue(os.path.exists(rel_fp))
+
+    def test_rename_file(self):
+        abs_dp = os.path.join(self.test_dir,'testDir')
+        os.mkdir(abs_dp)
+        open(os.path.join(abs_dp,'testfile.txt'),'w').close()
+        rel_fp = os.path.join(self.test_dir,'..',self.test_dir,'testfile.txt')
+        open(rel_fp,'w').close()
+        new_dp = os.path.join(self.test_dir,'newDir')
+        new_fp = os.path.join(self.test_dir,'newFile.txt')
+
+        self.assertRaises(OSError,PosixFS.rename_file,'/fake/fp',new_dp)
+
+        fp = PosixFS.rename_file(abs_dp,new_dp)
+        self.assertEqual(fp,new_dp)
+        self.assertTrue(os.path.exists(new_dp))
+        self.assertTrue(os.path.exists(os.path.join(new_dp,'testfile.txt')))
+        self.assertFalse(os.path.exists(abs_dp))
+
+        fp = PosixFS.rename_file(rel_fp,new_fp)
+        self.assertEqual(fp,new_fp)
+        self.assertTrue(os.path.exists(new_fp))
+        self.assertFalse(os.path.exists(rel_fp))
