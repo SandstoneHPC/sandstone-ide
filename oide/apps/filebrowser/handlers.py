@@ -125,7 +125,8 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
             res = self.fs.get_groups()
             self.write(json.dumps(res))
         if operation == "GET_ROOT_DIR":
-            list_of_root_dirs = self.fs.list_root_paths(self.current_user)
+            # list_of_root_dirs = self.fs.list_root_paths(self.current_user)
+            list_of_root_dirs = self.fs.list_root_paths()
             dirpath = self.get_argument('filepath')
             root_dir = ""
             for root in list_of_root_dirs:
@@ -260,7 +261,8 @@ class FileTreeHandler(BaseHandler,FSMixin):
             dirpath = self.get_argument('dirpath','')
             dir_contents = []
             if dirpath == '':
-                for r in self.fs.list_root_paths(self.current_user):
+                # for r in self.fs.list_root_paths(self.current_user):
+                for r in self.fs.list_root_paths():
                     dir_contents.append({
                         'type':'dir',
                         'filename':r,
@@ -300,7 +302,8 @@ class FileTreeHandler(BaseHandler,FSMixin):
         dirpath = self.get_argument('dirpath','')
         dir_contents = []
         if dirpath == '':
-            for r in self.fs.list_root_paths(self.current_user):
+            # for r in self.fs.list_root_paths(self.current_user):
+            for r in self.fs.list_root_paths():
                 dir_contents.append({
                     'type':'dir',
                     'filename':r,

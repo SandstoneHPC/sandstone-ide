@@ -41,7 +41,6 @@ class PosixFS():
         with open(filepath, 'w') as local_file:
             for line in content:
                 local_file.write(line.encode('utf8'))
-        #logging.info('Updated file at {}, with content:\n{}'.format(filepath,content[:80]))
         return filepath
 
     @staticmethod
@@ -56,7 +55,7 @@ class PosixFS():
     @staticmethod
     def create_directory(filepath):
         filepath = os.path.abspath(filepath)
-        os.mkdir(filepath)
+        os.makedirs(filepath)
         return filepath
 
     @staticmethod
@@ -84,20 +83,13 @@ class PosixFS():
         return newpath
 
     @staticmethod
-    def list_root_paths(username, **kwargs):
+    def list_root_paths(**kwargs):
         root_patterns = app_settings.FILESYSTEM_ROOT_DIRECTORIES
         formatted_patterns = []
         for patt in root_patterns:
-            patt = patt%{'username':username}
-            formatted_patterns.append(patt)
+            fmt = os.path.expandvars(patt)
+            formatted_patterns.append(fmt)
         return formatted_patterns
-
-    @staticmethod
-    def list_root_dirs_for_user(username):
-        root_dirs = []
-        for patt in list_root_paths(username):
-            root_dirs.append({ patt: [ f for f in list_dir_for_user(username,patt) ] })
-        return root_dirs
 
     @staticmethod
     def get_dir_contents(dirpath):
