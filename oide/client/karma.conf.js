@@ -23,11 +23,20 @@ module.exports = function(config){
       suite: 'unit'
     },
     preprocessors : {
-      'components/filetreedirective/templates/filetree.html': 'ng-html2js'
+      'components/filetreedirective/templates/filetree.html': 'ng-html2js',
+      'apps/**/templates/*.html': 'ng-html2js'
     },
     ngHtml2JsPreprocessor : {
-      stripPrefix: 'components/filetreedirective/templates/filetree.html',
-      prependPrefix: '/static/core/components/filetreedirective/templates/filetree.html',
+      cacheIdFromPath: function(filepath) {
+        var cacheId = filepath.split("/")[0]
+        if(cacheId == "components") {
+          return "/static/core/" + filepath;
+        } else if(cacheId == "apps") {
+          var path = "/static/" + filepath.replace("/static", "").replace("apps/", "");
+          return path;
+        }
+        return filepath;
+      },
       moduleName: 'oide.templates'
     }
 

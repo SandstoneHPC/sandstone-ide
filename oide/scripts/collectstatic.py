@@ -19,14 +19,15 @@ for app_name in global_settings.INSTALLED_APPS:
     # get the path to app static files and tests
     path = module.__path__[0]
     # get all scripts and stylesheets
+    pac_name = settings.APP_SPECIFICATION['NG_MODULE_NAME']
     scripts = []
     styles = []
     # append paths
     for script in settings.APP_SPECIFICATION['NG_MODULE_SCRIPTS']:
-        scripts.append("apps/" + package_name  + "/static/" + script)
+        scripts.append("apps/" + pac_name  + "/static/" + script)
     for style in settings.APP_SPECIFICATION['NG_MODULE_STYLESHEETS']:
-        styles.append("apps/" + package_name + "/static/" + style)
-    spec_list.append((package_name, path, 'oide.' + settings.APP_SPECIFICATION['NG_MODULE_NAME'], styles, scripts))
+        styles.append("apps/" + pac_name + "/static/" + style)
+    spec_list.append((pac_name, path, 'oide.' + settings.APP_SPECIFICATION['NG_MODULE_NAME'], styles, scripts))
 
 # print spec_list
 for app in spec_list:
@@ -51,6 +52,7 @@ with open('../client/karma.conf.js') as karma_file:
         files.extend(app[3])
         files.extend(app[4])
     files.append('apps/**/tests/js/*.js')
+    files.append('apps/**/templates/*.html')
     files.append('components/filetreedirective/templates/filetree.html')
     # print files
     file_contents = file_contents%{'file_list': str(files)}
