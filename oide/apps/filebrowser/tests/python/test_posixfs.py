@@ -3,6 +3,7 @@ import tempfile
 import os
 import shutil
 import mock
+from stat import *
 
 # Import here to patch with mock
 import oide.apps.filebrowser.settings
@@ -225,3 +226,61 @@ class PosixFSTestCase(unittest.TestCase):
         self.assertEqual(fp,new_fp)
         self.assertTrue(os.path.exists(new_fp))
         self.assertFalse(os.path.exists(rel_fp))
+
+    def test_get_dir_contents(self):
+        dp = os.path.join(self.test_dir,'testDir')
+        os.mkdir(dp)
+        sub_fp = os.path.join(dp,'testfile.txt')
+        open(sub_fp,'w').close()
+        fp = os.path.join(self.test_dir,'testfile.txt')
+        open(fp,'w').close()
+
+        contents = PosixFS.get_dir_contents(self.test_dir)
+        exp_contents = [
+            (
+                'testfile.txt',
+                fp,
+                False
+            ), (
+                'testDir',
+                dp+'/',
+                True
+            )
+        ]
+        self.assertEqual(contents,exp_contents)
+
+    def test_get_dir_folders(self):
+        dp = os.path.join(self.test_dir,'testDir')
+        os.mkdir(dp)
+        sub_fp = os.path.join(dp,'testfile.txt')
+        open(sub_fp,'w').close()
+        fp = os.path.join(self.test_dir,'testfile.txt')
+        open(fp,'w').close()
+
+        contents = PosixFS.get_dir_folders(self.test_dir)
+        exp_contents = [
+            (
+                'testDir',
+                dp+'/',
+                True
+            )
+        ]
+        self.assertEqual(contents,exp_contents)
+
+    def test_change_permissions(self):
+        dp = os.path.join(self.test_dir,'testDir')
+        os.mkdir(dp)
+        sub_fp = os.path.join(dp,'testfile.txt')
+        open(sub_fp,'w').close()
+        fp = os.path.join(self.test_dir,'testfile.txt')
+        open(fp,'w').close()
+
+        PosixFS.change_permisions(dp,'777')
+        self.assertEqual(os.stat(dp)[ST_MODE],040777)
+
+        PosixFS.change_permisions(fp,'777')
+        self.assertEqual(os.stat(fp)[ST_MODE],0100777)
+
+    def test_get_groups(self):
+        groups = PosixFS.get_groups()
+        self.assertEqual(type(groups),type([]))
