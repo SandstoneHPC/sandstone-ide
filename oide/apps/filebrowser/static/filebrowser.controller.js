@@ -536,16 +536,20 @@ angular.module('oide.filebrowser')
     currentDirectory = filepath.split("/")
     // Current Directory Path should be '/'
     currentDirectory[0] = "/";
-    // Last component will be blank and needs to be spliced
-    currentDirectory.splice(-1)
+    // If last character is blank, splice it out
+    if(currentDirectory[currentDirectory.length - 1] == "") {
+      currentDirectory.splice(-1);
+    }
   };
 
   var setRootDirectory = function(rootDirectory) {
     root_dir = rootDirectory.split("/")
     // Current Directory Path should be '/'
     root_dir[0] = "/";
-    // Last component will be blank and needs to be spliced
-    root_dir.splice(-1)
+    // If last component is blank, splice it out
+    if(root_dir[root_dir.length - 1] == "") {
+      root_dir.splice(-1);
+    }
   };
 
   var setVolumeInfo = function(volumeInfo) {
