@@ -27,10 +27,8 @@ module.exports = function(config){
     preprocessors : env.preprocessors,
     ngHtml2JsPreprocessor : {
       cacheIdFromPath: function(filepath) {
-        console.log(filepath);
         var path;
         for (var pfx in env.pathMap) {
-          console.log('prefix: '+pfx);
           if (filepath.startsWith(pfx)) {
             path = filepath.replace(
               pfx,
