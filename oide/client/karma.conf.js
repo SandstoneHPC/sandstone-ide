@@ -1,7 +1,9 @@
+var env = require('./karma.environment.js');
+
 module.exports = function(config){
   config.set({
 
-    files : %(file_list)s,
+    files : env.fileList,
 
     autoWatch : true,
 
@@ -22,18 +24,20 @@ module.exports = function(config){
       outputFile: 'test_out/unit.xml',
       suite: 'unit'
     },
-    preprocessors : {
-      'components/filetreedirective/templates/filetree.html': 'ng-html2js',
-      'apps/**/templates/*.html': 'ng-html2js'
-    },
+    preprocessors : env.preprocessors,
     ngHtml2JsPreprocessor : {
       cacheIdFromPath: function(filepath) {
-        var cacheId = filepath.split("/")[0]
-        if(cacheId == "components") {
-          return "/static/core/" + filepath;
-        } else if(cacheId == "apps") {
-          var path = "/static/" + filepath.replace("/static", "").replace("apps/", "");
-          return path;
+        console.log(filepath);
+        var path;
+        for (var pfx in env.pathMap) {
+          console.log('prefix: '+pfx);
+          if (filepath.startsWith(pfx)) {
+            path = filepath.replace(
+              pfx,
+              env.pathMap[pfx]
+            );
+            return path;
+          }
         }
         return filepath;
       },
