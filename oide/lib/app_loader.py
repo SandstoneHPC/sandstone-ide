@@ -1,4 +1,5 @@
 import logging
+import os
 import oide.settings as global_settings
 import oide.lib.decorators
 from oide.lib.handlers.base import BaseHandler
@@ -10,10 +11,11 @@ def get_installed_app_static_specs():
     for app_name in global_settings.INSTALLED_APPS:
         try:
             app_settings = __import__(app_name+'.settings',fromlist=[''])
+            static_dir = os.path.join(app_settings.APP_DIRECTORY,'static')
             spec_list.append(
                 (
                     app_settings.APP_SPECIFICATION['NG_MODULE_NAME'],
-                    app_settings.APP_DIRECTORY
+                    static_dir,
                 )
             )
         except ImportError:
@@ -54,7 +56,7 @@ class DependencyHandler(BaseHandler):
         dep_list = []
         for app_spec in get_installed_app_specs():
             dep_list.append(app_spec['NG_MODULE_NAME'])
-        
+
         resp = {
             'dependencies': dep_list
         }

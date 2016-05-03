@@ -25,9 +25,8 @@ class OIDEApplication(tornado.web.Application):
         app_static_handlers = []
         for spec in get_installed_app_static_specs():
             s_url = r"/static/{}/(.*)".format(spec[0])
-            s_dir = os.path.join(spec[1],'static')
             app_static_handlers.append(
-                (s_url, tornado.web.StaticFileHandler, {'path': s_dir})
+                (s_url, tornado.web.StaticFileHandler, {'path': spec[1]})
             )
 
         handlers = [

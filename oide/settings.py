@@ -17,6 +17,7 @@ COOKIE_SECRET = 'YouShouldProbablyChangeThisValueForYourProject'
 
 # App-Wide settings
 INSTALLED_APPS = (
+    'oide.lib',
     'oide.apps.codeeditor',
     'oide.apps.filebrowser',
     'oide.apps.webterminal'
