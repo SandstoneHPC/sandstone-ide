@@ -41,7 +41,10 @@ dep_list = [
 for app_name in oide.settings.INSTALLED_APPS:
     # get the module object using the module name
     mod = __import__(app_name, fromlist=[''])
-    settings = __import__(app_name+'.settings', fromlist=[''])
+    try:
+        settings = __import__(app_name+'.settings', fromlist=[''])
+    except ImportError:
+        continue
     mod_path = mod.__path__[0]
     ng_mod_name = settings.APP_SPECIFICATION['NG_MODULE_NAME']
     mod_static_path = os.path.join(mod_path,'static')
