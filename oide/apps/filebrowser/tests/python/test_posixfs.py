@@ -40,7 +40,7 @@ class PosixFSTestCase(unittest.TestCase):
         ps_roots = PosixFS.list_root_paths()
         self.assertEqual(
             ps_roots,
-            ['/home/%(username)s/','/tmp/']
+            [os.environ['HOME'],'/tmp/']
         )
         # Variable expansion
         with mock.patch('oide.apps.filebrowser.settings.FILESYSTEM_ROOT_DIRECTORIES',roots):

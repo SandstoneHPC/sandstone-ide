@@ -21,7 +21,7 @@ APP_SPECIFICATION = {
 }
 
 FILESYSTEM_ROOT_DIRECTORIES = (
-    '/home/%(username)s/',
+    '$HOME',
     '/tmp/',
     )
 
