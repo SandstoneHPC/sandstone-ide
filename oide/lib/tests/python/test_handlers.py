@@ -3,6 +3,7 @@ import pwd
 import urllib
 import mock
 from oide.lib.handlers.base import BaseHandler
+from oide.lib.handlers.logout import LogoutHandler
 from oide.lib.test_utils import TestHandlerBase
 
 
@@ -62,3 +63,53 @@ class BaseHandlerTestCase(TestHandlerBase):
         handler = BaseHandler(app,request)
         tpath = handler.get_template_path()
         self.assertEqual(tpath,app.settings['project_dir'])
+
+class PAMLoginHandlerTestCase(TestHandlerBase):
+    def test_get(self):
+        response = self.fetch(
+            '/auth/login',
+            method='GET')
+
+        self.assertEqual(response.code, 200)
+        login_form = """<form action="/auth/login" method="POST" class="form-signin" role="form">"""
+        self.assertIn(login_form,response.body)
+
+    @mock.patch('simplepam.authenticate',return_value=True)
+    def test_post(self,m):
+        post_args = {
+            'username': 'goodun',
+            'password': 'goodpwd',
+        }
+        response = self.fetch(
+            '/auth/login',
+            method='POST',
+            body=urllib.urlencode(post_args),
+            follow_redirects=False)
+        self.assertEqual(response.code, 302)
+        self.assertEqual(response.headers["Location"],'/')
+
+    def test_post_bad_creds(self):
+        post_args = {
+            'username': 'fakeun',
+            'password': 'fakepwd',
+        }
+        response = self.fetch(
+            '/auth/login',
+            method='POST',
+            body=urllib.urlencode(post_args),
+            follow_redirects=False)
+
+        self.assertEqual(response.code, 403)
+        login_form = """<form action="/auth/login" method="POST" class="form-signin" role="form">"""
+        self.assertIn(login_form,response.body)
+
+
+# class LogoutHandlerTestCase(TestHandlerBase):
+#     @mock.patch.object(BaseHandler,'get_argument',return_value='next_url')
+#     def test_get(self,m):
+#         request = mock.Mock()
+#         request.body = ''
+#         handler = LogoutHandler(self.get_app(),request)
+#         with mock.patch.object(handler,'clear_cookie',wraps=handler.clear_cookie) as mock_clear:
+#             handler.get()
+#             mock_clear.assert_called()
