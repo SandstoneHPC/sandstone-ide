@@ -9,6 +9,7 @@ import tornado.testing
 from tornado.testing import AsyncHTTPTestCase
 from oide.app import OIDEApplication
 from oide.lib.handlers.base import BaseHandler
+from oide.lib.test_utils import TestHandlerBase
 
 from oide.lib.app_loader import DependencyHandler
 from oide.lib.app_loader import get_installed_app_specs
@@ -17,7 +18,6 @@ from oide.lib.app_loader import get_installed_app_urls
 
 
 
-APP = OIDEApplication()
 EXEC_USER = pwd.getpwuid(os.getuid())[0]
 INSTALLED_APPS = (
     'oide.lib',
@@ -25,10 +25,6 @@ INSTALLED_APPS = (
     'oide.apps.filebrowser',
     'oide.apps.webterminal',
 )
-
-class TestHandlerBase(AsyncHTTPTestCase):
-    def get_app(self):
-        return APP
 
 # This test case covers the DependencyHandler, which is used by
 # the client application during bootstrap to inject core/app
