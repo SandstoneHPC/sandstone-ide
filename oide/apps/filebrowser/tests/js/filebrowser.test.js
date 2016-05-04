@@ -7,6 +7,23 @@ describe('Filebrowser', function() {
   var scope;
   var controller;
   var $compile;
+  var $modal;
+
+  var mockDeleteModal = {
+    result: {
+      then: function(confirmCallback, cancelCallback) {
+        this.confirmCallback = confirmCallback;
+        this.cancelCallback = cancelCallback;
+      },
+      close: function() {
+        this.result.confirmCallback(files[0]);
+      },
+      dismiss: function() {
+        this.result.cancelCallback();
+      }
+    }
+  };
+
   beforeEach(module('oide.filebrowser'));
   beforeEach(module('oide.filesystemservice'));
   beforeEach(module('oide.templates'));
@@ -23,9 +40,10 @@ describe('Filebrowser', function() {
       'used': '10',
       'size': '100'
     };
-    beforeEach(inject(function($controller, $rootScope, $httpBackend, $http, FilesystemService, FileService, _$compile_){
+    beforeEach(inject(function($controller, $rootScope, $httpBackend, $http, FilesystemService, FileService, _$compile_, _$modal_){
       mockFileService = FileService;
       $compile = _$compile_;
+      $modal = _$modal_;
       // The injector unwraps the underscores (_) from around the parameter names when matching
       httpBackend = $httpBackend;
       httpBackend.whenGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){
@@ -140,6 +158,10 @@ describe('Filebrowser', function() {
         });
         scope.ctrl = controller;
         scope.$apply();
+    }));
+
+    beforeEach(inject(function($modal){
+      spyOn($modal, 'open').andReturn(mockDeleteModal);
     }));
 
     it('checks if current directory is set', function() {
@@ -347,6 +369,17 @@ describe('Filebrowser', function() {
       httpBackend.flush();
       var new_length = scope.ctrl.fileData.length;
       expect(initial_length).toBe(new_length - 1);
+    });
+
+    it('should delete a file', function(){
+      console.log("deleting file");
+      spyOn(scope.ctrl, "refreshDirectory");
+      scope.ctrl.selectedFile = files[0];
+      scope.ctrl.deleteFile();
+      scope.modalInstance.close();
+      expect(scope.ctrl.refreshDirectory).toHaveBeenCalled();
+      expect(scope.ctrl.selectedFile).toBe("");
+      expect(scope.ctrl.show_details).not.toBeTruthy();
     });
 
   });

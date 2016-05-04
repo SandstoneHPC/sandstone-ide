@@ -127,7 +127,7 @@ angular.module('oide.filebrowser')
   };
 
   self.deleteFile = function() {
-    var modalInstance = $modal.open({
+    self.modalInstance = $modal.open({
       templateUrl: '/static/filebrowser/templates/delete-modal.html',
       controller: 'DeleteModalInstanceCtrl as ctrl',
       backdrop: 'static',
@@ -138,18 +138,19 @@ angular.module('oide.filebrowser')
       }
     });
 
-    modalInstance.result.then(function(){
+    self.modalInstance.result.then(function(){
       self.selectedFile = "";
       self.show_details = false;
       self.refreshDirectory();
       $rootScope.$emit('refreshFiletree');
       // FiletreeService.updateFiletree();
+      self.modalInstance = null;
     });
 
   };
 
   self.openUploadModal = function() {
-    var modalInstance = $modal.open({
+    self.modalInstance = $modal.open({
       templateUrl: '/static/filebrowser/templates/upload-modal.html',
       controller: 'UploadModalInstanceCtrl as ctrl',
       backdrop: 'static',
@@ -161,8 +162,9 @@ angular.module('oide.filebrowser')
       }
     });
 
-    modalInstance.result.then(function(){
+    self.modalInstance.result.then(function(){
       self.refreshDirectory();
+      self.modalInstance = null;
     });
 
   };
