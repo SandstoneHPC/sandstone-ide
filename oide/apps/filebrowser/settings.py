@@ -1,4 +1,4 @@
-APP_SPECIFICATIONS += [{
+APP_SPECIFICATION = [{
     'APP_DESCRIPTION': {
         'name': 'Filebrowser',
         'link': '/#/filebrowser',

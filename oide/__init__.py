@@ -3,7 +3,7 @@ import os
 import sys
 import imp
 
-from oide import global_settings
+import global_settings
 
 
 SETTINGS_ENVVAR = 'OIDE_SETTINGS'
@@ -15,10 +15,10 @@ class SettingsLoader(object):
         setattr(self,'INSTALLED_APPS',global_settings.INSTALLED_APPS)
         local_settings_file = os.environ.get(SETTINGS_ENVVAR,None)
         if local_settings_file:
-            self.local_settings = imp.load_source('local_settings',local_settings_file)
-            if hasattr(self.local_settings,'INSTALLED_APPS'):
+            local_settings = imp.load_source('local_settings',local_settings_file)
+            if hasattr(local_settings,'INSTALLED_APPS'):
                 setattr(self,'INSTALLED_APPS',local_settings.INSTALLED_APPS)
-        ignore = ['INSTALLED_APPS','APP_SPECIFICATIONS']
+        ignore = ['INSTALLED_APPS','APP_SPECIFICATION']
         # Load default settings
         self._load_settings(global_settings,ignorelist=ignore)
         # Load app settings
@@ -27,8 +27,8 @@ class SettingsLoader(object):
             try:
                 app_settings = __import__(app,fromlist=['settings'])
                 # Set app specifications
-                if hasattr(app_settings,'APP_SPECIFICATIONS'):
-                    specs = app_settings.APP_SPECIFICATIONS
+                if hasattr(app_settings,'APP_SPECIFICATION'):
+                    specs = app_settings.APP_SPECIFICATION
                     specs['PY_MODULE_NAME'] = app
                     specs['PY_MODULE_PATH'] = app_settings.__path__
                     self.APP_SPECIFICATIONS += specs
