@@ -48,7 +48,7 @@ angular.module('oide.editor')
       }
     };
     self.saveDocumentAs = function (tab) {
-      var saveAsModalInstance = $modal.open({
+      self.saveAsModalInstance = $modal.open({
         templateUrl: '/static/editor/templates/saveas-modal.html',
         backdrop: 'static',
         keyboard: false,
@@ -62,12 +62,14 @@ angular.module('oide.editor')
         }
       });
 
-      saveAsModalInstance.result.then(function (newFile) {
+      self.saveAsModalInstance.result.then(function (newFile) {
         EditorService.fileRenamed(newFile.oldFilepath,newFile.filepath);
         EditorService.saveDocument(newFile.filepath);
         $log.debug('Saved files at: ' + new Date());
+        self.saveAsModalInstance = null;
       }, function () {
         $log.debug('Modal dismissed at: ' + new Date());
+        self.saveAsModalInstance = null;
       });
     };
     self.saveDocument = function (tab) {

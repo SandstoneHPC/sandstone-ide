@@ -2,14 +2,37 @@ describe('oide.editor tabs', function(){
   var scope;
   var $editorService;
   var httpBackend;
+  var modal;
+
+  var mockSaveAsModal = {
+    result: {
+      then: function(confirmCallback, cancelCallback) {
+        this.confirmCallback = confirmCallback;
+        this.cancelCallback = cancelCallback;
+      }
+    },
+    close: function() {
+      var file = {
+        oldFilePath: '',
+        newFilePath: '/home/saurabh/file1'
+      };
+      this.result.confirmCallback(file);
+    },
+    dismiss: function() {
+      this.result.cancelCallback();
+    }
+  };
+
   beforeEach(module('oide'));
   beforeEach(module('oide.editor'));
   beforeEach(module('oide.filesystemservice'));
+  beforeEach(module('ui.bootstrap'));
 
   beforeEach(inject(function($controller, $rootScope, $modal, $log, EditorService, $httpBackend){
     scope = $rootScope.$new();
     controller = $controller;
     $editorService = EditorService;
+    modal = $modal;
     httpBackend = $httpBackend;
     httpBackend.whenGET('/filebrowser/filetree/a/dir').respond(function(){
       return [200, []];
@@ -89,5 +112,22 @@ describe('oide.editor tabs', function(){
       scope.ctrl.openSearchBox();
       expect($editorService.openSearchBox).toHaveBeenCalled();
     });
+
+    it('should save file as', function(){
+      spyOn(modal, "open").and.callFake(function(){
+        return mockSaveAsModal;
+      });
+      spyOn($editorService, "fileRenamed");
+      spyOn($editorService, "saveDocument");
+      var tab = {
+        'filepath': '/home/saurabh/file1',
+        'saveFile': true
+      };
+      scope.ctrl.saveDocumentAs(tab);
+      scope.ctrl.saveAsModalInstance.close();
+      expect($editorService.fileRenamed).toHaveBeenCalled();
+      expect($editorService.saveDocument).toHaveBeenCalled();
+    });
+
   });
 });

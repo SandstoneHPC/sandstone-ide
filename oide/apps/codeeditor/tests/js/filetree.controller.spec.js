@@ -7,6 +7,7 @@ describe('filetree', function(){
   var rootScope;
   var filesystemService;
   var editorService;
+  var modal;
   var dirs = [{
         "filepath": "/home/saurabh/dir1",
         "filename": "dir1",
@@ -57,19 +58,36 @@ describe('filetree', function(){
           "type": "dir"
         }];
 
+  var mockModal = {
+    result: {
+      then: function(confirmCallback, cancelCallback) {
+        this.confirmCallback = confirmCallback;
+        this.cancelCallback = cancelCallback;
+      }
+    },
+    close: function() {
+      this.result.confirmCallback();
+    },
+    dismiss: function() {
+      this.result.cancelCallback();
+    }
+  };
+
   beforeEach(module('oide'));
   beforeEach(module('oide.editor'));
   beforeEach(module('oide.filesystemservice'));
   beforeEach(module('oide.templates'));
   beforeEach(module('oide.filetreedirective'));
+  beforeEach(module('ui.bootstrap'));
 
-  beforeEach(inject(function($controller, $rootScope, $log, $document, $httpBackend, _$compile_, FilesystemService, EditorService){
+  beforeEach(inject(function($controller, $rootScope, $log, $document, $httpBackend, _$compile_, FilesystemService, EditorService, _$modal_){
     scope = $rootScope.$new();
     rootScope = $rootScope;
     $compile = _$compile_;
     httpBackend = $httpBackend;
     filesystemService = FilesystemService;
     editorService = EditorService;
+    modal = _$modal_;
     httpBackend.whenGET('/filebrowser/filetree/a/dir').respond(function(){
       return [200, dirs];
     });
@@ -129,6 +147,16 @@ describe('filetree', function(){
       scope.ctrl.openFilesInEditor();
       // As nothing is selected, the method should not be called
       expect(editorService.openDocument).not.toHaveBeenCalled();
+    });
+    it('should delete a file', function(){
+      spyOn(modal, "open").and.callFake(function(){
+        return mockModal;
+      });
+      spyOn(filesystemService, 'deleteFile');
+      scope.ctrl.treeData.selectedNodes = [files[0]];
+      scope.ctrl.deleteFiles();
+      scope.ctrl.deleteModalInstance.close();
+      expect(filesystemService.deleteFile).toHaveBeenCalled();
     });
   });
 
