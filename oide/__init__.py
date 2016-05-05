@@ -1,9 +1,9 @@
-import app
 import os
 import sys
 import imp
 
 import global_settings
+
 
 
 SETTINGS_ENVVAR = 'OIDE_SETTINGS'
@@ -45,5 +45,6 @@ class SettingsLoader(object):
 
 settings = SettingsLoader()
 
+import app
 def run_server():
     app.main()

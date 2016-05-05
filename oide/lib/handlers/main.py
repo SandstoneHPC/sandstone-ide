@@ -4,8 +4,6 @@ import tornado.web
 import oide.lib.decorators
 from oide.lib.handlers.base import BaseHandler
 
-import oide.settings as global_settings
-
 
 
 class MainHandler(BaseHandler):

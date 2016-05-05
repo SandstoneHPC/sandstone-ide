@@ -11,7 +11,7 @@ from datetime import date
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(PROJECT_DIR,'client/oide')
 
-import oide.settings as global_settings
+from oide import settings
 from oide.lib import ui_methods
 from oide.lib.app_loader import get_installed_app_static_specs
 import oide.urls
@@ -33,25 +33,25 @@ class OIDEApplication(tornado.web.Application):
                 (r"/static/core/(.*)", tornado.web.StaticFileHandler, {'path': STATIC_DIR}),
             ] + app_static_handlers + URL_SCHEMA
 
-        settings = dict(
+        app_settings = dict(
             project_dir=PROJECT_DIR,
             static_dir=STATIC_DIR,
-            login_url=global_settings.LOGIN_URL,
-            cookie_secret = global_settings.COOKIE_SECRET,
-            debug = global_settings.DEBUG,
+            login_url=settings.LOGIN_URL,
+            cookie_secret = settings.COOKIE_SECRET,
+            debug = settings.DEBUG,
             xsrf_cookies=True,
             ui_methods=ui_methods,
             )
 
-        tornado.web.Application.__init__(self, handlers, **settings)
+        tornado.web.Application.__init__(self, handlers, **app_settings)
 
 
 def main():
     application = OIDEApplication()
-    if global_settings.USE_SSL:
+    if settings.USE_SSL:
         ssl_server = tornado.httpserver.HTTPServer(application, ssl_options={
-            "certfile": global_settings.SSL_CERT,
-            "keyfile": global_settings.SSL_KEY,
+            "certfile": settings.SSL_CERT,
+            "keyfile": settings.SSL_KEY,
         })
         ssl_server.listen(int(os.environ.get('OIDEPORT', 8888)))
     else:
