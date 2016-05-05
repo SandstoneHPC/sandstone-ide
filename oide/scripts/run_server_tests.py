@@ -1,11 +1,11 @@
 import unittest
 import os
-import oide.settings
+from oide import settings
 
 
 
 oide_suite = unittest.TestSuite()
-for app in oide.settings.INSTALLED_APPS:
+for app in settings.INSTALLED_APPS:
     mod = __import__(app,fromlist=[''])
     app_dir = os.path.dirname(os.path.abspath(mod.__file__))
     test_dir = os.path.join(app_dir,'tests/python')

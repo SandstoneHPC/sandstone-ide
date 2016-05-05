@@ -14,6 +14,7 @@ class SettingsLoader(object):
         # any other settings or overrides.
         setattr(self,'INSTALLED_APPS',global_settings.INSTALLED_APPS)
         local_settings_file = os.environ.get(SETTINGS_ENVVAR,None)
+        local_settings = None
         if local_settings_file:
             local_settings = imp.load_source('local_settings',local_settings_file)
             if hasattr(local_settings,'INSTALLED_APPS'):
@@ -36,6 +37,9 @@ class SettingsLoader(object):
                 self._load_settings(app_settings,ignorelist=ignore)
             except ImportError:
                 continue
+        # Load overrides
+        if local_settings:
+            self._load_settings(local_settings,ignorelist=ignore)
 
     def _load_settings(self,mod,ignorelist=[]):
         for setting in dir(mod):

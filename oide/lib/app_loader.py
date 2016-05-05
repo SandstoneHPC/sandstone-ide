@@ -8,20 +8,15 @@ from oide.lib.handlers.base import BaseHandler
 
 def get_installed_app_static_specs():
     spec_list = []
-    for app_name in settings.INSTALLED_APPS:
-        try:
-            app_settings = __import__(app_name+'.settings',fromlist=[''])
-            static_dir = os.path.join(app_settings.APP_DIRECTORY,'static')
-            spec_list.append(
-                (
-                    app_settings.APP_SPECIFICATION['NG_MODULE_NAME'],
-                    static_dir,
-                )
+
+    for spec in settings.APP_SPECIFICATIONS:
+        static_dir = os.path.join(spec['PY_MODULE_PATH'],'static')
+        spec_list.append(
+            (
+                spec['NG_MODULE_NAME'],
+                static_dir,
             )
-        except ImportError:
-            logging.debug('No settings specified for app: %s'%app_name)
-        except AttributeError:
-            logging.debug('No app spec or directory specified for app: %s'%app_name)
+        )
     return spec_list
 
 def get_installed_app_urls():
