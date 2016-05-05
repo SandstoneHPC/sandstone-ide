@@ -129,5 +129,24 @@ describe('oide.editor tabs', function(){
       expect($editorService.saveDocument).toHaveBeenCalled();
     });
 
+    it('should save previously unsaved file as', function(){
+      spyOn(modal, "open").and.callFake(function(){
+        return mockSaveAsModal;
+      });
+      var tab = {
+        'filepath': '-/',
+        'filepath': '/home/saurabh/file1',
+        'saveFile': true,
+        'unsaved': true
+      };
+      spyOn($editorService, "closeDocument");
+      var e = {
+        preventDefault: function() {}
+      };
+      scope.ctrl.closeDocument(e,tab);
+      scope.ctrl.unsavedModalInstance.close();
+      expect($editorService.closeDocument).toHaveBeenCalled();
+    });
+
   });
 });

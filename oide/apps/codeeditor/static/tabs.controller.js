@@ -15,7 +15,7 @@ angular.module('oide.editor')
     self.closeDocument = function ($event, tab) {
       $event.preventDefault();
       if (tab.unsaved) {
-        var unsavedModalInstance = $modal.open({
+        self.unsavedModalInstance = $modal.open({
           templateUrl: '/static/editor/templates/close-unsaved-modal.html',
           backdrop: 'static',
           keyboard: false,
@@ -27,7 +27,7 @@ angular.module('oide.editor')
           }
         });
 
-        unsavedModalInstance.result.then(function (file) {
+        self.unsavedModalInstance.result.then(function (file) {
           if (file.saveFile) {
             if (tab.filepath.substring(0,2) !== '-/') {
               EditorService.saveDocument(file.filepath);
@@ -40,8 +40,10 @@ angular.module('oide.editor')
             $log.debug('Closed without saving at: ' + new Date());
             EditorService.closeDocument(file.filepath);
           }
+          self.unsavedModalInstance = null;
         }, function () {
           $log.debug('Modal dismissed at: ' + new Date());
+          self.unsavedModalInstance = null;
         });
       } else {
         EditorService.closeDocument(tab.filepath);
