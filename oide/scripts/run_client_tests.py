@@ -1,10 +1,10 @@
-import oide.settings
 import os
 import json
 import shutil
 import importlib
 import subprocess
 import re
+from oide import settings
 
 
 
@@ -38,15 +38,10 @@ dep_list = [
     'ui.bootstrap',
 ]
 
-for app_name in oide.settings.INSTALLED_APPS:
+for spec in settings.APP_SPECIFICATIONS:
     # get the module object using the module name
-    mod = __import__(app_name, fromlist=[''])
-    try:
-        settings = __import__(app_name+'.settings', fromlist=[''])
-    except ImportError:
-        continue
-    mod_path = mod.__path__[0]
-    ng_mod_name = settings.APP_SPECIFICATION['NG_MODULE_NAME']
+    mod_path = spec['PY_MODULE_PATH']
+    ng_mod_name = spec['NG_MODULE_NAME']
     mod_static_path = os.path.join(mod_path,'static')
     mod_test_path = os.path.join(mod_path,'tests','js','**','*.js')
     mod_tpl_path = os.path.join(mod_static_path,'**/*.html')
@@ -54,7 +49,7 @@ for app_name in oide.settings.INSTALLED_APPS:
     # Define file_list for app
     file_list.append(mod_test_path)
     file_list.append(mod_tpl_path)
-    for s in settings.APP_SPECIFICATION['NG_MODULE_SCRIPTS']:
+    for s in spec['NG_MODULE_SCRIPTS']:
         spath = os.path.join(mod_static_path,s)
         file_list.append(spath)
 
