@@ -18,13 +18,21 @@ class SettingsLoader(object):
             self.local_settings = imp.load_source('local_settings',local_settings_file)
             if hasattr(self.local_settings,'INSTALLED_APPS'):
                 setattr(self,'INSTALLED_APPS',local_settings.INSTALLED_APPS)
-        ignore = ['INSTALLED_APPS']
+        ignore = ['INSTALLED_APPS','APP_SPECIFICATIONS']
         # Load default settings
         self._load_settings(global_settings,ignorelist=ignore)
         # Load app settings
+        setattr(self,'APP_SPECIFICATIONS',[])
         for app in self.INSTALLED_APPS:
             try:
                 app_settings = __import__(app,fromlist=['settings'])
+                # Set app specifications
+                if hasattr(app_settings,'APP_SPECIFICATIONS'):
+                    specs = app_settings.APP_SPECIFICATIONS
+                    specs['PY_MODULE_NAME'] = app
+                    specs['PY_MODULE_PATH'] = app_settings.__path__
+                    self.APP_SPECIFICATIONS += specs
+                # Load settings
                 self._load_settings(app_settings,ignorelist=ignore)
             except ImportError:
                 continue
