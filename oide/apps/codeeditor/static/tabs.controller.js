@@ -222,4 +222,16 @@ angular.module('oide.editor')
   $scope.cancel = function () {
     $modalInstance.dismiss('cancel');
   };
-});
+})
+.controller('DeleteModalCtrl', function ($modalInstance, files) {
+  var self =  this;
+  self.files = files;
+
+  self.remove = function () {
+    $modalInstance.close();
+  };
+
+  self.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+})
