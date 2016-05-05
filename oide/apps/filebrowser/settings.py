@@ -1,4 +1,4 @@
-APP_SPECIFICATION = [{
+APP_SPECIFICATION = {
     'APP_DESCRIPTION': {
         'name': 'Filebrowser',
         'link': '/#/filebrowser',
@@ -13,7 +13,7 @@ APP_SPECIFICATION = [{
         'filetree.controller.js',
         'filebrowser.controller.js',
     ),
-}]
+}
 
 FILESYSTEM_ROOT_DIRECTORIES = (
     '$HOME',

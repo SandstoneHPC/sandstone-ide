@@ -1,4 +1,4 @@
-APP_SPECIFICATION = [{
+APP_SPECIFICATION = {
     'APP_DESCRIPTION': {
         'name': 'Terminal',
         'link': '/#/terminal',
@@ -11,4 +11,4 @@ APP_SPECIFICATION = [{
     'NG_MODULE_SCRIPTS': (
         'terminal.js',
     ),
-}]
+}

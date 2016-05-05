@@ -1,4 +1,4 @@
-APP_SPECIFICATION = [{
+APP_SPECIFICATION = {
     'APP_DESCRIPTION': {
         'name': 'Editor',
         'link': '/#/editor',
@@ -16,4 +16,4 @@ APP_SPECIFICATION = [{
         'settings.controller.js',
         'filetree.controller.js',
     ),
-}]
+}

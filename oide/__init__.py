@@ -25,13 +25,13 @@ class SettingsLoader(object):
         setattr(self,'APP_SPECIFICATIONS',[])
         for app in self.INSTALLED_APPS:
             try:
-                app_settings = __import__(app,fromlist=['settings'])
+                app_settings = __import__(app+'.settings',fromlist=[''])
                 # Set app specifications
                 if hasattr(app_settings,'APP_SPECIFICATION'):
                     specs = app_settings.APP_SPECIFICATION
                     specs['PY_MODULE_NAME'] = app
-                    specs['PY_MODULE_PATH'] = app_settings.__path__
-                    self.APP_SPECIFICATIONS += specs
+                    specs['PY_MODULE_PATH'] = os.path.split(app_settings.__file__)[0]
+                    self.APP_SPECIFICATIONS.append(specs)
                 # Load settings
                 self._load_settings(app_settings,ignorelist=ignore)
             except ImportError:
