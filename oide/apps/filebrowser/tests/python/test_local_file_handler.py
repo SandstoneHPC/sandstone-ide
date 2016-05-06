@@ -114,3 +114,25 @@ class LocalFileHandlerTestCase(TestHandlerBase):
             body=urllib.urlencode(post_args),
             follow_redirects=False)
         self.assertEqual(response.code, 404)
+
+    @mock.patch.object(BaseHandler,'get_secure_cookie',return_value=EXEC_USER)
+    def test_post_exists(self,m):
+        post_args = {}
+        fp = os.path.join(self.test_dir,'testfile.txt')
+        with open(fp,'w') as test_file:
+            for line in ['test\n','test\ntest','test']:
+                test_file.write(line)
+        response = self.fetch(
+            '/filebrowser/localfiles{}'.format(fp),
+            method='POST',
+            body=urllib.urlencode(post_args),
+            follow_redirects=False)
+        self.assertEqual(response.code, 200)
+        # Contents unchanged
+        with open(fp,'r') as test_file:
+            contents = test_file.readlines()
+        self.assertEqual(contents,['test\n','test\n','testtest'])
+
+    # PUT tests
+
+    # DELETE tests
