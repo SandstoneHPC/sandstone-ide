@@ -1,23 +1,18 @@
 import unittest
 import mock
 
-from oide.lib.ui_methods import get_app_descriptions
-from oide.lib.ui_methods import get_ng_module_spec
+from oide.lib import ui_methods
+from oide import settings
 
 
 
-INSTALLED_APPS = (
-    'oide.lib',
-    'oide.apps.codeeditor',
-    'oide.apps.filebrowser',
-    'oide.apps.webterminal',
-)
+APP_SPECS = settings.APP_SPECIFICATIONS
 
 class GetAppDescriptionTestCase(unittest.TestCase):
-    @mock.patch('oide.settings.INSTALLED_APPS',INSTALLED_APPS)
+    @mock.patch('oide.settings.APP_SPECIFICATIONS',APP_SPECS)
     def test_get_default_desc(self):
-        desc = get_app_descriptions()
-        self.assertEqual(len(desc),3)
+        desc = ui_methods.get_app_descriptions()
+        self.assertEqual(len(desc),len(APP_SPECS))
         self.assertEqual(type(desc),type([]))
         d = desc[0]
         self.assertEqual(type(d),type({}))
@@ -26,20 +21,17 @@ class GetAppDescriptionTestCase(unittest.TestCase):
         self.assertIn('description',d)
         self.assertTrue(d['link'].startswith('/#/'))
 
-    def test_get_modified_desc(self):
-        installed_apps = (
-            'oide.lib',
-        )
-        with mock.patch('oide.settings.INSTALLED_APPS', installed_apps):
-            desc = get_app_descriptions()
-            self.assertEqual(len(desc),0)
-            self.assertEqual(type(desc),type([]))
+    @mock.patch('oide.settings.APP_SPECIFICATIONS',[])
+    def test_get_empty_desc(self):
+        desc = ui_methods.get_app_descriptions()
+        self.assertEqual(len(desc),0)
+        self.assertEqual(type(desc),type([]))
 
 class GetNgModuleSpecTestCase(unittest.TestCase):
-    @mock.patch('oide.settings.INSTALLED_APPS',INSTALLED_APPS)
+    @mock.patch('oide.settings.APP_SPECIFICATIONS',APP_SPECS)
     def test_get_default_ng_specs(self):
-        specs = get_ng_module_spec()
-        self.assertEqual(len(specs),3)
+        specs = ui_methods.get_ng_module_spec()
+        self.assertEqual(len(specs),len(APP_SPECS))
         self.assertEqual(type(specs),type([]))
         d = specs[0]
         self.assertEqual(type(d),type({}))
@@ -47,11 +39,8 @@ class GetNgModuleSpecTestCase(unittest.TestCase):
         self.assertIn('stylesheets',d)
         self.assertIn('scripts',d)
 
-    def test_get_modified_ng_specs(self):
-        installed_apps = (
-            'oide.lib',
-        )
-        with mock.patch('oide.settings.INSTALLED_APPS', installed_apps):
-            specs = get_ng_module_spec()
-            self.assertEqual(len(specs),0)
-            self.assertEqual(type(specs),type([]))
+    @mock.patch('oide.settings.APP_SPECIFICATIONS',[])
+    def test_get_empty_ng_specs(self):
+        specs = ui_methods.get_ng_module_spec()
+        self.assertEqual(len(specs),0)
+        self.assertEqual(type(specs),type([]))
