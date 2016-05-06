@@ -5,12 +5,18 @@ import shutil
 import mock
 from stat import *
 
-# Import here to patch with mock
-import oide.apps.filebrowser.settings
-
 from oide.apps.filebrowser.posixfs import PosixFS
 
 
+ROOTS = (
+    '/tmp/$USER/test/',
+    '$HOME/dev/',
+    '/tmp/',
+)
+TEST_ENV = {
+    'USER':'testuser',
+    'HOME':'/home/testuser'
+}
 
 class PosixFSTestCase(unittest.TestCase):
     def setUp(self):
@@ -19,46 +25,22 @@ class PosixFSTestCase(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
-    def test_loader(self):
-        with mock.patch('oide.apps.filebrowser.settings.FILESYSTEM_ROOT_DIRECTORIES',(self.test_dir,)):
-            self.assertEqual(
-                oide.apps.filebrowser.settings.FILESYSTEM_ROOT_DIRECTORIES,
-                (self.test_dir,)
-            )
-
+    @mock.patch('oide.settings.FILESYSTEM_ROOT_DIRECTORIES',ROOTS)
+    @mock.patch('os.environ',TEST_ENV)
     def test_list_root_paths(self):
-        roots = (
-            '/tmp/$USER/test/',
-            '$HOME/dev/',
-            '/tmp/',
-        )
-        env = {
-            'USER':'testuser',
-            'HOME':'/home/testuser'
-        }
-        # Default value exists
         ps_roots = PosixFS.list_root_paths()
         self.assertEqual(
             ps_roots,
-            [os.environ['HOME'],'/tmp/']
+            [
+                '/tmp/testuser/test/',
+                '/home/testuser/dev/',
+                '/tmp/',
+            ]
         )
-        # Variable expansion
-        with mock.patch('oide.apps.filebrowser.settings.FILESYSTEM_ROOT_DIRECTORIES',roots):
-            # env vars set
-            with mock.patch('os.environ',env):
-                ps_roots = PosixFS.list_root_paths()
-                self.assertEqual(
-                    ps_roots,
-                    [
-                        '/tmp/testuser/test/',
-                        '/home/testuser/dev/',
-                        '/tmp/',
-                    ]
-                )
-            # env vars undefined
-            with mock.patch('os.environ',{}):
-                ps_roots = PosixFS.list_root_paths()
-                self.assertEqual(ps_roots,list(roots))
+        # env vars undefined
+        with mock.patch('os.environ',{}):
+            ps_roots = PosixFS.list_root_paths()
+            self.assertEqual(ps_roots,list(ROOTS))
 
     def test_create_directory(self):
         abs_fp = os.path.join(self.test_dir,'testDirA')
