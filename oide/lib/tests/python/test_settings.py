@@ -3,14 +3,13 @@ import mock
 import os
 import tempfile
 
-import oide.settings
+import oide.global_settings as global_settings
+from oide import SettingsLoader
 
 
 
-class SettingsTestCase(unittest.TestCase):
+class SettingsLoaderTestCase(unittest.TestCase):
     def setUp(self):
-        with open('/tmp/oide_settings.py','w+') as settings_file:
-            self.local_settings = settings_file.name
         self.settings_dict = {
             'INSTALLED_APPS': (
                 'oide.lib',
@@ -19,30 +18,39 @@ class SettingsTestCase(unittest.TestCase):
             ),
             'USE_SSL': True,
         }
+        with open('/tmp/oide_settings.py','w+') as settings_file:
+            self.local_settings = settings_file.name
+            for k,v in self.settings_dict.iteritems():
+                settings_file.write('{} = {}\n'.format(k,v))
 
     def tearDown(self):
         os.remove(self.local_settings)
 
-    def test_load_default_settings(self):
-        with mock.patch('os.environ', {}):
-            reload(oide.settings)
-            installed_apps = (
-                'oide.lib',
-                'oide.apps.codeeditor',
-                'oide.apps.filebrowser',
-                'oide.apps.webterminal',
-            )
-            self.assertEqual(oide.settings.INSTALLED_APPS,installed_apps)
-            self.assertFalse(oide.settings.USE_SSL)
+    @mock.patch('os.environ',{})
+    def test_settings_init_default(self):
+        settings = SettingsLoader()
+        self.assertEqual(settings.INSTALLED_APPS,global_settings.INSTALLED_APPS)
+        self.assertEqual(settings.USE_SSL,global_settings.USE_SSL)
+        self.assertEqual(len(settings.APP_SPECIFICATIONS),3)
+        self.assertFalse(hasattr(settings,'APP_SPECIFICATION'))
 
-    # def test_load_local_settings(self):
-    #     with open(self.local_settings,'w') as settings_file:
-    #         for k,v in self.settings_dict.iteritems():
-    #             settings_file.write('{} = {}\n'.format(k,v))
-    #     env = {
-    #         'OIDE_SETTINGS': self.local_settings,
-    #     }
-    #     with mock.patch('os.environ', env):
-    #         reload(oide.settings)
-    #         self.assertEqual(oide.settings.INSTALLED_APPS,self.settings_dict['INSTALLED_APPS'])
-    #         self.assertTrue(oide.settings.USE_SSL)
+    def test_settings_init_modified(self):
+        with mock.patch('os.environ',{'OIDE_SETTINGS': self.local_settings}):
+            settings = SettingsLoader()
+            self.assertEqual(settings.INSTALLED_APPS,self.settings_dict['INSTALLED_APPS'])
+            self.assertEqual(settings.USE_SSL,self.settings_dict['USE_SSL'])
+            self.assertEqual(len(settings.APP_SPECIFICATIONS),2)
+            self.assertFalse(hasattr(settings,'APP_SPECIFICATION'))
+
+    @mock.patch('os.environ',{})
+    def test_load_settings(self):
+        settings = SettingsLoader()
+        for s in ['USE_SSL','LOGIN_URL','COOKIE_SECRET']:
+            delattr(settings,s)
+        self.assertFalse(hasattr(settings,'USE_SSL'))
+        self.assertFalse(hasattr(settings,'LOGIN_URL'))
+        self.assertFalse(hasattr(settings,'COOKIE_SECRET'))
+
+        settings._load_settings(global_settings,ignorelist=['USE_SSL','LOGIN_URL'])
+        self.assertTrue(hasattr(settings,'COOKIE_SECRET'))
+        self.assertEqual(settings.COOKIE_SECRET,global_settings.COOKIE_SECRET)

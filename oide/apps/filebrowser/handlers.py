@@ -12,8 +12,7 @@ from tornado.concurrent import Future
 from tornado import gen
 
 import oide.lib.decorators
-import oide.settings as global_settings
-import oide.apps.filebrowser.settings as app_settings
+from oide import settings
 from oide.lib.handlers.base import BaseHandler
 from oide.apps.filebrowser.mixins.fs_mixin import FSMixin
 from os import stat
@@ -242,7 +241,7 @@ class FilesystemUploadHandler(BaseHandler,FSMixin):
 
         session_id = self.request.headers['Session-Id']
         currpath = os.path.join(
-            app_settings.NGINX_UPLOAD_DIR,
+            settings.NGINX_UPLOAD_DIR,
             session_id[-1],
             session_id
             )

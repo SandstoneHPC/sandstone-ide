@@ -4,7 +4,7 @@ import stat
 import pwd
 import shutil
 import logging
-import oide.apps.filebrowser.settings as app_settings
+from oide import settings
 import grp
 import subprocess
 
@@ -84,7 +84,7 @@ class PosixFS():
 
     @staticmethod
     def list_root_paths(**kwargs):
-        root_patterns = app_settings.FILESYSTEM_ROOT_DIRECTORIES
+        root_patterns = settings.FILESYSTEM_ROOT_DIRECTORIES
         formatted_patterns = []
         for patt in root_patterns:
             fmt = os.path.expandvars(patt)

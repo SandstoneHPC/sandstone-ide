@@ -1,7 +1,5 @@
 import tornado.web
 from oide.apps.filebrowser.posixfs import PosixFS
-import oide.settings as global_settings
-import oide.apps.filebrowser.settings as app_settings
 
 
 
