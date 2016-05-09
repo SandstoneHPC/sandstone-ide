@@ -99,13 +99,14 @@ class PosixFSTestCase(unittest.TestCase):
     def test_update_file(self):
         fp1 = os.path.join(self.test_dir,'testfile1.txt')
         fp2 = os.path.join(self.test_dir,'testfile2.txt')
+        fp_dne = os.path.join(self.test_dir,'dne.txt')
         cnt_str = 'test\n\nstring\n'
         for fp in [fp1,fp2]:
             with open(fp,'w') as f:
                 f.write(cnt_str.encode('utf8'))
 
         # Test does not exist
-        self.assertRaises(IOError,PosixFS.update_file,'/fake/fp','')
+        self.assertRaises(IOError,PosixFS.update_file,fp_dne,'')
 
         # Test string
         tfp = PosixFS.update_file(fp1,'test\n\nstring\n\u00E1\n\u00E1\u00E1')
