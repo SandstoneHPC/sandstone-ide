@@ -156,9 +156,6 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
             origpath = self.get_argument('origpath')
             newpath = self.get_argument('newpath')
             result = self.fs.copy_file(origpath,newpath)
-        elif operation=='MAKE_EXEC':
-            filepath = self.get_argument('filepath')
-            result = self.fs.make_executable(filepath)
         elif operation=='CHANGE_PERMISSIONS':
             result = self.change_permissions()
         elif operation == 'CHANGE_GROUP':
