@@ -187,3 +187,43 @@ class LocalFileHandlerTestCase(TestHandlerBase):
         self.assertEqual(response.code, 404)
 
     # DELETE tests
+    def test_delete_unauthed(self):
+        fp = os.path.join(self.test_dir,'testfile.txt')
+        open(fp,'w').close()
+        response = self.fetch(
+            '/filebrowser/localfiles{}'.format(fp),
+            method='DELETE',
+            follow_redirects=False)
+        self.assertEqual(response.code, 500)
+        self.assertTrue(os.path.exists(fp))
+
+    @mock.patch.object(BaseHandler,'get_secure_cookie',return_value=EXEC_USER)
+    def test_delete_authed(self,m):
+        dp = os.path.join(self.test_dir,'testdir')
+        os.mkdir(dp)
+        fp = os.path.join(self.test_dir,'testfile.txt')
+        open(fp,'w').close()
+
+        response = self.fetch(
+            '/filebrowser/localfiles{}'.format(fp),
+            method='DELETE',
+            follow_redirects=False)
+        self.assertEqual(response.code, 200)
+        self.assertFalse(os.path.exists(fp))
+
+        response = self.fetch(
+            '/filebrowser/localfiles{}'.format(dp),
+            method='DELETE',
+            follow_redirects=False)
+        self.assertEqual(response.code, 200)
+        self.assertFalse(os.path.exists(dp))
+
+    @mock.patch.object(BaseHandler,'get_secure_cookie',return_value=EXEC_USER)
+    def test_delete_bad_path(self,m):
+        fp = os.path.join(self.test_dir,'testfile.txt')
+        response = self.fetch(
+            '/filebrowser/localfiles{}'.format(fp),
+            method='DELETE',
+            follow_redirects=False)
+        self.assertEqual(response.code, 404)
+        self.assertFalse(os.path.exists(fp))
