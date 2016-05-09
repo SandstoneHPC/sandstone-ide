@@ -8,6 +8,7 @@ describe('Filebrowser', function() {
   var controller;
   var $compile;
   var modal;
+  var rootScope;
 
   var mockModal = {
     result: {
@@ -46,6 +47,7 @@ describe('Filebrowser', function() {
       mockFileService = FileService;
       $compile = _$compile_;
       modal = _$modal_;
+      rootScope = $rootScope;
       // The injector unwraps the underscores (_) from around the parameter names when matching
       httpBackend = $httpBackend;
       httpBackend.whenGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){
@@ -355,6 +357,15 @@ describe('Filebrowser', function() {
       scope.ctrl.openUploadModal();
       scope.ctrl.modalInstance.close();
       expect(scope.ctrl.refreshDirectory).toHaveBeenCalled();
+    });
+
+    it('should programmatically set focus to input text on editing', function(){
+      scope.ctrl.isEditing = true;
+      var inputElement = $compile('<input type="text" class="filedetails-filename" ng-disabled="!ctrl.isEditing" ng-model="ctrl.editedFileName" ng-blur="ctrl.renameFile()" sync-focus-with="ctrl.isEditing">')(scope);
+      rootScope.$digest();
+      inputElementScope = inputElement.isolateScope();
+      console.log(inputElementScope.focusValue);
+      expect(inputElementScope.focusValue).toBeTruthy();
     });
 
   });
