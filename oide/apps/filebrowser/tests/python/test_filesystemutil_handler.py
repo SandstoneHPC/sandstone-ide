@@ -303,3 +303,30 @@ class FilesystemUtilHandlerTestCase(TestHandlerBase):
             method='GET',
             follow_redirects=False)
         self.assertEqual(response.code, 500)
+
+    @mock.patch.object(BaseHandler,'get_secure_cookie',return_value=EXEC_USER)
+    def test_get_volume_info(self,m):
+        params = {
+            'operation':'GET_VOLUME_INFO',
+        }
+        response = self.fetch(
+            '/filebrowser/a/fileutil?{}'.format(urllib.urlencode(params)),
+            method='GET',
+            follow_redirects=False)
+        self.assertEqual(response.code, 400)
+
+        params = {
+            'operation':'GET_VOLUME_INFO',
+            'filepath': self.test_dir,
+        }
+        response = self.fetch(
+            '/filebrowser/a/fileutil?{}'.format(urllib.urlencode(params)),
+            method='GET',
+            follow_redirects=False)
+        self.assertEqual(response.code, 200)
+        res = json.loads(response.body)
+        df = subprocess.check_output(['df', self.test_dir]).strip().split()
+        expd = {
+            'percent': float(df[-2].strip('%')),
+        }
+        self.assertDictContainsSubset(expd,res['result'])
