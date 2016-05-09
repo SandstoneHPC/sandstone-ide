@@ -15,7 +15,7 @@ angular.module('oide.editor')
     self.closeDocument = function ($event, tab) {
       $event.preventDefault();
       if (tab.unsaved) {
-        var unsavedModalInstance = $modal.open({
+        self.unsavedModalInstance = $modal.open({
           templateUrl: '/static/editor/templates/close-unsaved-modal.html',
           backdrop: 'static',
           keyboard: false,
@@ -27,7 +27,7 @@ angular.module('oide.editor')
           }
         });
 
-        unsavedModalInstance.result.then(function (file) {
+        self.unsavedModalInstance.result.then(function (file) {
           if (file.saveFile) {
             if (tab.filepath.substring(0,2) !== '-/') {
               EditorService.saveDocument(file.filepath);
@@ -40,15 +40,17 @@ angular.module('oide.editor')
             $log.debug('Closed without saving at: ' + new Date());
             EditorService.closeDocument(file.filepath);
           }
+          self.unsavedModalInstance = null;
         }, function () {
           $log.debug('Modal dismissed at: ' + new Date());
+          self.unsavedModalInstance = null;
         });
       } else {
         EditorService.closeDocument(tab.filepath);
       }
     };
     self.saveDocumentAs = function (tab) {
-      var saveAsModalInstance = $modal.open({
+      self.saveAsModalInstance = $modal.open({
         templateUrl: '/static/editor/templates/saveas-modal.html',
         backdrop: 'static',
         keyboard: false,
@@ -62,12 +64,14 @@ angular.module('oide.editor')
         }
       });
 
-      saveAsModalInstance.result.then(function (newFile) {
+      self.saveAsModalInstance.result.then(function (newFile) {
         EditorService.fileRenamed(newFile.oldFilepath,newFile.filepath);
         EditorService.saveDocument(newFile.filepath);
         $log.debug('Saved files at: ' + new Date());
+        self.saveAsModalInstance = null;
       }, function () {
         $log.debug('Modal dismissed at: ' + new Date());
+        self.saveAsModalInstance = null;
       });
     };
     self.saveDocument = function (tab) {
@@ -222,4 +226,16 @@ angular.module('oide.editor')
   $scope.cancel = function () {
     $modalInstance.dismiss('cancel');
   };
-});
+})
+.controller('DeleteModalCtrl', function ($modalInstance, files) {
+  var self =  this;
+  self.files = files;
+
+  self.remove = function () {
+    $modalInstance.close();
+  };
+
+  self.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+})

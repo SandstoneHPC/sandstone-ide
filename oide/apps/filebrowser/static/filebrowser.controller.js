@@ -127,7 +127,7 @@ angular.module('oide.filebrowser')
   };
 
   self.deleteFile = function() {
-    var modalInstance = $modal.open({
+    self.modalInstance = $modal.open({
       templateUrl: '/static/filebrowser/templates/delete-modal.html',
       controller: 'DeleteModalInstanceCtrl as ctrl',
       backdrop: 'static',
@@ -138,18 +138,19 @@ angular.module('oide.filebrowser')
       }
     });
 
-    modalInstance.result.then(function(){
+    self.modalInstance.result.then(function(){
       self.selectedFile = "";
       self.show_details = false;
       self.refreshDirectory();
       $rootScope.$emit('refreshFiletree');
       // FiletreeService.updateFiletree();
+      self.modalInstance = null;
     });
 
   };
 
   self.openUploadModal = function() {
-    var modalInstance = $modal.open({
+    self.modalInstance = $modal.open({
       templateUrl: '/static/filebrowser/templates/upload-modal.html',
       controller: 'UploadModalInstanceCtrl as ctrl',
       backdrop: 'static',
@@ -161,8 +162,9 @@ angular.module('oide.filebrowser')
       }
     });
 
-    modalInstance.result.then(function(){
+    self.modalInstance.result.then(function(){
       self.refreshDirectory();
+      self.modalInstance = null;
     });
 
   };
@@ -536,16 +538,20 @@ angular.module('oide.filebrowser')
     currentDirectory = filepath.split("/")
     // Current Directory Path should be '/'
     currentDirectory[0] = "/";
-    // Last component will be blank and needs to be spliced
-    currentDirectory.splice(-1)
+    // If last character is blank, splice it out
+    if(currentDirectory[currentDirectory.length - 1] == "") {
+      currentDirectory.splice(-1);
+    }
   };
 
   var setRootDirectory = function(rootDirectory) {
     root_dir = rootDirectory.split("/")
     // Current Directory Path should be '/'
     root_dir[0] = "/";
-    // Last component will be blank and needs to be spliced
-    root_dir.splice(-1)
+    // If last component is blank, splice it out
+    if(root_dir[root_dir.length - 1] == "") {
+      root_dir.splice(-1);
+    }
   };
 
   var setVolumeInfo = function(volumeInfo) {

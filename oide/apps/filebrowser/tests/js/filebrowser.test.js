@@ -7,10 +7,29 @@ describe('Filebrowser', function() {
   var scope;
   var controller;
   var $compile;
+  var modal;
+
+  var mockModal = {
+    result: {
+      then: function(confirmCallback, cancelCallback) {
+        this.confirmCallback = confirmCallback;
+        this.cancelCallback = cancelCallback;
+      }
+    },
+    close: function() {
+      this.result.confirmCallback();
+    },
+    dismiss: function() {
+      this.result.cancelCallback();
+    }
+  };
+
   beforeEach(module('oide.filebrowser'));
   beforeEach(module('oide.filesystemservice'));
   beforeEach(module('oide.templates'));
   beforeEach(module('oide.filetreedirective'));
+  beforeEach(module('ui.bootstrap'));
+  beforeEach(module('angularFileUpload'));
   // beforeEach(module('FileService'));
 
   describe('FilebrowserController Test', function() {
@@ -23,9 +42,10 @@ describe('Filebrowser', function() {
       'used': '10',
       'size': '100'
     };
-    beforeEach(inject(function($controller, $rootScope, $httpBackend, $http, FilesystemService, FileService, _$compile_){
+    beforeEach(inject(function($controller, $rootScope, $httpBackend, $http, FilesystemService, FileService, _$compile_, _$modal_){
       mockFileService = FileService;
       $compile = _$compile_;
+      modal = _$modal_;
       // The injector unwraps the underscores (_) from around the parameter names when matching
       httpBackend = $httpBackend;
       httpBackend.whenGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){
@@ -85,44 +105,6 @@ describe('Filebrowser', function() {
       }];
       var fileData;
 
-
-      // mockFileService = {
-      //   getCurrentDirectory: function() {
-      //     return currentDirectory;
-      //   },
-      //   getFileData: function() {
-      //     return currentFile;
-      //   },
-      //   getRootDirectory: function() {
-      //     return rootDirectory;
-      //   },
-      //   getVolumeInfo: function() {
-      //     return volume_info;
-      //   },
-      //   setFileData: function(data) {
-      //     fileData = data;
-      //   },
-      //   getFileData: function(){
-      //     return fileData;
-      //   }
-      // };
-
-      // Mock FilesystemService
-      // mockFilesystemService = {
-      //   getGroups: function() {
-      //     return groups;
-      //   },
-      //   getFiles: function() {
-      //     http.get('/filebrowser/filetree/a/dir')
-      //     .success(function(data){
-      //       mockFileService.setFileData(data);
-      //     })
-      //     .error(function(data){
-      //       console.log(data);
-      //     });
-      //   }
-      //
-      // };
       mockFilesystemService = FilesystemService;
       // Mock FiletreeService
       mockFiletreeService = {
@@ -136,11 +118,12 @@ describe('Filebrowser', function() {
           FileService: mockFileService,
           FilesystemService: mockFilesystemService,
           FBFiletreeService: mockFiletreeService,
-          $modal: {}
+          $modal: modal
         });
         scope.ctrl = controller;
         scope.$apply();
     }));
+
 
     it('checks if current directory is set', function() {
       mockFileService.setCurrentDirectory("/home/saurabh/");
@@ -347,6 +330,31 @@ describe('Filebrowser', function() {
       httpBackend.flush();
       var new_length = scope.ctrl.fileData.length;
       expect(initial_length).toBe(new_length - 1);
+    });
+
+    it('should delete a file', function(){
+  		spyOn(modal, "open").and.callFake(function() {
+  			return mockModal;
+  		});
+
+      spyOn(scope.ctrl, "refreshDirectory");
+      scope.ctrl.selectedFile = files[0];
+      scope.ctrl.deleteFile();
+      scope.ctrl.modalInstance.close();
+      expect(scope.ctrl.refreshDirectory).toHaveBeenCalled();
+      expect(scope.ctrl.selectedFile).toBe("");
+      expect(scope.ctrl.show_details).not.toBeTruthy();
+    });
+
+    it('should handle uploads', function(){
+      spyOn(modal, "open").and.callFake(function(){
+        return mockModal;
+      });
+      spyOn(scope.ctrl, "refreshDirectory");
+      scope.ctrl.currentDirectory = ['/', 'home', 'saurabh', 'workspace'];
+      scope.ctrl.openUploadModal();
+      scope.ctrl.modalInstance.close();
+      expect(scope.ctrl.refreshDirectory).toHaveBeenCalled();
     });
 
   });

@@ -93,7 +93,7 @@ angular.module('oide.editor')
   };
 
   self.deleteFiles = function () {
-    var deleteModalInstance = $modal.open({
+    self.deleteModalInstance = $modal.open({
       templateUrl: '/static/editor/templates/delete-modal.html',
       backdrop: 'static',
       keyboard: false,
@@ -105,14 +105,16 @@ angular.module('oide.editor')
       }
     });
 
-    deleteModalInstance.result.then(function () {
+    self.deleteModalInstance.result.then(function () {
       $log.debug('Files deleted at: ' + new Date());
       for (var i=0;i<self.treeData.selectedNodes.length;i++) {
         var filepath = self.treeData.selectedNodes[i].filepath;
         FilesystemService.deleteFile(filepath, self.deletedFile);
+        self.deleteModalInstance = null;
       }
     }, function () {
       $log.debug('Modal dismissed at: ' + new Date());
+      self.deleteModalInstance = null;
     });
   };
   self.copyFiles = function () {

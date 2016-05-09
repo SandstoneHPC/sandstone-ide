@@ -4,6 +4,10 @@ describe('filetree', function(){
   var filetreeCtrl;
   var httpBackend;
   var $compile;
+  var rootScope;
+  var filesystemService;
+  var editorService;
+  var modal;
   var dirs = [{
         "filepath": "/home/saurabh/dir1",
         "filename": "dir1",
@@ -54,16 +58,36 @@ describe('filetree', function(){
           "type": "dir"
         }];
 
+  var mockModal = {
+    result: {
+      then: function(confirmCallback, cancelCallback) {
+        this.confirmCallback = confirmCallback;
+        this.cancelCallback = cancelCallback;
+      }
+    },
+    close: function() {
+      this.result.confirmCallback();
+    },
+    dismiss: function() {
+      this.result.cancelCallback();
+    }
+  };
+
   beforeEach(module('oide'));
   beforeEach(module('oide.editor'));
   beforeEach(module('oide.filesystemservice'));
   beforeEach(module('oide.templates'));
   beforeEach(module('oide.filetreedirective'));
+  beforeEach(module('ui.bootstrap'));
 
-  beforeEach(inject(function($controller, $rootScope, $log, $document, $httpBackend, _$compile_){
+  beforeEach(inject(function($controller, $rootScope, $log, $document, $httpBackend, _$compile_, FilesystemService, EditorService, _$modal_){
     scope = $rootScope.$new();
+    rootScope = $rootScope;
     $compile = _$compile_;
     httpBackend = $httpBackend;
+    filesystemService = FilesystemService;
+    editorService = EditorService;
+    modal = _$modal_;
     httpBackend.whenGET('/filebrowser/filetree/a/dir').respond(function(){
       return [200, dirs];
     });
@@ -71,32 +95,68 @@ describe('filetree', function(){
     controller = $controller('FiletreeCtrl', {
       $scope: scope,
       $document: $document,
-      $log: $log
+      $log: $log,
     });
     scope.ctrl = controller;
     scope.$apply();
+    var element = angular.element('<div oide-filetree tree-data="ctrl.treeData" leaf-level="file" selection-desc="ctrl.sd"></div>');
+    el = $compile(element)(scope);
+    scope.$digest();
+    httpBackend.flush();
   }));
 
   describe('Whether the filetree is working as expected or not', function(){
     //Expect Filetree service to be defined
     it('Controller initialization should be proper', function(){
-      var element = angular.element('<div oide-filetree tree-data="ctrl.treeData" leaf-level="file" selection-desc="ctrl.sd"></div>');
-      el = $compile(element)(scope);
-      scope.$digest();
-      httpBackend.flush();
       expect(scope.ctrl).toBeDefined();
       expect(scope.ctrl.treeData).toBeDefined();
       expect(scope.ctrl.treeData.filetreeContents).toBeDefined();
       expect(scope.ctrl.treeData.filetreeContents.length).toBe(3);
     });
     it('should have valid default treeOptions loaded', function(){
-      var element = angular.element('<div oide-filetree tree-data="ctrl.treeData" leaf-level="file" selection-desc="ctrl.sd"></div>');
-      el = $compile(element)(scope);
-      scope.$digest();
-      httpBackend.flush();
-      console.log(scope.ctrl.sd);
       expect(scope.ctrl.sd).toBeDefined();
       expect(scope.ctrl.sd.multipleSelections).not.toBeTruthy();
+    });
+    it('should copy files to clipboard', function(){
+      scope.ctrl.treeData.selectedNodes = [files[0], files[1]];
+      scope.ctrl.copyFiles();
+      // Expect clipboard length to be 2
+      expect(scope.ctrl.clipboard.length).toBe(2);
+    });
+    it('should paste the selected files', function(){
+      scope.ctrl.treeData.selectedNodes = [files[0], files[1]];
+      scope.ctrl.copyFiles();
+      scope.ctrl.treeData.selectedNodes = [dirs[0]]
+      spyOn(filesystemService, 'pasteFile');
+      scope.ctrl.pasteFiles();
+      // Expect pasteFile method of FilesystemService to have been called
+      expect(filesystemService.pasteFile).toHaveBeenCalled();
+      // Expect clipboard length to be zero
+      expect(scope.ctrl.clipboard.length).toBe(0);
+    });
+    it('should open files in editor', function(){
+      spyOn(editorService, 'openDocument');
+      scope.ctrl.treeData.selectedNodes = [files[0]];
+      scope.ctrl.openFilesInEditor();
+      // As files are selected, the method should be invoked
+      expect(editorService.openDocument).toHaveBeenCalled();
+    })
+    it('if no files are selected, openDocument should not do anything', function(){
+      spyOn(editorService, 'openDocument');
+      scope.ctrl.treeData.selectedNodes = [];
+      scope.ctrl.openFilesInEditor();
+      // As nothing is selected, the method should not be called
+      expect(editorService.openDocument).not.toHaveBeenCalled();
+    });
+    it('should delete a file', function(){
+      spyOn(modal, "open").and.callFake(function(){
+        return mockModal;
+      });
+      spyOn(filesystemService, 'deleteFile');
+      scope.ctrl.treeData.selectedNodes = [files[0]];
+      scope.ctrl.deleteFiles();
+      scope.ctrl.deleteModalInstance.close();
+      expect(filesystemService.deleteFile).toHaveBeenCalled();
     });
   });
 
