@@ -227,28 +227,6 @@ class SimpleUploadHandler(BaseHandler, FSMixin):
         except ValueError:
             return "".join(tmp)
 
-class FilesystemUploadHandler(BaseHandler,FSMixin):
-
-    @oide.lib.decorators.authenticated
-    def post(self):
-        basepath = self.request.headers['basepath']
-        mgrp = re.search(
-            r'filename="(?P<filename>.*)"',
-            self.request.headers['Content-Disposition']
-            )
-        filename = mgrp.group('filename')
-        destpath = os.path.join(basepath,filename)
-
-        session_id = self.request.headers['Session-Id']
-        currpath = os.path.join(
-            settings.NGINX_UPLOAD_DIR,
-            session_id[-1],
-            session_id
-            )
-
-        self.fs.move_file(currpath,destpath)
-        self.write(dict(path=destpath))
-
 class FileTreeHandler(BaseHandler,FSMixin):
 
     @oide.lib.decorators.authenticated
