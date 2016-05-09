@@ -103,8 +103,8 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
             dirExists = True
             while dirExists:
                 index+=1
-                dirname = 'UntitledFolder' + str(index) + '/'
-                newDirPath = os.path.join(dirpath,dirname)
+                dirname = 'UntitledFolder' + str(index)
+                newDirPath = os.path.join(dirpath,dirname,'')
                 dirExists = self.fs.file_exists(newDirPath)
             self.write({'result':newDirPath})
         if operation=='GET_NEXT_DUPLICATE':
@@ -126,13 +126,13 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
         if operation == "GET_ROOT_DIR":
             # list_of_root_dirs = self.fs.list_root_paths(self.current_user)
             list_of_root_dirs = self.fs.list_root_paths()
-            dirpath = self.get_argument('filepath')
-            root_dir = ""
+            filepath = self.get_argument('filepath')
+            root_dirs = []
             for root in list_of_root_dirs:
-                if dirpath.startswith(root):
-                    root_dir = root
-                    break
-            self.write({'result': root_dir})
+                if filepath.startswith(root):
+                    root_dirs.append(root)
+            sorted(root_dirs,key=len)
+            self.write({'result': root_dirs[0]})
         if operation == 'GET_VOLUME_INFO':
             filepath = self.get_argument('filepath')
             res = self.fs.get_volume_info(filepath)
