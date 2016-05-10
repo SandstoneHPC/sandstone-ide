@@ -29,7 +29,8 @@ describe('oide.editor settings', function(){
         fontSize: 12,
         tabSize:
         4,
-        showIndentGuides: true
+        showIndentGuides: true,
+        wordWrap: false
       };
       expect($editorService.getSettings()).toEqual(settings);
     });

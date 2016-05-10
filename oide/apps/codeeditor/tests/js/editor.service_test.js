@@ -3,10 +3,10 @@
 describe('oide.editor.EditorService', function() {
   beforeEach(module('oide'));
   beforeEach(module('oide.editor'));
-  
+
   describe('oide.editor.EditorService settings', function() {
     var aceMock,sessMock;
-    
+
     beforeEach(function() {
       sessMock = jasmine.createSpyObj(
         'sessMock',
@@ -15,7 +15,8 @@ describe('oide.editor.EditorService', function() {
           'setUndoManager',
           'getDocument',
           'setUseSoftTabs',
-          'setTabSize'
+          'setTabSize',
+          'setUseWrapMode'
         ]
       );
       aceMock = jasmine.createSpyObj(
@@ -31,14 +32,15 @@ describe('oide.editor.EditorService', function() {
         return sessMock;
       };
     });
-    
+
     it('starts with the correct defaults.', inject(function(EditorService) {
       var defaults = {
         showInvisibles: true,
         useSoftTabs: true,
         fontSize: 12,
         tabSize: 4,
-        showIndentGuides: true
+        showIndentGuides: true,
+        wordWrap: false
       };
       expect(EditorService.getSettings()).toEqual(defaults);
     }));
