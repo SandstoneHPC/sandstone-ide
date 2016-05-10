@@ -1,10 +1,37 @@
 describe('oide.editor settings', function(){
   var scope;
   var $editorService;
+  var aceMock;
+  var sessMock;
   beforeEach(module('oide'));
   beforeEach(module('oide.editor'));
 
   beforeEach(inject(function($controller, $rootScope, EditorService){
+
+    sessMock = jasmine.createSpyObj(
+      'sessMock',
+      [
+        'getUndoManager',
+        'setUndoManager',
+        'getDocument',
+        'setUseSoftTabs',
+        'setTabSize',
+        'setUseWrapMode'
+      ]
+    );
+    aceMock = jasmine.createSpyObj(
+      'aceMock',
+      [
+        'setSession',
+        'setShowInvisibles',
+        'setFontSize',
+        'setDisplayIndentGuides'
+      ]
+    );
+    aceMock.getSession = function() {
+      return sessMock;
+    };
+    EditorService.onAceLoad(aceMock);
     scope = $rootScope.$new();
     controller = $controller;
     $editorService = EditorService;
@@ -34,6 +61,20 @@ describe('oide.editor settings', function(){
       };
       expect($editorService.getSettings()).toEqual(settings);
     });
+    it('should be able to set the word wrap', function(){
+      scope.ctrl.editorSettings = {
+        showInvisibles: true,
+        useSoftTabs: true,
+        fontSize: 12,
+        tabSize:
+        4,
+        showIndentGuides: true,
+        wordWrap: true
+      };
+      scope.ctrl.applyEditorSettings();
+      expect($editorService.getSettings().wordWrap).toBeTruthy();
+    });
+
   });
 
 });
