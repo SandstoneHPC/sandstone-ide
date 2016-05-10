@@ -1,11 +1,9 @@
-var env = require('./environment.js');
+var env = require('./protractor.environment.js');
 
 exports.config = {
   allScriptsTimeout: 11000,
 
-  specs: [
-    '*spec.js'
-  ],
+  specs: env.specs,
 
   capabilities: {
     'browserName': 'chrome'

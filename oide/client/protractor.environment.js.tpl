@@ -1,5 +1,6 @@
 module.exports = {
-  baseUrl: 'https://localhost:8888',
+  baseUrl: '%(base_url)s',
+  specs: %(file_list)s,
   creds: {
     // username: 'your-username',
     // password: 'your-password'
