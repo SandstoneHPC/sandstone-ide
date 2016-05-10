@@ -33,7 +33,8 @@ angular.module('oide.editor')
     useSoftTabs: true,
     fontSize: 12,
     tabSize: 4,
-    showIndentGuides: true
+    showIndentGuides: true,
+    wordWrap: false
   };
 
   var applySettings = function () {
@@ -42,6 +43,7 @@ angular.module('oide.editor')
     editor.setFontSize(editorSettings.fontSize);
     editor.getSession().setTabSize(editorSettings.tabSize);
     editor.setDisplayIndentGuides(editorSettings.showIndentGuides);
+    editor.getSession().setUseWrapMode(editorSettings.wordWrap);
   };
 
   // Called when the contents of the current session have changed. Bound directly to

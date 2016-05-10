@@ -8,6 +8,15 @@
       Use soft tabs
     </label>
   </div>
+  <div class="checkbox">
+    <label>
+      <input
+        type="checkbox"
+        ng-model="ctrl.editorSettings.wordWrap"
+        ng-change="ctrl.applyEditorSettings()">
+      Toggle Word Wrap
+    </label>
+  </div>
   <div class="form-group">
     <label for="settings-tab-size">Tab size</label>
     <select
