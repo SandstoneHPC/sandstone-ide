@@ -373,6 +373,7 @@ angular.module('oide.editor')
     },
     commentSelection: function () {
       editor.toggleCommentLines();
-    }
+    },
+    getCurrentDoc: getCurrentDoc
   };
 }]);

@@ -1,3 +1,5 @@
+import os
+
 APP_SPECIFICATION = {
     'APP_DESCRIPTION': {
         'name': 'Filebrowser',
@@ -16,6 +18,6 @@ APP_SPECIFICATION = {
 }
 
 FILESYSTEM_ROOT_DIRECTORIES = (
-    '$HOME',
+    os.path.join('$HOME', ''),
     '/tmp/',
     )
