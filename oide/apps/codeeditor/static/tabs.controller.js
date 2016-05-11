@@ -109,7 +109,11 @@ angular.module('oide.editor')
         var tab = {
           filepath: currentTab
         };
-        self.saveDocument(tab);
+        if(e.shiftKey) {
+          self.saveDocumentAs(tab)
+        } else {
+          self.saveDocument(tab);  
+        }
         event.preventDefault();
         return false;
       }
