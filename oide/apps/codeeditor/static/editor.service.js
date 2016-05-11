@@ -374,6 +374,10 @@ angular.module('oide.editor')
     commentSelection: function () {
       editor.toggleCommentLines();
     },
-    getCurrentDoc: getCurrentDoc
+    getCurrentDoc: getCurrentDoc,
+    setAceMode: function(mode) {
+      var path = getCurrentDoc();
+      openDocs[path].session.setMode(mode.mode);
+    }
   };
 }]);

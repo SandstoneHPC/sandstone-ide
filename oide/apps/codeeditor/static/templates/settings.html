@@ -46,4 +46,14 @@
       ng-options="opt for opt in ctrl.fontOptions">
     </select>
   </div>
+  <div class="form-group">
+    <label for="settings-font-size">Ace Mode</label>
+    <select
+      id="settings-font-size"
+      class="form-control input-sm"
+      ng-model="ctrl.aceMode"
+      ng-change="ctrl.setAceMode()"
+      ng-options="mode for mode in ctrl.aceModes">
+    </select>
+  </div>
 </form>
