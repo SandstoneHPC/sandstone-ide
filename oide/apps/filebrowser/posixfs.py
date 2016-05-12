@@ -38,6 +38,8 @@ class PosixFS():
     @staticmethod
     def update_file(filepath, content):
         filepath = os.path.abspath(filepath)
+        if not os.path.exists(filepath):
+            raise IOError
         with open(filepath, 'w') as local_file:
             for line in content:
                 local_file.write(line.encode('utf8'))
