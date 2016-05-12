@@ -5,7 +5,7 @@ describe('oide.editor.EditorService', function() {
   beforeEach(module('oide.editor'));
 
   describe('oide.editor.EditorService settings', function() {
-    var aceMock,sessMock;
+    var aceMock,sessMock, httpBackend;
 
     beforeEach(function() {
       sessMock = jasmine.createSpyObj(
@@ -33,6 +33,16 @@ describe('oide.editor.EditorService', function() {
       };
     });
 
+    beforeEach(inject(function($httpBackend){
+      httpBackend = $httpBackend;
+      httpBackend.whenGET(/\/filebrowser\/localfiles.*/).respond(function(){
+        var file = {
+          contents: 'this is a basic file'
+        };
+        return [200, file];
+      });
+    }));
+
     it('starts with the correct defaults.', inject(function(EditorService) {
       var defaults = {
         showInvisibles: true,
@@ -59,6 +69,14 @@ describe('oide.editor.EditorService', function() {
       expect(sessMock.setTabSize).toHaveBeenCalledWith(2);
       expect(aceMock.setShowInvisibles).toHaveBeenCalledWith(false);
       expect(aceMock.setFontSize).toHaveBeenCalledWith(14);
+    }));
+    it('should open a document', inject(function(EditorService){
+      EditorService.onAceLoad(aceMock);
+      var filepath = "/home/saurabh/file1";
+      EditorService.openDocument(filepath);
+      httpBackend.flush();
+      expect(Object.keys(EditorService.getOpenDocs()).length).toBe(2);
+      expect(EditorService.getCurrentDoc()).toBe("/home/saurabh/file1");
     }));
   });
 });

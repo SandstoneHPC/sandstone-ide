@@ -3,10 +3,12 @@ describe('oide.editor settings', function(){
   var $editorService;
   var aceMock;
   var sessMock;
+  var aceModeService;
+  var rootScope;
   beforeEach(module('oide'));
   beforeEach(module('oide.editor'));
 
-  beforeEach(inject(function($controller, $rootScope, EditorService){
+  beforeEach(inject(function($controller, $rootScope, EditorService, AceModeService){
 
     sessMock = jasmine.createSpyObj(
       'sessMock',
@@ -33,8 +35,10 @@ describe('oide.editor settings', function(){
     };
     EditorService.onAceLoad(aceMock);
     scope = $rootScope.$new();
+    rootScope = $rootScope;
     controller = $controller;
     $editorService = EditorService;
+    aceModeService = AceModeService;
     controller = $controller('EditorSettingsCtrl', {
       $scope: scope,
       EditorService: EditorService
@@ -73,6 +77,13 @@ describe('oide.editor settings', function(){
       };
       scope.ctrl.applyEditorSettings();
       expect($editorService.getSettings().wordWrap).toBeTruthy();
+    });
+    it('should have be able to set the syntax', function(){
+      var filename = "/home/saurabh/main.py";
+      var mode = aceModeService.getModeForPath(filename);
+      rootScope.$emit('aceModeChanged', mode);
+      scope.$apply();
+      expect(scope.ctrl.aceMode).toBe(mode.caption);
     });
 
   });
