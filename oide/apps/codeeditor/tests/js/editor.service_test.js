@@ -41,6 +41,12 @@ describe('oide.editor.EditorService', function() {
         };
         return [200, file];
       });
+      httpBackend.whenPUT(/\/filebrowser\/localfiles.*/).respond(function(){
+        return [200, {}];
+      });
+      httpBackend.whenPOST(/\/filebrowser\/localfiles.*/).respond(function(){
+        return [200, {}];
+      });
     }));
 
     it('starts with the correct defaults.', inject(function(EditorService) {
@@ -90,6 +96,28 @@ describe('oide.editor.EditorService', function() {
       EditorService.openDocument(filename);
       EditorService.closeDocument(filename);
       expect(Object.keys(EditorService.getOpenDocs()).length).toBe(1);
+    }));
+    it('should save a document if it exists', inject(function(EditorService){
+      httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?filepath=.*&operation=CHECK_EXISTS/).respond(function(){
+        return [200, {result: true}];
+      });
+      EditorService.onAceLoad(aceMock);
+      EditorService.openDocument("/home/saurabh/file1");
+      httpBackend.flush();
+      EditorService.saveDocument("/home/saurabh/file1");
+      httpBackend.flush();
+      expect(EditorService.getOpenDocs()["/home/saurabh/file1"].unsaved).not.toBeTruthy();
+    }));
+    it('should save a document if it doesnt exists', inject(function(EditorService){
+      httpBackend.whenGET(/\/filebrowser\/a\/fileutil\?filepath=.*&operation=CHECK_EXISTS/).respond(function(){
+        return [200, {result: false}];
+      });
+      EditorService.onAceLoad(aceMock);
+      EditorService.openDocument("/home/saurabh/file1");
+      httpBackend.flush();
+      EditorService.saveDocument("/home/saurabh/file1");
+      httpBackend.flush();
+      expect(EditorService.getOpenDocs()["/home/saurabh/file1"].unsaved).not.toBeTruthy();
     }));
   });
 });
