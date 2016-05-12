@@ -110,7 +110,9 @@ angular.module('oide.editor')
       }
       editor.setSession(openDocs[filepath].session);
       openDocs[filepath].active = true;
-      // editor.setMode(openDocs[filepath].$modeId);
+      var mode = AceModeService.getModeForPath(filepath);
+      $rootScope.$emit('aceModeChanged', mode);
+      openDocs[filepath].session.setMode(mode.mode);
       applySettings();
     } else {
       return false;
@@ -230,6 +232,7 @@ angular.module('oide.editor')
             .get('/filebrowser/localfiles'+filepath)
             .success(function (data, status, headers, config) {
               var mode = AceModeService.getModeForPath(filepath);
+              $rootScope.$emit('aceModeChanged', mode);
               createNewSession(filepath,data.content,mode.mode);
               switchSession(filepath);
             });
@@ -320,7 +323,7 @@ angular.module('oide.editor')
                 openDocs[filepath].unsaved = false;
                 $rootScope.$emit('refreshFiletree');
                 var mode = AceModeService.getModeForPath(filepath);
-                $rootScope.$emit('aceModeChanged', mode);                
+                $rootScope.$emit('aceModeChanged', mode);
               });
             });
           }
