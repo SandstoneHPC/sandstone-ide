@@ -13,7 +13,7 @@ RUN echo "oide:oide" | chpasswd
 
 # Setup settings overrides
 RUN mkdir -p /home/oide/.config/oide
-RUN echo "INSTALLED_APPS=('oide.lib','oide.apps.codeeditor','oide.apps.filebrowser',)" \
+RUN echo "INSTALLED_APPS=('oide.lib','oide.apps.codeeditor','oide.apps.filebrowser','oide.apps.webterminal',)" \
     > /home/oide/.config/oide/oide_settings.py
 RUN chown -R oide:oide /home/oide/.config/
 
