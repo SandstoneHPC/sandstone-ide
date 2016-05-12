@@ -2,7 +2,7 @@
 
 angular.module('oide.editor')
 
-.controller('EditorSettingsCtrl', ['$scope', 'EditorService', 'AceModeService', function ($scope, EditorService, AceModeService) {
+.controller('EditorSettingsCtrl', ['$scope', 'EditorService', 'AceModeService', '$rootScope', function ($scope, EditorService, AceModeService, $rootScope) {
   var self =  this;
   self.editorSettings = EditorService.getSettings();
   var fontSizes = [];
@@ -17,6 +17,10 @@ angular.module('oide.editor')
   for(var mode in modes) {
     self.aceModes.push(mode);
   }
+
+  $rootScope.$on('aceModeChanged', function(e, mode){
+    self.aceMode = mode.caption;
+  });
 
   self.setAceMode = function() {
     var mode = AceModeService.getModeByName(self.aceMode.toLowerCase());

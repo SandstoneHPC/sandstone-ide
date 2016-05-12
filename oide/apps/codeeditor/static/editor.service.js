@@ -295,6 +295,8 @@ angular.module('oide.editor')
               $log.debug('Saved file: ', filepath);
               openDocs[filepath].unsaved = false;
               $rootScope.$emit('refreshFiletree');
+              var mode = AceModeService.getModeForPath(filepath);
+              $rootScope.$emit('aceModeChanged', mode);
             });
           } else {
             $http({
@@ -317,6 +319,8 @@ angular.module('oide.editor')
                 $log.debug('Saved file: ', filepath);
                 openDocs[filepath].unsaved = false;
                 $rootScope.$emit('refreshFiletree');
+                var mode = AceModeService.getModeForPath(filepath);
+                $rootScope.$emit('aceModeChanged', mode);                
               });
             });
           }
