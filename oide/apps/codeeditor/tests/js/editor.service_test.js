@@ -78,5 +78,18 @@ describe('oide.editor.EditorService', function() {
       expect(Object.keys(EditorService.getOpenDocs()).length).toBe(2);
       expect(EditorService.getCurrentDoc()).toBe("/home/saurabh/file1");
     }));
+    it('should close a document when only 1 file', inject(function(EditorService){
+      EditorService.onAceLoad(aceMock);
+      var currentFile = EditorService.getCurrentDoc();
+      EditorService.closeDocument(currentFile);
+      expect(Object.keys(EditorService.getOpenDocs()).length).toBe(0);
+    }));
+    it('should close a document when multiple files are open', inject(function(EditorService){
+      EditorService.onAceLoad(aceMock);
+      var filename = "/home/saurabh/file1";
+      EditorService.openDocument(filename);
+      EditorService.closeDocument(filename);
+      expect(Object.keys(EditorService.getOpenDocs()).length).toBe(1);
+    }));
   });
 });
