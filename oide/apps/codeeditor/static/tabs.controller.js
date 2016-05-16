@@ -2,8 +2,8 @@
 
 angular.module('oide.editor')
 
-.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', '$rootScope',
-  function ($scope, $modal, $log, EditorService, $rootScope) {
+.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', '$rootScope', '$document',
+  function ($scope, $modal, $log, EditorService, $rootScope, $document) {
     var self = this;
     self.getOpenDocs = function() {
       return EditorService.getOpenDocs();
@@ -102,6 +102,23 @@ angular.module('oide.editor')
     self.openSearchBox = function () {
       EditorService.openSearchBox();
     };
+
+    $document.on('keydown', function(e) {
+      if(e.ctrlKey && (e.which == 83)) {
+        var currentTab = EditorService.getCurrentDoc();
+        var tab = {
+          filepath: currentTab
+        };
+        if(e.shiftKey) {
+          self.saveDocumentAs(tab)
+        } else {
+          self.saveDocument(tab);  
+        }
+        event.preventDefault();
+        return false;
+      }
+    });
+
   }])
 .controller('SaveAsModalCtrl', function ($scope, $modalInstance, $http, file) {
   $scope.treeData = {

@@ -178,6 +178,12 @@ angular.module('oide.acemodes', [])
         }
       }
       return mode;
+    },
+    getSupportedModes: function() {
+      return supportedModes;
+    },
+    getModeByName: function(name) {
+      return modesByName[name];
     }
   };
 }]);

@@ -33,7 +33,8 @@ angular.module('oide.editor')
     useSoftTabs: true,
     fontSize: 12,
     tabSize: 4,
-    showIndentGuides: true
+    showIndentGuides: true,
+    wordWrap: false
   };
 
   var applySettings = function () {
@@ -42,6 +43,7 @@ angular.module('oide.editor')
     editor.setFontSize(editorSettings.fontSize);
     editor.getSession().setTabSize(editorSettings.tabSize);
     editor.setDisplayIndentGuides(editorSettings.showIndentGuides);
+    editor.getSession().setUseWrapMode(editorSettings.wordWrap);
   };
 
   // Called when the contents of the current session have changed. Bound directly to
@@ -108,7 +110,9 @@ angular.module('oide.editor')
       }
       editor.setSession(openDocs[filepath].session);
       openDocs[filepath].active = true;
-      // editor.setMode(openDocs[filepath].$modeId);
+      var mode = AceModeService.getModeForPath(filepath);
+      $rootScope.$emit('aceModeChanged', mode);
+      openDocs[filepath].session.setMode(mode.mode);
       applySettings();
     } else {
       return false;
@@ -228,6 +232,7 @@ angular.module('oide.editor')
             .get('/filebrowser/localfiles'+filepath)
             .success(function (data, status, headers, config) {
               var mode = AceModeService.getModeForPath(filepath);
+              $rootScope.$emit('aceModeChanged', mode);
               createNewSession(filepath,data.content,mode.mode);
               switchSession(filepath);
             });
@@ -293,6 +298,8 @@ angular.module('oide.editor')
               $log.debug('Saved file: ', filepath);
               openDocs[filepath].unsaved = false;
               $rootScope.$emit('refreshFiletree');
+              var mode = AceModeService.getModeForPath(filepath);
+              $rootScope.$emit('aceModeChanged', mode);
             });
           } else {
             $http({
@@ -315,6 +322,8 @@ angular.module('oide.editor')
                 $log.debug('Saved file: ', filepath);
                 openDocs[filepath].unsaved = false;
                 $rootScope.$emit('refreshFiletree');
+                var mode = AceModeService.getModeForPath(filepath);
+                $rootScope.$emit('aceModeChanged', mode);
               });
             });
           }
@@ -371,6 +380,11 @@ angular.module('oide.editor')
     },
     commentSelection: function () {
       editor.toggleCommentLines();
+    },
+    getCurrentDoc: getCurrentDoc,
+    setAceMode: function(mode) {
+      var path = getCurrentDoc();
+      openDocs[path].session.setMode(mode.mode);
     }
   };
 }]);
