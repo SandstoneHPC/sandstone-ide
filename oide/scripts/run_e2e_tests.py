@@ -64,4 +64,4 @@ for spec in settings.APP_SPECIFICATIONS:
     subprocess.call(['npm','run','protractor'])
 
     # Kill app container
-    subprocess.call('docker stop $(docker ps -a -q)',shell=True)
+    subprocess.call('docker stop $(docker ps -q)',shell=True)

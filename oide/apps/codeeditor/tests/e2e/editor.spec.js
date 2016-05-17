@@ -1,7 +1,7 @@
 'use strict';
 
 var sendKeys = function() {
-  var editor = element(by.css('textarea.ace_text-input'));
+  var editor = $('textarea.ace_text-input');
   browser.actions().doubleClick($('#aceplace')).perform();
   editor.sendKeys('test.');
 };
@@ -10,11 +10,11 @@ describe('OIDE Ace Editor', function() {
   browser.get('/');
 
   it('should load an ace instance with the page', function() {
-    expect(element(by.css('#aceplace > textarea')).isPresent()).toBe(true);
+    expect($('#aceplace > textarea').isPresent()).toBe(true);
   });
 
   it('contents should be empty', function() {
-    element.all(by.css('.ace_line')).then(function(arr) {
+    $$('.ace_line').then(function(arr) {
       expect(arr.length).toEqual(1);
     });
   });
@@ -24,29 +24,29 @@ describe('OIDE Editor Tabs', function() {
   browser.get('/');
 
   it('should initialize with one document', function() {
-    element.all(by.css('#editor-nav-tabs li.ng-isolate-scope')).then(function(arr) {
+    $$('#editor-nav-tabs li.ng-isolate-scope').then(function(arr) {
       expect(arr.length).toBe(2);
       expect(arr[1].getAttribute('tooltip')).toBe('Create New Document');
     });
   });
 
   it('initial document should be -/Untitled0', function() {
-    var el = element(by.css('#editor-nav-tabs li.ng-isolate-scope tab-heading > span'));
+    var el = $$('#editor-nav-tabs li.ng-isolate-scope tab-heading > span').get(0);
     expect(el.getText()).toBe('UNTITLED0');
     expect(el.getAttribute('tooltip')).toBe('-/untitled0');
   });
 
   it('should have a functioning dropdown menu', function() {
-    element.all(by.css('#editor-nav-tabs li.ng-isolate-scope tab-heading > span')).then(function(arr) {
+    $$('#editor-nav-tabs li.ng-isolate-scope tab-heading > span').then(function(arr) {
       arr[1].click();
-      element.all(by.css('#editor-nav-tabs span.fa-caret-down > ul.dropdown-menu > li')).then(function(arr) {
+      $$('#editor-nav-tabs span.fa-caret-down > ul.dropdown-menu > li').then(function(arr) {
         expect(arr.length).toBe(8);
       });
     });
   });
 
   it('should not be marked as unsaved', function() {
-    element.all(by.css('#editor-nav-tabs li.ng-isolate-scope tab-heading > span')).then(function(arr) {
+    $$('#editor-nav-tabs li.ng-isolate-scope tab-heading > span').then(function(arr) {
       expect(arr[2].getAttribute('class')).toContain('fa-times');
     });
   });
@@ -67,15 +67,15 @@ describe('OIDE Editor Tabs', function() {
     // });
 
     it('should have the entered text', function() {
-      element(by.css('div.ace_content')).getText().then(function(text) {
+      $('div.ace_content').getText().then(function(text) {
         expect(text.slice(0,-1)).toBe('test.');
       });
     });
 
     it("should be able to save a file", function(){
       // Click on Save File As
-      element(by.css('span.dropdown-toggle')).click();
-      element.all(by.css('span > .dropdown-menu > li > a')).get(5).click();
+      $('span.dropdown-toggle').click();
+      $$('span > .dropdown-menu > li > a').get(5).click();
       var modalTitle = $('h3.modal-title');
       browser.wait(function() {
         return modalTitle.isDisplayed();
@@ -86,8 +86,8 @@ describe('OIDE Editor Tabs', function() {
 
     it("should prompt to save unsaved file", function(){
       // Click on Close File
-      element(by.css('span.dropdown-toggle')).click();
-      element.all(by.css('span > .dropdown-menu > li > a')).get(6).click();
+      $('span.dropdown-toggle').click();
+      $$('span > .dropdown-menu > li > a').get(6).click();
       var modalTitle = $('h3.modal-title');
       browser.wait(function() {
         return modalTitle.isDisplayed();
@@ -101,20 +101,17 @@ describe('OIDE Editor Tabs', function() {
       var initialText = '';
       $('div.ace_content').getText().then(function(text){
         initialText = text;
-        // Go to terminal
-        var driver = browser.driver;
-        driver.findElements(by.css('ul.navbar-nav > li > a')).then(function(elements){
-          driver.executeScript("arguments[0].click()", elements[1]).then(function(){
-            // Go to editor
-            driver.executeScript("arguments[0].click()", elements[0]).then(function(){
-              //Get Text
-              $('div.ace_content').getText().then(function(text){
-                // Expect the text to be the same
-                expect(text).toBe(initialText);
-              });
-            });
-          });
-        });
+        // Wait for filebrowser app to load
+        $$('ul.nav > li > a').get(1).click();
+        browser.wait(function() {
+          return $('div.progress').isDisplayed();
+        }, 500);
+        // Wait for editor app to load
+        $$('ul.nav > li > a').get(0).click();
+        browser.wait(function() {
+          return $('#editor-nav-tabs').isDisplayed();
+        }, 500);
+        expect($('div.ace_content').getText()).toBe(initialText);
       });
     });
 
