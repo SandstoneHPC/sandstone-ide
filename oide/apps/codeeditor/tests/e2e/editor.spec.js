@@ -73,28 +73,30 @@ describe('OIDE Editor Tabs', function() {
     });
 
     it("should be able to save a file", function(){
-      // Click on Save As
-      var driver = browser.driver;
-      driver.findElements(by.css('span > .dropdown-menu > li > a')).then(function(elements){
-        driver.executeScript("arguments[0].click()", elements[5]).then(function(){
-          // Expect a modal to show up with title as Save File As
-          expect($('.modal-title').getText()).toBe('Save File As');
-        });
-      });
+      // Click on Save File As
+      element(by.css('span.dropdown-toggle')).click();
+      element.all(by.css('span > .dropdown-menu > li > a')).get(5).click();
+      var modalTitle = $('h3.modal-title');
+      browser.wait(function() {
+        return modalTitle.isDisplayed();
+      }, 500);
+      // Expect a modal to show up with title Save File As
+      expect(modalTitle.getText()).toBe('Save File As');
     });
 
     it("should prompt to save unsaved file", function(){
       // Click on Close File
-      var driver = browser.driver;
-      driver.findElements(by.css('span > .dropdown-menu > li > a')).then(function(elements){
-        driver.executeScript("arguments[0].click()", elements[6]).then(function(){
-          // Expect a modal to show up with title as File Not Saved
-          expect($('.modal-title').getText()).toBe('File Not Saved');
-        });
-      });
+      element(by.css('span.dropdown-toggle')).click();
+      element.all(by.css('span > .dropdown-menu > li > a')).get(6).click();
+      var modalTitle = $('h3.modal-title');
+      browser.wait(function() {
+        return modalTitle.isDisplayed();
+      }, 500);
+      // Expect a modal to show up with title File Not Saved
+      expect(modalTitle.getText()).toBe('File Not Saved');
     });
 
-    it("should go to terminal and on returning, it should have the same text", function(){
+    it("should go to filebrowser and on returning, it should have the same text", function(){
       // Save Text
       var initialText = '';
       $('div.ace_content').getText().then(function(text){
