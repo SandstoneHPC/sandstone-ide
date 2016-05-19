@@ -11,7 +11,7 @@ describe('OIDE Filetree', function(){
 
   it('should open the filetree when a node is clicked', function(){
     // Get the first filetree node
-    var fileNode = element.all(by.css('.tree-branch-head')).first();
+    var fileNode = $$('.tree-branch-head').first();
     // The element should have class fa-folder
     expect(classMatcherHelper(fileNode, 'fa-folder')).toBeTruthy();
     // Simulate click for the element
@@ -25,34 +25,29 @@ describe('OIDE Filetree', function(){
 
 
   it('should open the delete modal when delete is clicked', function(){
-      $('.tree-label').click().then(function(){
-        var driver = browser.driver;
-        driver.findElements(by.css('.filetree-btn')).then(function(elements){
-          driver.executeScript("arguments[0].click()", elements[2]).then(function() {
-            expect($('.modal').isDisplayed()).toBeTruthy();
-            // Modal title should be Confirm Remove
-            expect($('.modal-title').getText()).toBe('Confirm Remove');
-            $('.btn-danger').click();
-          });
-        });
+    $$('.tree-label').first().click().then(function(){
+      $$('.filetree-btn').get(2).click(function() {
+        var modalTitle = $('h3.modal-title');
+        browser.wait(function() {
+          return modalTitle.isDisplayed();
+        }, 500);
+        expect(modalTitle.getText()).toBe('Confirm Remove');
+        $('.btn-danger').click();
       });
+    });
   });
 
   it('should open the rename modal when rename is clicked', function(){
-      $('.tree-label').click().then(function(){
-        $('.tree-label').click();
+      $$('.tree-label').first().click().then(function(){
+        $$('.tree-label').first().click();
         //click on rename
-
         var driver = browser.driver;
         driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
           driver.executeScript("arguments[0].click()", elements[4]).then(function() {
-            //$$('.fc-dropdown-link').get(4).click();
             //Expect modal to be displayed
-            // browser.pause();
             expect($('.modal').isDisplayed()).toBeTruthy();
             // Modal title should be Rename File
             expect($('.modal-title').getInnerHtml()).toBe('Rename File');
-            // browser.pause();
             $('.btn-danger').click();
           });
         });
@@ -60,58 +55,51 @@ describe('OIDE Filetree', function(){
   });
 
   it('should open a file for editing', function(){
-      var fileNode = element.all(by.css('.tree-branch-head')).first();
-      fileNode.click();
-
-      var initialNumberOfFiles = 0;
-      var newNumberOfFiles = 0;
-      //Save the initial number of open files
-      $$('tab-heading > span.ng-binding').then(function(elements){
-        initialNumberOfFiles = elements.length;
-        console.log(initialNumberOfFiles);
-        //Open a file
-        $('li.tree-leaf > div').click().then(function(){
-          //Click on edit file
-          var driver = browser.driver;
-          driver.findElements(by.css('.filetree-btn')).then(function(elements){
-            driver.executeScript("arguments[0].click()", elements[0]).then(function() {
-              $('.filetree-btn').click().then(function(){
-                //Get new number of open files
-                $$('tab-heading > span.ng-binding').then(function(elements){
-                  newNumberOfFiles = elements.length;
-                  //Expect new number of files to be 1 greater than initial number of file
-                  expect(newNumberOfFiles).toBe(initialNumberOfFiles + 1);
+    var driver = browser.driver;
+    var initialNumberOfFiles = 0;
+    var newNumberOfFiles = 0;
+    var fileNode = $$('.tree-branch-head').first().click(function() {
+      // Make sure a file exists in the selected directory
+      $$('.tree-label').first().click().then(function(){
+        driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
+          driver.executeScript("arguments[0].click()", elements[0]).then(function() {
+            //Save the initial number of open files
+            $$('tab-heading > span.ng-binding').then(function(elements){
+              initialNumberOfFiles = elements.length;
+              //Open a file
+              $('li.tree-leaf > div').click(function(){
+                //Click on edit file
+                $$('.filetree-btn').get(0).click(function() {
+                  $('.filetree-btn').click(function() {
+                    expect($$('tab-heading > span.ng-binding').count()).toBe(initialNumberOfFiles+1);
+                  });
                 });
               });
             });
           });
         });
       });
+    });
   });
 
   it('should create new file when new file is clicked', function(){
+    var driver = browser.driver;
     var initialNumberOfFiles = 0;
     var finalNumberOfFiles = 0;
-      $('.tree-label').click().then(function(){
-        var driver = browser.driver;
-        driver.findElements(by.css('.dropdown-toggle')).then(function(elements){
-          driver.executeScript("arguments[0].click()", elements[0]).then(function() {
-            //Get initial number of files
-            $$('.fa-file').then(function(files){
-              initialNumberOfFiles = files.length;
-            });
-            //click on new file
-            $$('.fc-dropdown-link').get(0).click().then(function(){
-              // browser.pause();
-              $$('.fa-file').then(function(files){
-                finalNumberOfFiles = files.length;
-                // expect finalNumberOfFiles to be 1 more than initialNumberOfFiles
-                expect(finalNumberOfFiles).toBe(initialNumberOfFiles + 1);
-              });
+    $$('.tree-branch-head').first().click(function() {
+      $$('.tree-label').first().click().then(function(){
+        //Get initial number of files
+        $$('.fa-file').then(function(files){
+          initialNumberOfFiles = files.length;
+          //click on new file
+          driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
+            driver.executeScript("arguments[0].click()", elements[0]).then(function() {
+              expect($$('.fa-file').count()).toBe(initialNumberOfFiles + 1);
             });
           });
         });
       });
+    });
   });
 
   it('should be able to duplicate a file', function(){
@@ -147,7 +135,7 @@ describe('OIDE Filetree', function(){
     var driver = browser.driver;
     var initialNumberofFolders = 0;
     var finalNumberOfFolders = 0;
-    $('.tree-label').click().then(function(){
+    $$('.tree-label').first().click().then(function(){
       $$('.fa-folder').then(function(elements){
         initialNumberofFolders = elements.length;
         // Get the number of folders
