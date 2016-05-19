@@ -171,33 +171,25 @@ describe('OIDE Editor Tabs', function() {
     });
 
     it("should be able to find and replace", function(){
-      var driver = browser.driver;
-      driver.findElements(by.css('span > .dropdown-menu > li > a')).then(function(elements){
-        driver.executeScript("arguments[0].click()", elements[3]).then(function(){
-          // Send Text to the Find Search Box
-          $('.ace_search_field').sendKeys('es').then(function(){
-            $('.ace_searchbtn').click().then(function(){
-              // find if there is an element with class as ace_selection
-              $$('.ace_selection').then(function(elements){
-                expect(elements.length).toBe(1);
+      // Click on Find & Replace
+      $('span.dropdown-toggle').click();
+      $$('span > .dropdown-menu > li > a').get(3).click();
+      var searchBox = $('div.ace_search.right');
+      browser.wait(function() {
+        return searchBox.isDisplayed();
+      }, 500);
+      // Find
+      $('.ace_search_form > .ace_search_field').sendKeys('es');
+      $('.ace_searchbtn.next').click();
+      var searchRes = $$('.ace_selection');
+      expect(searchRes.count()).toBe(1);
 
-                // Find and replace
-                $$('.ace_search_field').then(function(elements){
-                  // Send some text to replace textbox
-                  elements[1].sendKeys("el").then(function(){
-                    // Click the Replace button
-                    $('.ace_replacebtn').click(function(){
-                      // Ge the Ace Text
-                      element(by.css('div.ace_content')).getText().then(function(text) {
-                        expect(text.slice(0,-1)).toBe('telt.');
-                      });
-                    });
-                  });
-                });
-              });
-            });
-          });
-        });
+      // Replace
+      $('.ace_replace_form > .ace_search_field').sendKeys('el');
+      // Replace all
+      $$('.ace_replacebtn').get(1).click(function() {
+        // Grab Ace text
+        expect($('div.ace_content').getText().slice(0,-1)).toBe('telt.');
       });
     });
 
