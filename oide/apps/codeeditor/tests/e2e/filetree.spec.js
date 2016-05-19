@@ -105,25 +105,24 @@ describe('OIDE Filetree', function(){
   it('should be able to duplicate a file', function(){
     // var fileNode = element.all(by.css('.tree-branch-head')).first();
     // fileNode.click();
-
+    var driver = browser.driver;
     var initialNumberOfFiles = 0;
     var newNumberOfFiles = 0;
     //Save the initial number of open files
 
-    $$('li.tree-leaf > div').then(function(elements){
-      initialNumberOfFiles = elements.length;
-      $('li.tree-leaf > div').click().then(function(){
-        //Click on duplicate file
-        var driver = browser.driver;
-        driver.findElements(by.css('.filetree-btn')).then(function(elements){
-          driver.executeScript("arguments[0].click()", elements[1]).then(function() {
-            //Get new number of open files
+    var fileNode = $$('.tree-branch-head').first().click(function() {
+      // Make sure a file exists in the selected directory
+      $$('.tree-label').first().click().then(function(){
+        driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
+          driver.executeScript("arguments[0].click()", elements[0]).then(function() {
             $$('li.tree-leaf > div').then(function(elements){
-              newNumberOfFiles = elements.length;
-              console.log(newNumberOfFiles);
-              // browser.pause();
-              //Expect new number of files to be 1 greater than initial number of file
-              expect(newNumberOfFiles).toBe(initialNumberOfFiles + 1);
+              initialNumberOfFiles = elements.length;
+              $('li.tree-leaf > div').click().then(function(){
+                //Click on duplicate file
+                $$('.filetree-btn').get(1).click(function() {
+                  expect($$('li.tree-leaf > div').count()).toBe(initialNumberOfFiles + 1);
+                });
+              });
             });
           });
         });
@@ -133,18 +132,17 @@ describe('OIDE Filetree', function(){
 
   it('should create a new folder', function(){
     var driver = browser.driver;
-    var initialNumberofFolders = 0;
+    var initialNumberOfFolders = 0;
     var finalNumberOfFolders = 0;
-    $$('.tree-label').first().click().then(function(){
-      $$('.fa-folder').then(function(elements){
-        initialNumberofFolders = elements.length;
-        // Get the number of folders
-        driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
-          driver.executeScript("arguments[0].click()", elements[1]).then(function() {
-            $$('.fa-folder').then(function(elements){
-              finalNumberOfFolders = elements.length;
-              // expect finalNumberOfFolders to be 1 more than initialNumberofFolders
-              expect(finalNumberOfFolders).toBe(initialNumberofFolders + 1);
+    $$('.tree-branch-head').first().click(function() {
+      $$('.tree-label').first().click().then(function(){
+        //Get initial number of folders
+        $$('.fa-file').then(function(folders){
+          initialNumberOfFolders = files.length;
+          //click on new folder
+          driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
+            driver.executeScript("arguments[0].click()", elements[1]).then(function() {
+              expect($$('.fa-folder').count()).toBe(initialNumberOfFolders + 1);
             });
           });
         });
