@@ -156,22 +156,28 @@ describe('OIDE Filetree', function(){
     var initialNumberOfFiles = 0;
     var newNumberOfFiles = 0;
     var driver = browser.driver;
-    // Count the number of files
-    $$('.tree-label').then(function(elements){
-      initialNumberOfFiles = elements.length;
-      //Click on first element
-      elements[1].click().then(function(){
-        // click on copy
+    // Make sure a file exists in the selected directory
+    $$('.tree-branch-head').first().click(function() {
+      $$('.tree-label').first().click().then(function(){
         driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
-          driver.executeScript("arguments[0].click()", elements[2]).then(function(){
-            // Click paste
-            driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
-              driver.executeScript("arguments[0].click()", elements[3]).then(function(){
-                // count elements
-                $$('.tree-label').then(function(elements){
-                  newNumberOfFiles = elements.length;
-                  // Expect new number of files to be one more than initial number of files
-                  expect(newNumberOfFiles).toBe(initialNumberOfFiles + 1);
+          driver.executeScript("arguments[0].click()", elements[0]).then(function() {
+            $$('.tree-label').then(function(elements){
+              // Count the number of files
+              initialNumberOfFiles = elements.length;
+              //Click on first element
+              elements[1].click().then(function(){
+                // click on copy
+                driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
+                  driver.executeScript("arguments[0].click()", elements[2]).then(function(){
+                    // Click paste
+                    driver.findElements(by.css('.fc-dropdown-link')).then(function(elements){
+                      driver.executeScript("arguments[0].click()", elements[3]).then(function(){
+                        // count elements
+                        // Expect new number of files to be one more than initial number of files
+                        expect($$('.tree-label').count()).toBe(initialNumberOfFiles+1);
+                      });
+                    });
+                  });
                 });
               });
             });
