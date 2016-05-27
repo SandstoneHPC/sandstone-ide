@@ -86,6 +86,28 @@ describe('OIDE Editor Tabs', function() {
       }, 500);
       // Expect a modal to show up with title File Not Saved
       expect(modalTitle.getText()).toBe('File Not Saved');
+      $('.modal-footer > button.btn-success').click();
+      var modalTitle = $('h3.modal-title');
+      var saveAsModal = $('.modal-body .filetree-container');
+      browser.wait(function() {
+        return saveAsModal.isDisplayed();
+      }, 500);
+      expect(modalTitle.getText()).toBe('Save File As');
+      $$('.modal-body div.tree-label').then(function(elements) {
+        var tmpDir = elements[1];
+        var fnameInput = $('#filename-input');
+        tmpDir.click();
+        fnameInput.click();
+        fnameInput.sendKeys('test-');
+        $('.modal-footer > button.btn-success').click(function() {
+          $$('.filetree-btn').get(3).click(function() {
+            $$('div.tree-label').get(1).click(function() {
+              var files = $$('div.tree-label div.tree-label:first-child');
+              expect(files.get(1).getText()).toBe('test-untitled0');
+            });
+          });
+        });
+      });
     });
 
     it("should go to filebrowser and on returning, it should have the same text", function(){
