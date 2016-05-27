@@ -4,6 +4,7 @@ import shutil
 import importlib
 import subprocess
 import re
+import time
 from oide import settings
 
 
@@ -14,9 +15,12 @@ BASE_URL = 'http://localhost:{}'.format(DPORT)
 oide_mod = __import__('oide',fromlist=[''])
 core_path = os.path.join(oide_mod.__path__[0],'client','oide','')
 
+print "Building base container..."
+test_start = time.time()
 # Build OIDE image
-os.chdir(oide_mod.__path__[0])
-subprocess.call(['docker','build','-t','oide','.'])
+base_img_path = os.path.abspath(os.path.join(oide_mod.__path__[0],'..'))
+os.chdir(base_img_path)
+subprocess.call(['docker','build','-q','-t','oide','.'])
 
 for spec in settings.APP_SPECIFICATIONS:
     # get the module object using the module name
@@ -51,8 +55,9 @@ for spec in settings.APP_SPECIFICATIONS:
         prot_env.write(fmt_contents)
 
     # Build and run Docker container for app
+    print "Building {} container...".format(spec['NG_MODULE_NAME'])
     os.chdir(e2e_dir)
-    subprocess.call(['docker','build','-t',spec['NG_MODULE_NAME'],'.'])
+    subprocess.call(['docker','build','-q','-t',spec['NG_MODULE_NAME'],'.'])
     subprocess.call([
         'docker','run','-p','49160:8888','-d','--user=oide',
         spec['NG_MODULE_NAME']
@@ -65,3 +70,7 @@ for spec in settings.APP_SPECIFICATIONS:
 
     # Kill app container
     subprocess.call('docker stop $(docker ps -q)',shell=True)
+
+test_end = time.time()
+elapsed = test_end - test_start
+print "Test suite ran in {} seconds".format(elapsed)
