@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import shutil
 import importlib
@@ -23,6 +24,12 @@ os.chdir(base_img_path)
 subprocess.call(['docker','build','-q','-t','oide','.'])
 
 for spec in settings.APP_SPECIFICATIONS:
+    # if an app name was passed to script, only
+    # test the named app
+    if len(sys.argv) > 1:
+        test_app = sys.argv[1]
+        if not spec['NG_MODULE_NAME'] == test_app:
+            continue
     # get the module object using the module name
     mod_path = spec['PY_MODULE_PATH']
     e2e_dir = os.path.join(mod_path,'tests','e2e')
