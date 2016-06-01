@@ -99,6 +99,7 @@ describe('OIDE Editor Tabs', function() {
         tmpDir.click();
         fnameInput.click();
         fnameInput.sendKeys('test-');
+        browser.executeScript('window.scrollTo(0,10000);');
         $('.modal-footer > button.btn-success').click(function() {
           $$('.filetree-btn').get(3).click(function() {
             $$('div.tree-label').get(1).click(function() {
