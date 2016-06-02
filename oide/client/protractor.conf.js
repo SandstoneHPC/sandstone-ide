@@ -18,6 +18,7 @@ exports.config = {
   },
 
   onPrepare: function() {
+    browser.driver.manage().window().maximize();
     browser.driver.get(env.baseUrl+'/auth/login?next=%2F#/editor');
     browser.driver.findElement(by.css('input[name=username]')).sendKeys(env.creds.username);
     browser.driver.findElement(by.css('input[name=password]')).sendKeys(env.creds.password);
