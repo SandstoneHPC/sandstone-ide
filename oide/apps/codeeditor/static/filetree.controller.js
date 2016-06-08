@@ -173,4 +173,17 @@ angular.module('oide.editor')
   };
 
 
-}]);
+}])
+.controller('RenameModalCtrl', function ($modalInstance, files) {
+  var self = this;
+  self.files = files;
+  self.newFileName = files[0].filename;
+
+  self.rename = function () {
+    $modalInstance.close(self.newFileName);
+  };
+
+  self.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+});

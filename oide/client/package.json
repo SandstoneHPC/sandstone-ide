@@ -19,7 +19,9 @@
     "karma-jasmine": "^0.3.8",
     "karma-junit-reporter": "",
     "karma-ng-html2js-preprocessor": "^0.2.1",
+    "karma-phantomjs-launcher": "^1.0.0",
     "node-gyp": "^3.3.1",
+    "phantomjs-prebuilt": "^2.1.7",
     "protractor": "^2.5.1",
     "shelljs": "^0.2.6"
   },
