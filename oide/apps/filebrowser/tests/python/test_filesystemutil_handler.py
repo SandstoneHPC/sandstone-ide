@@ -346,3 +346,51 @@ class FilesystemUtilHandlerTestCase(TestHandlerBase):
             follow_redirects=False)
 
         self.assertEqual(response.code, 403)
+
+    @mock.patch.object(BaseHandler,'get_secure_cookie',return_value=EXEC_USER)
+    def test_post_rename(self,m):
+        fp = os.path.join(self.test_dir,'testfile.txt')
+        open(fp,'w').close()
+        params = {
+            'operation':'RENAME',
+            'filepath': fp,
+            'newFileName': 'changed.txt',
+        }
+        response = self.fetch(
+            '/filebrowser/a/fileutil',
+            method='POST',
+            body=urllib.urlencode(params),
+            follow_redirects=False)
+        self.assertEqual(response.code, 200)
+        res = json.loads(response.body)
+        rename_path = os.path.join(os.path.dirname(fp),'changed.txt')
+        expd = {
+            'result': rename_path,
+        }
+        self.assertDictContainsSubset(expd,res)
+        self.assertFalse(os.path.exists(fp))
+        self.assertTrue(os.path.exists(rename_path))
+
+    @mock.patch.object(BaseHandler,'get_secure_cookie',return_value=EXEC_USER)
+    def test_post_copy(self,m):
+        fp = os.path.join(self.test_dir,'testfile.txt')
+        copy_path = os.path.join(self.test_dir,'copied.txt')
+        open(fp,'w').close()
+        params = {
+            'operation':'COPY',
+            'origpath': fp,
+            'newpath': copy_path,
+        }
+        response = self.fetch(
+            '/filebrowser/a/fileutil',
+            method='POST',
+            body=urllib.urlencode(params),
+            follow_redirects=False)
+        self.assertEqual(response.code, 200)
+        res = json.loads(response.body)
+        expd = {
+            'result': copy_path,
+        }
+        self.assertDictContainsSubset(expd,res)
+        self.assertTrue(os.path.exists(fp))
+        self.assertTrue(os.path.exists(copy_path))
