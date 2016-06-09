@@ -147,7 +147,7 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
             new_name = self.get_argument('newFileName')
             if os.path.isdir(filepath):
                 basepath = os.path.split(os.path.dirname(filepath))[0]
-                newpath = os.path.join(basepath,new_name)+'/'
+                newpath = os.path.join(basepath,new_name,'')
             else:
                 basepath = os.path.dirname(filepath)
                 newpath = os.path.join(basepath,new_name)
@@ -170,7 +170,7 @@ class FilesystemUtilHandler(BaseHandler,FSMixin):
         perm_string = self.get_argument('permissions')
         filepath = self.get_argument('filepath')
         self.fs.change_permisions(filepath, perm_string)
-        result = "Changed permission of ", filepath, " to ", perm_string
+        result = (filepath, perm_string)
         return result
 
 @tornado.web.stream_request_body

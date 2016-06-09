@@ -5,6 +5,7 @@ import mock
 import json
 import tempfile
 import shutil
+import stat
 import subprocess
 from oide.lib.handlers.base import BaseHandler
 from oide.lib.test_utils import TestHandlerBase
@@ -350,7 +351,9 @@ class FilesystemUtilHandlerTestCase(TestHandlerBase):
     @mock.patch.object(BaseHandler,'get_secure_cookie',return_value=EXEC_USER)
     def test_post_rename(self,m):
         fp = os.path.join(self.test_dir,'testfile.txt')
+        dp = os.path.join(self.test_dir,'testDir','')
         open(fp,'w').close()
+        os.mkdir(dp)
         params = {
             'operation':'RENAME',
             'filepath': fp,
@@ -363,12 +366,33 @@ class FilesystemUtilHandlerTestCase(TestHandlerBase):
             follow_redirects=False)
         self.assertEqual(response.code, 200)
         res = json.loads(response.body)
-        rename_path = os.path.join(os.path.dirname(fp),'changed.txt')
+        rename_path = os.path.join(self.test_dir,'changed.txt')
         expd = {
             'result': rename_path,
         }
         self.assertDictContainsSubset(expd,res)
         self.assertFalse(os.path.exists(fp))
+        self.assertTrue(os.path.exists(rename_path))
+
+        #Directory
+        params = {
+            'operation':'RENAME',
+            'filepath': dp,
+            'newFileName': 'changedDir',
+        }
+        response = self.fetch(
+            '/filebrowser/a/fileutil',
+            method='POST',
+            body=urllib.urlencode(params),
+            follow_redirects=False)
+        self.assertEqual(response.code, 200)
+        res = json.loads(response.body)
+        rename_path = os.path.join(self.test_dir,'changedDir')
+        expd = {
+            'result': rename_path,
+        }
+        self.assertDictContainsSubset(expd,res)
+        self.assertFalse(os.path.exists(dp))
         self.assertTrue(os.path.exists(rename_path))
 
     @mock.patch.object(BaseHandler,'get_secure_cookie',return_value=EXEC_USER)
@@ -394,3 +418,26 @@ class FilesystemUtilHandlerTestCase(TestHandlerBase):
         self.assertDictContainsSubset(expd,res)
         self.assertTrue(os.path.exists(fp))
         self.assertTrue(os.path.exists(copy_path))
+
+    @mock.patch.object(BaseHandler,'get_secure_cookie',return_value=EXEC_USER)
+    def test_post_change_perms(self,m):
+        fp = os.path.join(self.test_dir,'testfile.txt')
+        open(fp,'w').close()
+        params = {
+            'operation': 'CHANGE_PERMISSIONS',
+            'permissions': '777',
+            'filepath': fp,
+        }
+        response = self.fetch(
+            '/filebrowser/a/fileutil',
+            method='POST',
+            body=urllib.urlencode(params),
+            follow_redirects=False)
+        self.assertEqual(response.code, 200)
+        res = json.loads(response.body)
+        expd = {
+            'result': [fp,'777'],
+        }
+        self.assertDictContainsSubset(expd,res)
+        new_perms = oct(os.stat(fp)[stat.ST_MODE])[-3:]
+        self.assertEqual(new_perms,'777')
