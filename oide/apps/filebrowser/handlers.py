@@ -244,8 +244,8 @@ class FileTreeHandler(BaseHandler,FSMixin):
             else:
                 for i in self.fs.get_dir_contents(dirpath):
                     curr_file = {}
-                    if i[0].startswith('.'):
-                        continue
+                    # if i[0].startswith('.'):
+                    #     continue
                     if i[2]:
                         curr_file['type'] = 'dir'
                     else:
@@ -285,8 +285,8 @@ class FileTreeHandler(BaseHandler,FSMixin):
         else:
             for i in self.fs.get_dir_folders(dirpath):
                 curr_file = {}
-                if i[0].startswith('.'):
-                    continue
+                # if i[0].startswith('.'):
+                #     continue
                 if i[2]:
                     curr_file['type'] = 'dir'
                 else:
