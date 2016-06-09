@@ -80,7 +80,7 @@ class LocalFileHandlerTestCase(TestHandlerBase):
 
         self.assertFalse(os.path.exists(fp))
 
-        self.assertEqual(response.code, 500)
+        self.assertEqual(response.code, 403)
 
     @mock.patch.object(BaseHandler,'get_secure_cookie',return_value=EXEC_USER)
     def test_post_authed(self,m):
@@ -142,7 +142,7 @@ class LocalFileHandlerTestCase(TestHandlerBase):
             method='PUT',
             body=json.dumps(put_args),
             follow_redirects=False)
-        self.assertEqual(response.code, 500)
+        self.assertEqual(response.code, 403)
 
         with open(fp,'r') as test_file:
             test_cnt = test_file.read()
@@ -194,7 +194,7 @@ class LocalFileHandlerTestCase(TestHandlerBase):
             '/filebrowser/localfiles{}'.format(fp),
             method='DELETE',
             follow_redirects=False)
-        self.assertEqual(response.code, 500)
+        self.assertEqual(response.code, 403)
         self.assertTrue(os.path.exists(fp))
 
     @mock.patch.object(BaseHandler,'get_secure_cookie',return_value=EXEC_USER)

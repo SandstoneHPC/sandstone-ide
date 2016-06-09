@@ -230,7 +230,7 @@ class PosixFSTestCase(unittest.TestCase):
                 True
             )
         ]
-        self.assertEqual(contents,exp_contents)
+        self.assertItemsEqual(contents,exp_contents)
 
     def test_get_dir_folders(self):
         dp = os.path.join(self.test_dir,'testDir')

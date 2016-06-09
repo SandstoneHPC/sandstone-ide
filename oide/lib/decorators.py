@@ -22,6 +22,7 @@ def authenticated(method):
                     url += "?" + urlencode(dict(next=next_url))
                 self.redirect(url)
                 return
-            raise HTTPError(403)
+            self.set_status(403)
+            return
         return method(self, *args, **kwargs)
     return wrapper

@@ -330,3 +330,19 @@ class FilesystemUtilHandlerTestCase(TestHandlerBase):
             'percent': float(df[-2].strip('%')),
         }
         self.assertDictContainsSubset(expd,res['result'])
+
+    def test_post_unauthed(self):
+        fp = os.path.join(self.test_dir,'testfile.txt')
+        open(fp,'w').close()
+        params = {
+            'operation':'RENAME',
+            'filepath': fp,
+            'newFileName': 'changed.txt',
+        }
+        response = self.fetch(
+            '/filebrowser/a/fileutil',
+            method='POST',
+            body=urllib.urlencode(params),
+            follow_redirects=False)
+
+        self.assertEqual(response.code, 403)
