@@ -41,10 +41,12 @@
   margin-left: 20px;
   margin-right: 20px;
   margin-bottom: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
 }
 
 .side {
-  background-color: #FFFFFF;
+  /*background-color: #FFFFFF;*/
 }
 
 .file-details {

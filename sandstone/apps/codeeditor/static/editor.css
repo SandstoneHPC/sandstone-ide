@@ -247,8 +247,11 @@
   margin-bottom: 10px;
   font-weight: bold;
 }
-/*#find-menu .input-group-addon {
-  color: #FFFFFF;
-  background-color: #3e3f3a;
-  border: 1px solid #3e3f3a;
-}*/
+
+.sidebar > div[ui-view] {
+  height: 100%;
+}
+
+#saveas-ft-container {
+  height: 60vh;
+}

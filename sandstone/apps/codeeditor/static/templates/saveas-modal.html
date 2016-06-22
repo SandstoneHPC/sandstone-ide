@@ -18,19 +18,7 @@
         </div>
       </div>
     </form>
-    <div class="col-sm-7 col-sm-offset-2">
-      <!-- <treecontrol
-        class="tree-sandstone"
-        tree-model="treeData.filetreeContents"
-        options="treeOptions"
-        order-by="type+filename"
-        selected-nodes="treeData.selectedNodes"
-        expanded-nodes="treeData.expandedNodes"
-        on-node-toggle="getDirContents(node,expanded)"
-        on-selection="updateSaveName(node, selected)">
-        {{node.filename}}
-        <span class="filetree-permissions">{{node.permissions}}</span>
-      </treecontrol> -->
+    <div id="saveas-ft-container" class="col-sm-7 col-sm-offset-2">
       <div
         sandstone-filetree
         tree-data="treeData" selection-desc="sd"
