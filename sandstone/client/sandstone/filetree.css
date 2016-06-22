@@ -1,0 +1,50 @@
+.filetree-icon {
+    color: #3e3f3a;
+}
+.filetree-permissions {
+    margin-left: 10px;
+    font-style: italic;
+    color: #A6A6A6;
+}
+treecontrol.tree-sandstone li.tree-expanded i {
+    padding: 1px 10px;
+    /*background: url("../images/folder.png") no-repeat;*/
+    /*content: "\f114";*/
+}
+
+treecontrol.tree-sandstone li.tree-collapsed i {
+    padding: 1px 10px;
+    /*background: url("../images/folder-closed.png") no-repeat;*/
+}
+
+treecontrol.tree-sandstone li.tree-leaf i {
+    padding: 1px 10px;
+    /*background: url("../images/file.png") no-repeat;*/
+}
+
+treecontrol.tree-sandstone li .tree-selected {
+    /*background-color: #aaddff;*/
+    color: #93c54b;
+    font-weight: bold;
+}
+
+[treecontrol].tree-sandstone li.tree-expanded i {
+    padding: 1px 10px;
+    /*background: url("../images/folder.png") no-repeat;*/
+    /*content: "\f114";*/
+}
+
+[treecontrol].tree-sandstone li.tree-collapsed i {
+    padding: 1px 10px;
+    /*background: url("../images/folder-closed.png") no-repeat;*/
+}
+
+[treecontrol].tree-sandstone li.tree-leaf i {
+    padding: 1px 10px;
+    /*background: url("../images/file.png") no-repeat;*/
+}
+
+[treecontrol].tree-sandstone li .tree-selected {
+    /*background-color: #aaddff;*/
+    color: #93c54b: bold;
+}

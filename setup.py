@@ -3,15 +3,15 @@ from distutils.core import setup
 from setuptools import find_packages
 
 setup(
-    name='oide',
+    name='sandstone',
     version='0.11.4',
     author=u'Zebula Sampedro',
     author_email='sampedro@colorado.edu',
     packages=find_packages(),
     include_package_data=True,
-    url='https://github.com/ResearchComputing/OIDE',
+    url='https://github.com/SandstoneHPC/sandstone-ide',
     license='MIT, see LICENSE',
-    description="Online Integrated Development Environment (OIDE)",
+    description="Sandstone IDE",
     long_description=open('DESCRIPTION.rst').read(),
     zip_safe=False,
     install_requires=[
@@ -34,7 +34,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'oide=oide:run_server',
+            'sandstone=sandstone:run_server',
         ],
     },
 )

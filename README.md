@@ -1,4 +1,4 @@
-OIDE
+Sandstone IDE
 ====
 
 The Online Integrated Development Environment (OIDE) is a consolidated set of web-based, visual utilities that facilitate access to HPC resources.
