@@ -207,9 +207,9 @@ angular.module('sandstone.filetreedirective', [])
           return node.type !== 'dir';
         },
         injectClasses: {
-          iExpanded: "filetree-icon fa fa-folder-open",
-          iCollapsed: "filetree-icon fa fa-folder",
-          iLeaf: "filetree-icon fa fa-file",
+          iExpanded: "filetree-icon fa fa-caret-down",
+          iCollapsed: "filetree-icon fa fa-caret-right",
+          iLeaf: "filetree-icon fa"
         }
       };
       self.describeSelection = function (node, selected) {

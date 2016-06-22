@@ -221,16 +221,17 @@ class PosixFSTestCase(unittest.TestCase):
         contents = PosixFS.get_dir_contents(self.test_dir)
         exp_contents = [
             (
-                'testfile.txt',
-                fp,
-                False
-            ), (
                 'testDir',
                 dp+'/',
                 True
+            ),
+            (
+                'testfile.txt',
+                fp,
+                False
             )
         ]
-        self.assertItemsEqual(contents,exp_contents)
+        self.assertListEqual(contents,exp_contents)
 
     def test_get_dir_folders(self):
         dp = os.path.join(self.test_dir,'testDir')

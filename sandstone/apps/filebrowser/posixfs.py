@@ -95,14 +95,19 @@ class PosixFS():
 
     @staticmethod
     def get_dir_contents(dirpath):
-        contents = []
+        files = []
+        dirs = []
         for i in os.listdir(dirpath):
             filepath = os.path.join(dirpath,i)
             is_dir = os.path.isdir(filepath)
             if is_dir:
                 filepath = filepath + '/'
-            contents.append( ( i,filepath,is_dir ) )
-        return contents
+                dirs.append(( i,filepath,True ))
+            else:
+                files.append( ( i,filepath,False ) )
+        dirs.sort(key=lambda tup: tup[1])
+        files.sort(key=lambda tup: tup[1])
+        return dirs + files
 
     @staticmethod
     def get_dir_folders(dirpath):
@@ -115,6 +120,7 @@ class PosixFS():
             else:
                 continue
             contents.append( ( i,filepath,is_dir ) )
+        contents.sort(key=lambda tup: tup[1])
         return contents
 
     @staticmethod
