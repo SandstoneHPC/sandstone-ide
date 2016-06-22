@@ -1,0 +1,47 @@
+html, body {
+  height: 100%;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+body {
+  padding-top: 50px;
+}
+
+
+/*
+ * Global add-ons
+ */
+
+.sub-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/*
+ * Top navigation
+ * Hide default border to remove 1px line.
+ */
+.navbar-fixed-top {
+  border: 0;
+}
+
+/*
+ * Sandstone theme modifications
+ */
+.navbar-default .navbar-brand {
+  color: #93c54b;
+}
+.navbar-default ul.nav > li.active > a {
+  color: #93c54b;
+}
+
+.navbar-icon {
+  margin: 10px 0 10px 10px;
+}
+.navbar-icon > img {
+  max-height: 40px;
+}
+@media (min-width: 768px) {
+  .navbar-icon {
+    margin: 10px 10px 10px -5px;
+  }
+}

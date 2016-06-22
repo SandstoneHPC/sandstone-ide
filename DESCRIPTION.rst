@@ -1,4 +1,4 @@
-Online Integrated Development Environment (OIDE)
+Sandstone IDE
 =======================
 
-Full documentation can be found on the OIDE GitHub page: https://github.com/ResearchComputing/OIDE
+Full documentation can be found on the Sandstone IDE GitHub page: https://github.com/SandstoneHPC/sandstone-ide

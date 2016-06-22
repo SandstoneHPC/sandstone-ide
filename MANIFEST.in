@@ -1,8 +1,8 @@
 include AUTHORS CHANGES README.md INSTALL LICENSE DESCRIPTION.rst
 prune .git
 prune .gitignore
-recursive-exclude oide *.pyc
-prune oide/client/node_modules
-recursive-include oide/apps *.py *.js *.html *.css
-recursive-include oide/lib *.py *.js *.html *.css
-graft oide/client/oide
+recursive-exclude sandstone *.pyc
+prune sandstone/client/node_modules
+recursive-include sandstone/apps *.py *.js *.html *.css
+recursive-include sandstone/lib *.py *.js *.html *.css
+graft sandstone/client/sandstone

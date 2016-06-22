@@ -5,3 +5,6 @@ bower_components/
 node_modules/
 tmp/
 nohup.out
+sandstone.test.js
+karma.environment.js
+protractor.environment.js

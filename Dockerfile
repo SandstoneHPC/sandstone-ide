@@ -8,21 +8,22 @@ RUN apt-get update && apt-get install -y build-essential \
 RUN npm install -g npm@2
 
 # Add user
-RUN useradd -m oide
-RUN echo "oide:oide" | chpasswd
+RUN useradd -m sandstone
+RUN echo "sandstone:sandstone" | chpasswd
 
 # Setup settings overrides
-RUN mkdir -p /home/oide/.config/oide
-RUN echo "INSTALLED_APPS=('oide.lib','oide.apps.codeeditor','oide.apps.filebrowser','oide.apps.webterminal',)" \
-    > /home/oide/.config/oide/oide_settings.py
-RUN chown -R oide:oide /home/oide/.config/
+RUN mkdir -p /home/sandstone/.config/sandstone
+RUN echo "INSTALLED_APPS=('sandstone.lib','sandstone.apps.codeeditor',\
+  'sandstone.apps.filebrowser','sandstone.apps.webterminal',)" > \
+  /home/sandstone/.config/sandstone/sandstone_settings.py
+RUN chown -R sandstone:sandstone /home/sandstone/.config/
 
-# Install OIDE
-RUN mkdir -p /opt/OIDE/oide
-ADD oide /opt/OIDE/oide/
-ADD ["DESCRIPTION.rst","MANIFEST.in","requirements.txt","setup.py", "/opt/OIDE/"]
-RUN cd /opt/OIDE/oide/client && npm install
-RUN cd /opt/OIDE && python /opt/OIDE/setup.py install
+# Install Sandstone IDE
+RUN mkdir -p /opt/sandstone-ide/sandstone
+ADD sandstone /opt/sandstone-ide/sandstone/
+ADD ["DESCRIPTION.rst","MANIFEST.in","requirements.txt","setup.py", "/opt/sandstone-ide/"]
+RUN cd /opt/sandstone-ide/sandstone/client && npm install
+RUN cd /opt/sandstone-ide && python /opt/sandstone-ide/setup.py install
 
-ENV "OIDE_SETTINGS=/home/oide/.config/oide/oide_settings.py"
-CMD ["/usr/local/bin/oide"]
+ENV "SANDSTONE_SETTINGS=/home/sandstone/.config/sandstone/sandstone_settings.py"
+CMD ["/usr/local/bin/sandstone"]
