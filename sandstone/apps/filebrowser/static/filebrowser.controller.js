@@ -74,7 +74,7 @@ angular.module('sandstone.filebrowser')
 
   self.openFileInEditor = function() {
       var message = {
-          key: 'editor',
+          key: 'editor:openDocument',
           data: {
               filename: self.selectedFile.filepath
           }

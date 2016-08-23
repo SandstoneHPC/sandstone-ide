@@ -1,19 +1,24 @@
 angular.module('sandstone.updateservice', [])
-.service('UpdateService', ['$rootScope', function($rootScope){
+.factory('UpdateService', ['$rootScope', function($rootScope){
     var ws = null;
     var setUpWebsocket = function() {
         // TODO find better way to create WS address
-        var websocketAddress = "ws://" + window.location.hostname + ":" + window.location.port + "/messages";
+        if(window.location.protocol === 'https:') {
+            protocol = 'wss://';
+        } else {
+            protocol = 'ws://';
+        }
+        var websocketAddress = protocol + window.location.hostname + ':' + window.location.port + '/messages';
         ws = new WebSocket(websocketAddress);
-        ws.onMessage = function(e) {
+        ws.onmessage = function(e) {
             // TODO do something on receiving message
-            console.log(e.data);
+            console.log(JSON.parse(e.data));
         };
     };
 
     var sendMessage = function(message) {
         if(message) {
-            ws.send(message);
+            ws.send(JSON.stringify(message));
         }
     };
     setUpWebsocket();

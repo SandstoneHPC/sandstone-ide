@@ -1,6 +1,7 @@
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
+import json
 
 class UpdateHandler(tornado.websocket.WebSocketHandler):
     """
@@ -8,5 +9,6 @@ class UpdateHandler(tornado.websocket.WebSocketHandler):
     """
     def on_message(self, message):
         print message
+        # print json.loads(message)
         # write message back
         self.write_message(message)
