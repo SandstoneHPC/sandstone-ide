@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sandstone.filebrowser')
-.controller('FilebrowserController', ['$rootScope', 'FileService', '$scope', 'FilesystemService', '$modal', function($rootScope, FileService, $scope, FilesystemService, $modal){
+.controller('FilebrowserController', ['$rootScope', 'FileService', '$scope', 'FilesystemService', '$modal', 'UpdateService', function($rootScope, FileService, $scope, FilesystemService, $modal, UpdateService){
   var self = this;
 
   self.treeData = {
@@ -70,6 +70,16 @@ angular.module('sandstone.filebrowser')
   self.copyFile = function() {
     self.copiedFile = self.selectedFile;
     self.isCopied = true;
+  };
+
+  self.openFileInEditor = function() {
+      var message = {
+          key: 'editor',
+          data: {
+              filename: self.selectedFile.filepath
+          }
+      };
+      UpdateService.sendMessage(message);
   };
 
   self.gotFiles = function(data, status, headers, config) {
