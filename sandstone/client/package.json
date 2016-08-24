@@ -13,7 +13,7 @@
     "grunt-ngdocs": "~0.1.1",
     "http-server": "^0.6.1",
     "jasmine": "^2.4.1",
-    "karma": "",
+    "karma": "0.13.22",
     "karma-chrome-launcher": "^1.0.1",
     "karma-firefox-launcher": "^0.1.7",
     "karma-jasmine": "^0.3.8",
@@ -21,7 +21,7 @@
     "karma-ng-html2js-preprocessor": "^0.2.1",
     "karma-phantomjs-launcher": "^1.0.0",
     "node-gyp": "^3.3.1",
-    "phantomjs-prebuilt": "^2.1.7",
+    "phantomjs-prebuilt": "2.1.7",
     "protractor": "^2.5.1",
     "shelljs": "^0.2.6"
   },

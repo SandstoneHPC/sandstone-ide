@@ -29,6 +29,7 @@ describe('Filebrowser', function() {
   beforeEach(module('sandstone.filesystemservice'));
   beforeEach(module('sandstone.templates'));
   beforeEach(module('sandstone.filetreedirective'));
+  beforeEach(module('sandstone.updateservice'));
   beforeEach(module('ui.bootstrap'));
   beforeEach(module('angularFileUpload'));
   // beforeEach(module('FileService'));
