@@ -7,6 +7,12 @@ function getSandstoneModule(depList) {
       var self = this;
       self.currentUrl = PageService.getCurrentUrl;
     }])
+    .run(
+        function initializeServices(EditorService) {
+            //Initializes the services
+            // Dummy Method
+        }
+    )
     .factory('PageService', ['$location',function($location) {
       return {
         getCurrentUrl: function () {

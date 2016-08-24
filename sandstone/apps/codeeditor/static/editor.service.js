@@ -46,6 +46,11 @@ angular.module('sandstone.editor')
     editor.getSession().setUseWrapMode(editorSettings.wordWrap);
   };
 
+  $rootScope.$on('editor:openDocument', function(event, data) {
+      console.log(data);
+      openDocument(data.filename);
+  });
+
   // Called when the contents of the current session have changed. Bound directly to
   // an EditSession.
   var onSessionModified = function(e) {
@@ -140,6 +145,29 @@ angular.module('sandstone.editor')
     }
   };
 
+  var openDocument = function(filepath) {
+    if (typeof filepath === 'undefined') {
+      // Create an untitled document, and a new editSession to associate it with.
+      createUntitledDocument();
+    } else {
+      if (filepath in openDocs) {
+        // Switch to open document
+        switchSession(filepath);
+      } else {
+        // Load document from filesystem
+        $log.debug('Load '+filepath+' from filesystem.');
+        $http
+          .get('/filebrowser/localfiles'+filepath)
+          .success(function (data, status, headers, config) {
+            var mode = AceModeService.getModeForPath(filepath);
+            $rootScope.$emit('aceModeChanged', mode);
+            createNewSession(filepath,data.content,mode.mode);
+            switchSession(filepath);
+          });
+      }
+    }
+};
+
   return {
     /**
      * Called when ace editor has loaded. Must be bound to directive by controller.
@@ -217,28 +245,7 @@ angular.module('sandstone.editor')
      * otherwise a new document will be created and switched to.
      * @returns {str} returns filepath of opened document, or return undefined if opening fails.
      */
-    openDocument: function(filepath) {
-      if (typeof filepath === 'undefined') {
-        // Create an untitled document, and a new editSession to associate it with.
-        createUntitledDocument();
-      } else {
-        if (filepath in openDocs) {
-          // Switch to open document
-          switchSession(filepath);
-        } else {
-          // Load document from filesystem
-          $log.debug('Load '+filepath+' from filesystem.');
-          $http
-            .get('/filebrowser/localfiles'+filepath)
-            .success(function (data, status, headers, config) {
-              var mode = AceModeService.getModeForPath(filepath);
-              $rootScope.$emit('aceModeChanged', mode);
-              createNewSession(filepath,data.content,mode.mode);
-              switchSession(filepath);
-            });
-        }
-      }
-    },
+    openDocument: openDocument,
     /**
      * @ngdoc
      * @name sandstone.EditorService#closeDocument
