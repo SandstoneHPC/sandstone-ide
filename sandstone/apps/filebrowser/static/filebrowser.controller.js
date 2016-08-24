@@ -73,6 +73,7 @@ angular.module('sandstone.filebrowser')
   };
 
   self.openFileInEditor = function() {
+      window.location.href = '#/editor';
       var message = {
           key: 'editor:openDocument',
           data: {

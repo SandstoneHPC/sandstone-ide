@@ -11,8 +11,8 @@ angular.module('sandstone.updateservice', [])
         var websocketAddress = protocol + window.location.hostname + ':' + window.location.port + '/messages';
         ws = new WebSocket(websocketAddress);
         ws.onmessage = function(e) {
-            // TODO do something on receiving message
-            console.log(JSON.parse(e.data));
+            var data = JSON.parse(e.data);
+            $rootScope.$emit(data.key, data.data);
         };
     };
 

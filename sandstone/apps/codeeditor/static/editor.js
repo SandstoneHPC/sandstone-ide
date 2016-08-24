@@ -1,7 +1,12 @@
 'use strict';
 
 angular.module('sandstone.editor', ['ui.ace','treeControl'])
-
+.run(
+    function initializeServices(EditorService) {
+        //Initializes the services
+        // Dummy Method
+    }
+)
 .config(['$stateProvider', '$urlRouterProvider' ,function($stateProvider, $urlRouterProvider){
   $stateProvider
     .state('editor', {
