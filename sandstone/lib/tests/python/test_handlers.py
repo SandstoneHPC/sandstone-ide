@@ -7,10 +7,7 @@ from sandstone.lib.handlers.update import UpdateHandler
 from sandstone.lib.handlers.logout import LogoutHandler
 from sandstone.lib.test_utils import TestHandlerBase
 from tornado.testing import gen_test
-from tornado.web import Application
 from tornado.websocket import websocket_connect
-import websocket
-
 
 
 EXEC_USER = pwd.getpwuid(os.getuid())[0]
