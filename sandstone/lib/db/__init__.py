@@ -5,8 +5,11 @@ from sandstone import settings
 
 
 
-if not os.path.exists(settings.DATABASE):
-    db_dir = os.path.dirname(settings.DATABASE)
+db_path = os.path.expandvars(settings.DATABASE)
+db_path = os.path.abspath(db_path)
+db_dir = os.path.dirname(db_path)
+
+if not os.path.exists(db_dir):
     os.makedirs(db_dir)
 
-sandstone_db = SqliteExtDatabase(settings.DATABASE)
+sandstone_db = SqliteExtDatabase(db_path)
