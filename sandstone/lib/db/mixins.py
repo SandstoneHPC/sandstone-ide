@@ -1,17 +1,11 @@
-import os
 import tornado.web
-from peewee.playhouse.sqlite_ext import SqliteExtDatabase
-from sandstone import settings
+from sandstone.lib.db import sandstone_db
 
 
 
 class DBHandler(tornado.web.RequestHandler):
     def prepare(self):
-        if not os.path.exists(settings.DATABASE):
-            db_dir = os.path.dirname(settings.DATABASE)
-            os.path.makedirs(db_dir)
-
-        self.db = SqliteExtDatabase(settings.DATABASE)
+        self.db = sandstone_db
         self.db.connect()
         return super(DBHandler, self).prepare()
 
