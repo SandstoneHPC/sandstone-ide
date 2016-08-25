@@ -15,6 +15,7 @@ setup(
     long_description=open('DESCRIPTION.rst').read(),
     zip_safe=False,
     install_requires=[
+        'peewee',
         'simplepam',
         'tornado>=4',
         'terminado',
