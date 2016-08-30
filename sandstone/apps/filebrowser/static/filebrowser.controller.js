@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sandstone.filebrowser')
-.controller('FilebrowserController', ['$rootScope', 'FileService', '$scope', 'FilesystemService', '$modal', 'UpdateService', function($rootScope, FileService, $scope, FilesystemService, $modal, UpdateService){
+.controller('FilebrowserController', ['$rootScope', 'FileService', '$scope', 'FilesystemService', '$modal', 'BroadcastService', function($rootScope, FileService, $scope, FilesystemService, $modal, BroadcastService){
   var self = this;
 
   self.treeData = {
@@ -80,7 +80,7 @@ angular.module('sandstone.filebrowser')
               filename: self.selectedFile.filepath
           }
       };
-      UpdateService.sendMessage(message);
+      BroadcastService.sendMessage(message);
   };
 
   self.gotFiles = function(data, status, headers, config) {

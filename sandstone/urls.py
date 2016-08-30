@@ -2,7 +2,7 @@ from sandstone.lib.handlers.pam_auth import PAMLoginHandler
 from sandstone.lib.handlers.logout import LogoutHandler
 from sandstone.lib.handlers.main import MainHandler
 from sandstone.lib.handlers.state import StateHandler
-from sandstone.lib.handlers.update import UpdateHandler
+from sandstone.lib.handlers.broadcast import BroadcastHandler
 from sandstone.lib.app_loader import DependencyHandler
 from sandstone.lib.app_loader import get_installed_app_urls
 
@@ -15,5 +15,5 @@ URL_SCHEMA = [
             (r"/", MainHandler),
             (r"/a/deps", DependencyHandler),
             (r"/a/state", StateHandler),
-            (r"/messages", UpdateHandler),
+            (r"/messages", BroadcastHandler),
         ] + APP_SCHEMA

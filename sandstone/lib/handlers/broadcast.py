@@ -4,7 +4,7 @@ import tornado.websocket
 import json
 from pydispatch import dispatcher
 
-class UpdateHandler(tornado.websocket.WebSocketHandler):
+class BroadcastHandler(tornado.websocket.WebSocketHandler):
     """
     Used to receive and send messages to connected apps
     """

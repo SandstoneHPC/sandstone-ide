@@ -16,7 +16,7 @@
       depList.push('ui.bootstrap');
       depList.push('sandstone.filesystemservice');
       depList.push('sandstone.filetreedirective');
-      depList.push('sandstone.updateservice');
+      depList.push('sandstone.broadcastservice');
       var sandstone = getSandstoneModule(depList);
 
       angular.element(document).ready(function() {
