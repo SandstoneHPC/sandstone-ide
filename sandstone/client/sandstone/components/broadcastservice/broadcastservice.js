@@ -1,5 +1,5 @@
-angular.module('sandstone.updateservice', [])
-.factory('UpdateService', ['$rootScope', function($rootScope){
+angular.module('sandstone.broadcastservice', [])
+.factory('BroadcastService', ['$rootScope', function($rootScope){
     var ws = null;
     var setUpWebsocket = function() {
         // TODO find better way to create WS address
