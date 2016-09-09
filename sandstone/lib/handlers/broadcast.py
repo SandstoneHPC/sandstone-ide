@@ -1,6 +1,7 @@
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
+import tornado.escape
 import json
 from pydispatch import dispatcher
 
@@ -15,7 +16,11 @@ class BroadcastManager(object):
 
     def broadcast(self, message):
         for client in self._clients:
-            client.write_message(message)
+            try:
+                client.write_message(message)
+            except:
+                import pdb
+                pdb.set_trace()
 
     def remove_client(self, client):
         if client:
@@ -32,7 +37,7 @@ class BroadcastHandler(tornado.websocket.WebSocketHandler):
         # broadcast message
         self.application.broadcast_manager.broadcast(message)
         # get the event from the message
-        message_info = json.loads(message)
+        message_info = tornado.escape.json_decode(message)
         event = message_info['key']
         data = message_info['data']
         dispatcher.send(signal=event, sender=data)
