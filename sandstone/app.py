@@ -14,7 +14,6 @@ STATIC_DIR = os.path.join(PROJECT_DIR,'client/sandstone')
 from sandstone import settings
 from sandstone.lib import ui_methods
 from sandstone.lib.app_loader import get_installed_app_static_specs
-from sandstone.lib.handlers.broadcast import BroadcastManager
 import sandstone.urls
 from sandstone.urls import URL_SCHEMA
 

@@ -2,30 +2,8 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket
 import tornado.escape
-import json
 from pydispatch import dispatcher
-
-
-class BroadcastManager(object):
-    _clients = set()
-
-    @classmethod
-    def add_client(cls, client):
-        cls._clients.add(client)
-
-    @classmethod
-    def broadcast(cls, message):
-        for client in cls._clients:
-            try:
-                client.write_message(message)
-            except:
-                import pdb
-                pdb.set_trace()
-
-    @classmethod
-    def remove_client(cls, client):
-        if client:
-            cls._clients.remove(client)
+from sandstone.lib.broadcast.manager import BroadcastManager
 
 class BroadcastHandler(tornado.websocket.WebSocketHandler):
     """
