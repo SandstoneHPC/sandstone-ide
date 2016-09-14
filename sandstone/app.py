@@ -23,7 +23,6 @@ from sandstone.urls import URL_SCHEMA
 
 class SandstoneApplication(tornado.web.Application):
     def __init__(self, *args, **kwargs):
-        self.broadcast_manager = BroadcastManager()
         app_static_handlers = []
         for spec in get_installed_app_static_specs():
             s_url = r"/static/{}/(.*)".format(spec[0])
