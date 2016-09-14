@@ -3,7 +3,6 @@ import pwd
 import urllib
 import mock
 from sandstone.lib.handlers.base import BaseHandler
-from sandstone.lib.handlers.update import UpdateHandler
 from sandstone.lib.handlers.logout import LogoutHandler
 from sandstone.lib.test_utils import TestHandlerBase
 from tornado.testing import gen_test
@@ -106,25 +105,25 @@ class PAMLoginHandlerTestCase(TestHandlerBase):
         self.assertIn(login_form,response.body)
 
 
-class UpdateHandlerTestCase(TestHandlerBase):
-    # Based on websocket tests written for Tornado
-    # https://github.com/tornadoweb/tornado/blob/master/tornado/test/websocket_test.py
-    @gen_test
-    def test_a(self):
-        message = {
-          'key': 'editor:openDocument',
-          'data': {
-              'filename': 'somepath'
-          }
-        }
-        ws = yield websocket_connect(
-            'ws://localhost:%d/messages' % self.get_http_port(),
-            io_loop=self.io_loop)
-        ws.write_message(str(message))
-        response = yield ws.read_message()
-        self.assertIn(
-                str(message), response
-        )
+# class UpdateHandlerTestCase(TestHandlerBase):
+#     # Based on websocket tests written for Tornado
+#     # https://github.com/tornadoweb/tornado/blob/master/tornado/test/websocket_test.py
+#     @gen_test
+#     def test_a(self):
+#         message = {
+#           'key': 'editor:openDocument',
+#           'data': {
+#               'filename': 'somepath'
+#           }
+#         }
+#         ws = yield websocket_connect(
+#             'ws://localhost:%d/messages' % self.get_http_port(),
+#             io_loop=self.io_loop)
+#         ws.write_message(str(message))
+#         response = yield ws.read_message()
+#         self.assertIn(
+#                 str(message), response
+#         )
 
 # class LogoutHandlerTestCase(TestHandlerBase):
 #     @mock.patch.object(BaseHandler,'get_argument',return_value='next_url')
