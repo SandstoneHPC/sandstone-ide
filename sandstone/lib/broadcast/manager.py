@@ -1,5 +1,6 @@
 import tornado.websocket
 import tornado.escape
+from sandstone.lib.broadcast.message import BroadcastMessage
 
 
 
@@ -17,16 +18,13 @@ class BroadcastManager(object):
 
     @classmethod
     def broadcast(cls, message):
-        # Validate message
-        msg = tornado.escape.json_decode(message)
-        try:
-            msg['key']
-            msg['data']
-        except KeyError:
-            raise ValueError("Message must have 'key' and 'data' defined.")
+        if not isinstance(message, BroadcastMessage):
+            raise TypeError("message must be an instance of BroadcastMessage.")
+
+        json_msg = message.to_json_string()
         for client in cls._clients:
             try:
-                client.write_message(message)
+                client.write_message(json_msg)
             except:
                 # TODO handle custom exception
                 pass

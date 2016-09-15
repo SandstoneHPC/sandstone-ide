@@ -5,6 +5,7 @@ import tornado.escape
 from pydispatch import dispatcher
 import sandstone.lib.decorators
 from sandstone.lib.handlers.base import BaseHandler
+from sandstone.lib.broadcast.message import BroadcastMessage
 from sandstone.lib.broadcast.manager import BroadcastManager
 
 class BroadcastHandler(tornado.websocket.WebSocketHandler,BaseHandler):
@@ -20,12 +21,15 @@ class BroadcastHandler(tornado.websocket.WebSocketHandler,BaseHandler):
         BroadcastManager.add_client(self)
 
     def on_message(self, message):
+        try:
+            bmsg = BroadcastMessage.create_from_string(message)
+        except BroadcastMessage.MessageValidationError:
+            return
         # broadcast message
-        BroadcastManager.broadcast(message)
+        BroadcastManager.broadcast(bmsg)
         # get the event from the message
-        message_info = tornado.escape.json_decode(message)
-        event = message_info['key']
-        data = message_info['data']
+        event = bmsg.key
+        data = bmsg.data
         dispatcher.send(signal=event, sender=data)
 
     def on_close(self):
