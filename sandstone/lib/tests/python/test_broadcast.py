@@ -1,13 +1,48 @@
+import os
+import pwd
 import unittest
 import mock
+import tornado.web
 import tornado.websocket
 import tornado.escape
+from tornado.testing import gen_test
+from tornado.websocket import websocket_connect
+from tornado.httpclient import HTTPRequest
 from sandstone.lib.test_utils import TestHandlerBase
 from sandstone.lib.handlers.base import BaseHandler
 from sandstone.lib.broadcast.manager import BroadcastManager
 from sandstone.lib.broadcast.handlers import BroadcastHandler
 
 
+EXEC_USER = pwd.getpwuid(os.getuid())[0]
+
+class BroadcastHandlerTestCase(TestHandlerBase):
+    def setUp(self):
+        request = mock.Mock()
+        reqh = tornado.web.RequestHandler(self.get_app(),request)
+        reqh.set_secure_cookie('user',EXEC_USER)
+        cookie = reqh._new_cookie.get('user')
+        self.auth_cookie = 'user="{}"'.format(cookie.value)
+        super(BroadcastHandlerTestCase,self).setUp()
+
+    @gen_test
+    def test_send_message(self):
+        msg = {
+          'key': 'test:test_msg',
+          'data': {
+              'test': 'test'
+          }
+        }
+        msg_json = tornado.escape.json_encode(msg)
+
+        ws = yield websocket_connect(
+            HTTPRequest(
+                'ws://localhost:%d/messages' % self.get_http_port(),
+                headers={'Cookie':self.auth_cookie}),
+            io_loop=self.io_loop)
+        ws.write_message(msg_json)
+        response = yield ws.read_message()
+        self.assertIn(msg_json, response)
 
 class BroadcastManagerTestCase(TestHandlerBase):
     def setUp(self):
