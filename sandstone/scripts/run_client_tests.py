@@ -36,6 +36,7 @@ dep_list = [
     'ui.router',
     'sandstone.acemodes',
     'ui.bootstrap',
+    'sandstone.broadcastservice'
 ]
 
 for spec in settings.APP_SPECIFICATIONS:
