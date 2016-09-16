@@ -1,28 +1,26 @@
 angular.module('sandstone.broadcastservice', [])
-.factory('BroadcastService', ['$rootScope', function($rootScope){
-    var ws = null;
-    var setUpWebsocket = function() {
-        // TODO find better way to create WS address
-        if(window.location.protocol === 'https:') {
-            protocol = 'wss://';
-        } else {
-            protocol = 'ws://';
-        }
-        var websocketAddress = protocol + window.location.hostname + ':' + window.location.port + '/messages';
-        ws = new WebSocket(websocketAddress);
-        ws.onmessage = function(e) {
-            var data = JSON.parse(e.data);
-            $rootScope.$emit(data.key, data.data);
-        };
-    };
-
-    var sendMessage = function(message) {
-        if(message) {
-            ws.send(JSON.stringify(message));
-        }
-    };
-    setUpWebsocket();
-    return {
-        sendMessage: sendMessage
+.factory('BroadcastService', ['$rootScope','$websocket','$location', function($rootScope,$websocket,$location) {
+  var ws = null;
+  var setUpWebsocket = function() {
+    var protocol = 'ws'
+    if($location.protocol() === 'https') {
+      protocol = 'wss';
     }
+    var websocketAddress = protocol + '://' + $location.host() + ':' + $location.port() + '/messages';
+    ws = $websocket(websocketAddress);
+    ws.onmessage = function(msg) {
+      var data = JSON.parse(msg.data);
+      $rootScope.$emit(data.key, data.data);
+    };
+  };
+
+  var sendMessage = function(message) {
+    if(message) {
+      ws.send(JSON.stringify(message));
+    }
+  };
+  setUpWebsocket();
+  return {
+    sendMessage: sendMessage
+  }
 }]);

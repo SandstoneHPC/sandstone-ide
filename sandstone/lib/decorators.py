@@ -2,6 +2,7 @@ import functools
 import urlparse
 import os
 import pwd
+import tornado.websocket
 from urllib import urlencode
 
 
@@ -11,6 +12,10 @@ def authenticated(method):
     def wrapper(self, *args, **kwargs):
         exec_user = pwd.getpwuid(os.getuid())[0]
         if (not self.current_user) or (self.current_user != exec_user):
+            if isinstance(self,tornado.websocket.WebSocketHandler):
+                self.set_status(403)
+                self.finish()
+                return
             if self.request.method in ("GET", "HEAD"):
                 url = self.get_login_url()
                 if "?" not in url:

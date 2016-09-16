@@ -17,7 +17,8 @@
     "angular-tree-control": "",
     "term.js": "",
     "angular-file-upload": "https://github.com/SandstoneHPC/angular-file-upload.git#2.2.1",
-    "angular-smart-table": "~2.1.6"
+    "angular-smart-table": "~2.1.6",
+    "angular-websocket": "^2.0.0"
   },
   "resolutions": {
     "angular": "1.4.x"

@@ -26,6 +26,8 @@ file_list = [
     'sandstone/bower_components/angular-smart-table/dist/smart-table.js',
     'sandstone/bower_components/angular-file-upload/dist/angular-file-upload.js',
     'sandstone/bower_components/term.js/src/term.js',
+    'sandstone/bower_components/angular-websocket/dist/angular-websocket.min.js',
+    'sandstone/bower_components/angular-websocket/dist/angular-websocket-mock.js',
     'sandstone/components/**/*.js',
     'sandstone/components/**/*.html',
     'sandstone/sandstone.mod.js',
@@ -36,6 +38,8 @@ dep_list = [
     'ui.router',
     'sandstone.acemodes',
     'ui.bootstrap',
+    'angular-websocket',
+    'sandstone.broadcastservice'
 ]
 
 for spec in settings.APP_SPECIFICATIONS:
