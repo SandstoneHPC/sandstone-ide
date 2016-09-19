@@ -3,6 +3,10 @@ import tornado.escape
 
 
 class BroadcastMessage:
+    """
+    Wraps up broadcasted messages. BroadcastMessage handles validation, as well as
+    serialization and deserialization.
+    """
     class MessageValidationError(Exception):
         pass
 

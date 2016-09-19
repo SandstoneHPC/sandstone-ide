@@ -5,6 +5,7 @@ function getSandstoneModule(depList) {
     }])
     .run(function(BroadcastService) {
         // Loads the BroadcastService
+        BroadcastService.initialize();
     })
     .controller('PageCtrl', ['$location','PageService',function($location,PageService) {
       var self = this;
