@@ -8,3 +8,4 @@ nohup.out
 sandstone.test.js
 karma.environment.js
 protractor.environment.js
+out/
