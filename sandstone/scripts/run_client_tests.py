@@ -45,7 +45,7 @@ for spec in settings.APP_SPECIFICATIONS:
     # get the module object using the module name
     mod_path = spec['PY_MODULE_PATH']
     ng_mod_name = spec['NG_MODULE_NAME']
-    mod_static_path = os.path.join(mod_path,'static')
+    mod_static_path = os.path.join(mod_path,'static','')
     mod_test_path = os.path.join(mod_path,'tests','js','**','*.js')
     mod_tpl_path = os.path.join(mod_static_path,'**/*.html')
 
