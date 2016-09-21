@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import shutil
 import importlib
@@ -59,7 +60,7 @@ for spec in settings.APP_SPECIFICATIONS:
     dep_list.append('sandstone.'+ng_mod_name)
 
     # Define module_mapper entry for app
-    path_map[mod_static_path] = os.path.join('/static','apps',ng_mod_name,'')
+    path_map[mod_static_path] = os.path.join('/static',ng_mod_name,'')
 
     # Define preprocessor entry for app
     preprocessors[mod_tpl_path] = 'ng-html2js'
@@ -89,4 +90,7 @@ with open(os.path.join(core_path,'sandstone.test.js'), "w+") as test_file:
     test_file.write(fmt_contents)
 
 os.chdir(test_path)
-subprocess.call(['npm','run','test-single-run'])
+if (len(sys.argv) > 1) and (sys.argv[1] == '--debug'):
+    subprocess.call(['npm','run','test'])
+else:
+    subprocess.call(['npm','run','test-single-run'])
