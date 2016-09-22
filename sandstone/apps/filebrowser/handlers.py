@@ -15,6 +15,7 @@ import sandstone.lib.decorators
 from sandstone import settings
 from sandstone.lib.handlers.base import BaseHandler
 from sandstone.apps.filebrowser.mixins.fs_mixin import FSMixin
+from sandstone.lib.filewatcher import Filewatcher
 from os import stat
 from stat import *
 from pwd import getpwuid
@@ -268,7 +269,7 @@ class FileTreeHandler(BaseHandler,FSMixin):
                     curr_file['group'] = grp.getgrgid(stat_object.st_gid).gr_name
                     curr_file['is_accessible'] = os.access(i[1], os.W_OK)
                     dir_contents.append(curr_file)
-
+                Filewatcher.add_directory_to_watch(dirpath)
             self.write(json.dumps(dir_contents))
 
     @sandstone.lib.decorators.authenticated
@@ -304,5 +305,5 @@ class FileTreeHandler(BaseHandler,FSMixin):
                 curr_file['group'] = grp.getgrgid(stat_object.st_gid).gr_name
                 curr_file['is_accessible'] = os.access(i[1], os.W_OK)
                 dir_contents.append(curr_file)
-
+            Filewatcher.add_directory_to_watch(dirpath)
         self.write(json.dumps(dir_contents))

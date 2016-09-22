@@ -189,6 +189,20 @@ describe('Filetree directive', function(){
       expect(isolateScope.treeData.selectedNodes.length).toBe(0);
     });
 
+    it('should update the filetree on getting a filtree:created_file event', function() {
+        spyOn(isolateScope, 'updateFiletree');
+        rootScope.$emit('filetree:created_file', {
+            filepath: '/tmp/some-file.txt'
+        });
+        expect(isolateScope.updateFiletree).toHaveBeenCalled();
+    });
+    it('should update the filetree on getting a filtree:deleted_file event', function() {
+        spyOn(isolateScope, 'updateFiletree');
+        rootScope.$emit('filetree:deleted_file', {
+            filepath: '/tmp/some-file.txt'
+        });
+        expect(isolateScope.updateFiletree).toHaveBeenCalled();
+    });
   });
 
 });
