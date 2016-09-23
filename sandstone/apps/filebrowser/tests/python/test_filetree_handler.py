@@ -45,7 +45,7 @@ class FileTreeHandlerTestCase(TestHandlerBase):
             '/tmp/test/',
             self.test_dir,
         )
-        subdir = os.path.join(self.test_dir,'subdir','')
+        subdir = os.path.join(self.test_dir,'subdir')
         os.mkdir(subdir)
         with mock.patch('sandstone.settings.FILESYSTEM_ROOT_DIRECTORIES',roots):
             response = self.fetch(
@@ -86,7 +86,7 @@ class FileTreeHandlerTestCase(TestHandlerBase):
                     u'filename': u'subdir',
                     u'owner': EXEC_USER,
                     u'type': u'dir',
-                    u'size': u'4.0 KiB'
+                    u'size': u'4.0K'
                 },
             ]
             self.assertListEqual(expd,res)
@@ -134,14 +134,9 @@ class FileTreeHandlerTestCase(TestHandlerBase):
             self.assertEqual(response.code, 200)
             expd = [
                 {
-                    u'group': EXEC_USER,
                     u'filepath': subdir,
-                    u'is_accessible': True,
-                    u'perm_string': u'775',
-                    u'perm': u'drwxrwxr-x',
                     u'filename': u'subdir',
-                    u'type': u'dir',
-                    u'size': u'4.0 KiB'
+                    u'type': u'dir'
                 },
             ]
             self.assertListEqual(expd,res)

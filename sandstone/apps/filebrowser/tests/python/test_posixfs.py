@@ -4,6 +4,7 @@ import os
 import shutil
 import mock
 from stat import *
+import pwd
 
 from sandstone.apps.filebrowser.posixfs import PosixFS
 
@@ -219,17 +220,27 @@ class PosixFSTestCase(unittest.TestCase):
         open(fp,'w').close()
 
         contents = PosixFS.get_dir_contents(self.test_dir)
+
+        user = pwd.getpwuid(os.getuid())[0]
         exp_contents = [
-            (
-                'testDir',
-                dp+'/',
-                True
-            ),
-            (
-                'testfile.txt',
-                fp,
-                False
-            )
+            {
+                'size': '4.0K',
+                'perm': 'drwxrwxr-x',
+                'perm_string': '775',
+                'owner': user,
+                'group': user,
+                'filepath': dp,
+                'filename': 'testDir'
+            },
+            {
+                'size': '0 bytes',
+                'perm': '-rw-rw-r--',
+                'perm_string': '664',
+                'owner': user,
+                'group': user,
+                'filepath': fp,
+                'filename': 'testfile.txt'
+            }
         ]
         self.assertListEqual(contents,exp_contents)
 
@@ -268,3 +279,25 @@ class PosixFSTestCase(unittest.TestCase):
     def test_get_groups(self):
         groups = PosixFS.get_groups()
         self.assertEqual(type(groups),type([]))
+
+    def test_get_size_empty_directory(self):
+        self.assertEqual(PosixFS.get_size(self.test_dir), '4.0K')
+
+    def test_get_size_files(self):
+        tempfile_1 = os.path.join(self.test_dir, 'temp_1')
+        tempfile_2 = os.path.join(self.test_dir, 'temp_2')
+
+        with open(tempfile_1, 'w') as tmp_file:
+            tmp_file.write('Some Text')
+
+        with open(tempfile_2, 'w') as tmp_file:
+            tmp_file.write('Some More Text')
+
+        self.assertEqual(PosixFS.get_size(self.test_dir), '12K')
+
+    def test_get_permissions_directory(self):
+        perm_string_1 = 'drwxrwxr-x'
+        self.assertEqual(PosixFS.get_permissions(perm_string_1), '775')
+
+        perm_string_2 = '-rw-rw-r--'
+        self.assertEqual(PosixFS.get_permissions(perm_string_2), '664')

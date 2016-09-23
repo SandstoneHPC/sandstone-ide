@@ -94,20 +94,60 @@ class PosixFS():
         return formatted_patterns
 
     @staticmethod
-    def get_dir_contents(dirpath):
-        files = []
-        dirs = []
-        for i in os.listdir(dirpath):
-            filepath = os.path.join(dirpath,i)
-            is_dir = os.path.isdir(filepath)
-            if is_dir:
-                filepath = filepath + '/'
-                dirs.append(( i,filepath,True ))
+    def get_permissions(perm_string):
+        perms = []
+        count = 0
+        p = 0
+        for i in perm_string[1:]:
+            if i == 'r':
+                p += 4
+            elif i == 'w':
+                p += 2
+            elif i == 'x':
+                p += 1
+            if count == 2:
+                perms.append('%d' % p)
+                count = 0
+                p = 0
             else:
-                files.append( ( i,filepath,False ) )
-        dirs.sort(key=lambda tup: tup[1])
-        files.sort(key=lambda tup: tup[1])
-        return dirs + files
+                count += 1
+        return ''.join(perms)
+
+    @staticmethod
+    def get_dir_contents(dirpath):
+
+        dir_contents = []
+
+        p = subprocess.Popen(['ls', '-lsah', dirpath], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        out, err = p.communicate()
+
+        contents = out.split('\n')[1:]
+
+        for node in contents:
+            parts = node.split()
+            if len(parts) == 0:
+                continue
+            if parts[-1] != '.' and parts[-1] != '..':
+                filepath = os.path.join(dirpath, parts[-1])
+
+                if os.path.isdir(filepath):
+                    size = PosixFS.get_size(filepath)
+                else:
+                    size = parts[5]
+                    if not size[-1].isalpha():
+                        size = size + ' bytes'
+
+                dir_contents.append({
+                    'size': size,
+                    'perm': parts[1],
+                    'perm_string': PosixFS.get_permissions(parts[1]),
+                    'owner': parts[3],
+                    'group': parts[4],
+                    'filepath': filepath,
+                    'filename': parts[-1]
+                    })
+        return dir_contents
 
     @staticmethod
     def get_dir_folders(dirpath):
@@ -148,3 +188,16 @@ class PosixFS():
         size = int(size) / (1024 * 1024)
         used = int(used) / (1024 * 1024)
         return {'percent': float(percent.strip('%')), 'used': used, 'size': size}
+
+    @staticmethod
+    def get_size(filepath):
+        p = subprocess.Popen(
+            ['du', '-hs', filepath],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        out = p.communicate()
+        size = out[0].split('\t')[0]
+        if size == '0':
+            return '0.0K'
+        return size
