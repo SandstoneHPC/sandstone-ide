@@ -48,6 +48,12 @@ angular.module('sandstone.filetreedirective', [])
         $rootScope.$on('pastedFiles', function(e, newDirPath){
           self.pastedFiles(newDirPath);
         });
+        $rootScope.$on('filetree:created_file', function(e, data) {
+            self.updateFiletree();
+        });
+        $rootScope.$on('filetree:deleted_file', function(e, data) {
+            self.updateFiletree();
+        });
       };
       self.initializeFiletree();
       self.getNodeFromPath = function (filepath, nodeList) {
