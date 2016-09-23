@@ -10,28 +10,6 @@ For the Slurm scheduler assistant app, install [sandstone-slurm-assist](https://
 For a combination web terminal and Jupyter BASH notebook, install [sandstone-nb-term](https://github.com/SandstoneHPC/oide-nb-term)
 
 
-## Installing Sandstone IDE using PIP
-
-To install Sandstone IDE using PIP, run:
-```
-pip install sandstone
-```
-
-Sandstone IDE can now be run with the following command:
-```
-sandstone
-```
-To use Sandstone IDE, point your browser to `localhost:8888`.
-
-## Running Sandstone IDE with Docker
-
-To run Sandstone IDE in a Docker container, run:
-```
-docker build -t sandstone .
-docker run -p 49160:8888 -d --user=sandstone sandstone
-```
-To use Sandstone IDE, point your browser to `localhost:49160`. Login with username:pass `sandstone:sandstone`.
-
 ## Installing Sandstone IDE from source
 
 To install Sandstone IDE, first clone the repository and enter the project directory:
@@ -96,3 +74,12 @@ If you wish to replace your home directory with the directory in which you run S
     '/tmp/',
 )
 ```
+
+## Running Sandstone IDE with Docker
+
+To run Sandstone IDE in a Docker container, run:
+```
+docker build -t sandstone .
+docker run -p 49160:8888 -d --user=sandstone sandstone
+```
+To use Sandstone IDE, point your browser to `localhost:49160`. Login with username:pass `sandstone:sandstone`.
