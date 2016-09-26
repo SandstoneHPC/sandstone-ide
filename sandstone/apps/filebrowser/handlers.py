@@ -16,11 +16,6 @@ from sandstone import settings
 from sandstone.lib.handlers.base import BaseHandler
 from sandstone.apps.filebrowser.mixins.fs_mixin import FSMixin
 from sandstone.lib.filewatcher import Filewatcher
-from os import stat
-from stat import *
-from pwd import getpwuid
-from permissions import *
-import grp
 
 
 class LocalFileHandler(BaseHandler,FSMixin):
@@ -236,7 +231,6 @@ class FileTreeHandler(BaseHandler,FSMixin):
             dirpath = self.get_argument('dirpath','')
             dir_contents = []
             if dirpath == '':
-                # for r in self.fs.list_root_paths(self.current_user):
                 for r in self.fs.list_root_paths():
                     dir_contents.append({
                         'type':'dir',
@@ -244,31 +238,12 @@ class FileTreeHandler(BaseHandler,FSMixin):
                         'filepath':r})
             else:
                 for i in self.fs.get_dir_contents(dirpath):
-                    curr_file = {}
-                    # if i[0].startswith('.'):
-                    #     continue
-                    if i[2]:
-                        curr_file['type'] = 'dir'
+                    if os.path.isdir(i['filepath']):
+                        i['type'] = 'dir'
                     else:
-                        curr_file['type'] = 'file'
-                    # Get owner information
-                    try:
-                        stat_object = stat(i[1])
-                    except OSError:
-                        # stat failed possibly due to broken file
-                        # ignore the current file
-                        continue
-                    owner = getpwuid(stat_object.st_uid).pw_name
-                    file_size = str((float(stat_object.st_size) / 1024)) + " KiB"
-                    curr_file['filename'] = i[0]
-                    curr_file['filepath'] = i[1]
-                    curr_file['owner'] = owner
-                    curr_file['size'] = file_size
-                    curr_file['perm'] = filemode(stat_object[ST_MODE])
-                    curr_file['perm_string'] = oct(stat_object[ST_MODE])[-3:]
-                    curr_file['group'] = grp.getgrgid(stat_object.st_gid).gr_name
-                    curr_file['is_accessible'] = os.access(i[1], os.W_OK)
-                    dir_contents.append(curr_file)
+                        i['type'] = 'file'
+                    i['is_accessible'] = os.access(i['filepath'], os.W_OK)
+                    dir_contents.append(i)
                 Filewatcher.add_directory_to_watch(dirpath)
             self.write(json.dumps(dir_contents))
 
@@ -277,7 +252,6 @@ class FileTreeHandler(BaseHandler,FSMixin):
         dirpath = self.get_argument('dirpath','')
         dir_contents = []
         if dirpath == '':
-            # for r in self.fs.list_root_paths(self.current_user):
             for r in self.fs.list_root_paths():
                 dir_contents.append({
                     'type':'dir',
@@ -285,25 +259,14 @@ class FileTreeHandler(BaseHandler,FSMixin):
                     'filepath':r})
         else:
             for i in self.fs.get_dir_folders(dirpath):
-                curr_file = {}
-                # if i[0].startswith('.'):
-                #     continue
-                if i[2]:
-                    curr_file['type'] = 'dir'
+                folder = {
+                    'filename': i[0],
+                    'filepath': i[1],
+                }
+                if os.path.isdir(i[1]):
+                    folder['type'] = 'dir'
                 else:
-                    curr_file['type'] = 'file'
-                # Get owner information
-                stat_object = stat(i[1])
-                # owner = getpwuid(stat_object.st_uid).pw_name
-                file_size = str((float(stat_object.st_size) / 1024)) + " KiB"
-                curr_file['filename'] = i[0]
-                curr_file['filepath'] = i[1]
-                # curr_file['owner'] = owner
-                curr_file['size'] = file_size
-                curr_file['perm'] = filemode(stat_object[ST_MODE])
-                curr_file['perm_string'] = oct(stat_object[ST_MODE])[-3:]
-                curr_file['group'] = grp.getgrgid(stat_object.st_gid).gr_name
-                curr_file['is_accessible'] = os.access(i[1], os.W_OK)
-                dir_contents.append(curr_file)
+                    folder['type'] = 'file'
+                dir_contents.append(folder)
             Filewatcher.add_directory_to_watch(dirpath)
         self.write(json.dumps(dir_contents))
