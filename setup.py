@@ -19,6 +19,7 @@ setup(
         'simplepam',
         'tornado>=4',
         'terminado',
+        'watchdog',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
