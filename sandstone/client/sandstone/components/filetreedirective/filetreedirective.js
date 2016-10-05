@@ -18,11 +18,7 @@ angular.module('sandstone.filetreedirective', [])
         ],
         selectedNodes: []
       };
-      self.selectionDesc = {
-        noSelections: true,
-        multipleSelections: false,
-        dirSelected: false
-      };
+
       self.clipboard = [];
       // self.leafLevel = '';
 
@@ -52,6 +48,9 @@ angular.module('sandstone.filetreedirective', [])
             self.updateFiletree();
         });
         $rootScope.$on('filetree:deleted_file', function(e, data) {
+            self.updateFiletree();
+        });
+        $rootScope.$on('filetree:moved_file', function(e, data) {
             self.updateFiletree();
         });
       };
@@ -108,6 +107,10 @@ angular.module('sandstone.filetreedirective', [])
         dirpath = filepath.substring(0,filepath.lastIndexOf('/')+1);
         parentNode = self.getNodeFromPath(dirpath,self.treeData.filetreeContents);
         index = parentNode.children.indexOf(node);
+        if(index == -1) {
+            // Node is not present
+            return;
+        }
         parentNode.children.splice(index,1);
         self.describeSelection();
       };
@@ -128,14 +131,6 @@ angular.module('sandstone.filetreedirective', [])
         self.updateFiletree();
       };
 
-      self.isDisplayed = function (filepath) {
-        for (var i=0;i<self.treeData.filetreeContents.length;i++) {
-          if (self.treeData.filetreeContents[i].filepath === filepath) {
-            return true;
-          }
-        }
-        return false;
-      };
 
       self.populatetreeContents = function(data, status, headers, config, node) {
           var matchedNode;
@@ -244,10 +239,6 @@ angular.module('sandstone.filetreedirective', [])
             FilesystemService.getFiles(node, self.populatetreeContents);
           }
         }
-      };
-      self.showSelected = function(node, selected) {
-        console.log(node);
-        console.log(selected);
       };
     }
   ]};

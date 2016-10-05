@@ -1,208 +1,366 @@
-describe('Filetree directive', function(){
-  var $compile;
-  var scope;
-  var element;
-  var httpBackend;
-  var rootScope;
-  var filesystemservice;
-  var isolateScope;
-  var dirs = [{
-        "filepath": "/home/saurabh/dir1",
-        "filename": "dir1",
-        "group": "saurabh",
-        "is_accessible": true,
-        "perm": "-rw-rw-r--",
-        "perm_string": "664",
-        "size": "4.0 KiB",
-        "type": "dir",
-        "children": []
-      }, {
-        "filepath": "/home/saurabh/dir2",
-        "filename": "dir2",
-        "group": "root",
-        "is_accessible": false,
-        "perm": "-rw-r--r--",
-        "perm_string": "644",
-        "size": "4.0 KiB",
-        "type": "dir",
-        "children": []
-      },
-      {
-        "filepath": "/home/saurabh/dir3",
-        "filename": "dir3",
-        "group": "saurabh",
-        "is_accessible": true,
-        "perm": "-rw-rw-r--",
-        "perm_string": "664",
-        "size": "4.0 KiB",
-        "type": "dir",
-        "children": []
-      },
-      {
-        "filepath": "/home/saurabh/dir4",
-        "filename": "dir4",
-        "group": "saurabh",
-        "is_accessible": true,
-        "perm": "-rw-rw-r--",
-        "perm_string": "664",
-        "size": "4.0 KiB",
-        "type": "dir",
-        "children": []
-      }];
-
-    var files = [{
-          "filepath": "/home/saurabh/file1",
-          "filename": "file1",
+describe('sandstone.filetree', function() {
+    var $compile;
+    var scope;
+    var element;
+    var httpBackend;
+    var rootScope;
+    var filesystemservice;
+    var isolateScope;
+    var dirs = [{
+          "filepath": "/home/user/dir1",
+          "filename": "dir1",
           "group": "saurabh",
           "is_accessible": true,
           "perm": "-rw-rw-r--",
           "perm_string": "664",
           "size": "4.0 KiB",
-          "type": "dir"
+          "type": "dir",
+          "children": []
         }, {
-          "filepath": "/home/saurabh/file2",
-          "filename": "file2",
+          "filepath": "/home/user/dir2",
+          "filename": "dir2",
           "group": "root",
           "is_accessible": false,
           "perm": "-rw-r--r--",
           "perm_string": "644",
           "size": "4.0 KiB",
-          "type": "dir"
+          "type": "dir",
+          "children": []
         },
         {
-          "filepath": "/home/saurabh/dir4/file2",
-          "filename": "file2",
-          "group": "root",
-          "is_accessible": false,
-          "perm": "-rw-r--r--",
-          "perm_string": "644",
+          "filepath": "/home/user/dir3",
+          "filename": "dir3",
+          "group": "saurabh",
+          "is_accessible": true,
+          "perm": "-rw-rw-r--",
+          "perm_string": "664",
           "size": "4.0 KiB",
-          "type": "dir"
+          "type": "dir",
+          "children": []
+        },
+        {
+          "filepath": "/home/user/dir4",
+          "filename": "dir4",
+          "group": "saurabh",
+          "is_accessible": true,
+          "perm": "-rw-rw-r--",
+          "perm_string": "664",
+          "size": "4.0 KiB",
+          "type": "dir",
+          "children": []
         }];
 
-  beforeEach(module('sandstone'));
-  beforeEach(module('sandstone.editor'));
-  beforeEach(module('sandstone.filesystemservice'));
-  beforeEach(module('sandstone.templates'));
-  beforeEach(module('sandstone.filetreedirective'));
+      var rootDirs = [
+          {
+              'type': 'dir',
+              'filename': 'user',
+              'filepath': '/home/user'
+          },
+          {
+              'type': 'dir',
+              'filename': 'tmp',
+              'filepath': '/tmp'
+          }
+      ];
 
-  beforeEach(inject(function($rootScope, _$compile_, $httpBackend, FilesystemService){
-    $compile = _$compile_;
-    scope = $rootScope.$new();
-    rootScope = $rootScope;
-    httpBackend = $httpBackend;
-    filesystemservice = FilesystemService;
+      var files = [{
+            "filepath": "/home/user/dir1",
+            "filename": "dir1",
+            "group": "saurabh",
+            "is_accessible": true,
+            "perm": "-rw-rw-r--",
+            "perm_string": "664",
+            "size": "4.0 KiB",
+            "type": "dir"
+          }, {
+            "filepath": "/home/user/dir2",
+            "filename": "dir2",
+            "group": "root",
+            "is_accessible": false,
+            "perm": "-rw-r--r--",
+            "perm_string": "644",
+            "size": "4.0 KiB",
+            "type": "dir"
+          },
+          {
+            "filepath": "/home/user/file1",
+            "filename": "file1",
+            "group": "root",
+            "is_accessible": false,
+            "perm": "-rw-r--r--",
+            "perm_string": "644",
+            "size": "4.0 KiB",
+            "type": "file"
+          }];
 
-    httpBackend.whenGET('/filebrowser/filetree/a/dir').respond(function(){
-      return [200, dirs];
-    });
-    scope.$apply();
-    var el = angular.element('<div sandstone-filetree tree-data="ctrl.treeData" leaf-level="file" selection-desc="ctrl.sd"></div>');
-    element = $compile(el)(scope);
-    scope.$digest();
-    httpBackend.flush();
+      filesystemService = {
+          getFolders: function(node, callback) {
+              if(node.filepath == '') {
+                  callback(rootDirs);
+              } else {
+                  callback(dirs, null, null, null, node);
+              }
+          },
+          getFiles: function(node, callback) {
+              // return files;
+              if(node == '') {
+                  callback(rootDirs);
+              } else {
+                  callback(files, null, null, null, node);
+              }
+          },
+          createdNewDir: function() {
+              // Do something here
+          }
+      };
+      beforeEach(module('sandstone'));
+      beforeEach(module('sandstone.templates'));
+      beforeEach(module('sandstone.filetreedirective'));
 
-    // Get isolate scope
-    isolateScope = element.isolateScope();
-  }));
+      describe('controller', function(){
+        beforeEach(module(function($provide) {
+            $provide.value('FilesystemService', filesystemService);
+        }));
+        beforeEach(inject(function(_$rootScope_, _$compile_, _$httpBackend_){
+            $compile = _$compile_;
+            scope = _$rootScope_.$new();
+            rootScope = _$rootScope_;
+            httpBackend = _$httpBackend_;
 
-  describe('Filetreedirective controller tests', function(){
-    it('should be initialized properly', function(){
-      // Create spies
-      spyOn(isolateScope, 'updateFiletree');
-      spyOn(isolateScope, 'deletedFile');
-      spyOn(isolateScope, 'pastedFiles');
+            httpBackend.whenGET('/filebrowser/filetree/a/dir').respond(function(){
+                return [200, dirs];
+            });
+            scope.$apply();
+        }));
+        beforeEach(function() {
+              scope.sd = {
+                  noSelections: true,
+                  multipleSelections: false,
+                  dirSelection: false
+              };
+              var el = angular.element('<div sandstone-filetree tree-data="ctrl.treeData" leaf-level="file" selection-desc="sd"></div>');
+              element = $compile(el)(scope);
+              scope.$digest();
 
-      expect(isolateScope.leafLevel).toBe("file");
-      expect(isolateScope.selectionDesc.noSelections).toBeTruthy();
-      expect(isolateScope.selectionDesc.multipleSelections).not.toBeTruthy();
-      expect(isolateScope.selectionDesc.dirSelected).not.toBeTruthy();
-      expect(isolateScope.treeData.filetreeContents.length).toBe(4);
-      // Refresh
-      rootScope.$emit('refreshFiletree');
-      expect(isolateScope.updateFiletree).toHaveBeenCalled();
-      // Deleted File
-      rootScope.$emit('deletedFile', dirs[0]);
-      expect(isolateScope.deletedFile).toHaveBeenCalled();
-      // Pasted File
-      rootScope.$emit('pastedFiles', dirs[0].filepath);
-      expect(isolateScope.pastedFiles).toHaveBeenCalled();
-    });
+              // Get isolate scope
+              isolateScope = element.isolateScope();
+          });
+        it('initializeFiletree', function(){
+            // Create spies
+            spyOn(isolateScope, 'updateFiletree');
+            spyOn(isolateScope, 'deletedFile');
+            spyOn(isolateScope, 'pastedFiles');
 
-    it('should be able to get files for a folder', function(){
-      spyOn(filesystemservice, 'getFiles');
-      isolateScope.getDirContents(dirs[0], true);
-      expect(filesystemservice.getFiles).toHaveBeenCalled();
-    });
+            expect(isolateScope.leafLevel).toBe("file");
+            expect(isolateScope.selectionDesc.noSelections).toBe(true);
+            expect(isolateScope.selectionDesc.multipleSelections).not.toBe(true);
+            expect(isolateScope.selectionDesc.dirSelected).not.toBe(true);
+            expect(isolateScope.treeData.filetreeContents.length).toBe(2);
+            // Refresh
+            rootScope.$emit('refreshFiletree');
+            expect(isolateScope.updateFiletree).toHaveBeenCalled();
+            // Deleted File
+            rootScope.$emit('deletedFile', dirs[0]);
+            expect(isolateScope.deletedFile).toHaveBeenCalled();
+            // Pasted File
+            rootScope.$emit('pastedFiles', dirs[0].filepath);
+            expect(isolateScope.pastedFiles).toHaveBeenCalled();
 
-    it('should return the node given a filepath', function() {
-      var node = isolateScope.getNodeFromPath('/home/saurabh/dir1', isolateScope.treeData.filetreeContents);
-      // Expect node parameters to match
-      expect(node.filepath).toBe('/home/saurabh/dir1');
-      expect(node.filename).toBe('dir1');
-      expect(node.group).toBe('saurabh');
-      expect(node.is_accessible).toBeTruthy();
-      expect(node.perm).toBe('-rw-rw-r--');
-      expect(node.perm_string).toBe('664');
-      expect(node.size).toBe('4.0 KiB');
-    });
+            // leafLevel=dir
+            isolateScope.leafLevel = 'dir';
+            isolateScope.initializeFiletree();
+            expect(isolateScope.treeData.filetreeContents.length).toBe(2);
+        });
 
-    it('should return null in case node doesnt exist', function(){
-      var node = isolateScope.getNodeFromPath('/home/saurabh/dir111', isolateScope.treeData.filetreeContents);
-      expect(node).not.toBeDefined();
-    });
+        it('getDirContents', function(){
+            isolateScope.describeSelection(isolateScope.treeData.filetreeContents[0], true);
+            isolateScope.getDirContents(isolateScope.treeData.filetreeContents[0], true);
+            // First directory should have 3 files
+            expect(isolateScope.treeData.filetreeContents[0].children.length).toBe(3);
 
-    it('should return file paths for a given directory', function(){
-      httpBackend.expectGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){
-        return [200, files];
+            // leafLevel=dir
+            isolateScope.leafLevel = 'dir';
+            isolateScope.getDirContents(isolateScope.treeData.filetreeContents[0], true);
+            // First directory should have 4 files
+            expect(isolateScope.treeData.filetreeContents[0].children.length).toBe(4);
+        });
+
+        it('getNodeFromPath', function(){
+            // Get contents for first node
+            isolateScope.getDirContents(isolateScope.treeData.filetreeContents[0], true);
+            var node = isolateScope.getNodeFromPath('/home/saurabh/dir111', isolateScope.treeData.filetreeContents);
+            expect(node).not.toBeDefined();
+
+            var node = isolateScope.getNodeFromPath('/home/user/dir1', isolateScope.treeData.filetreeContents);
+            // Expect node parameters to match
+            expect(node.filepath).toBe('/home/user/dir1');
+            expect(node.filename).toBe('dir1');
+            expect(node.group).toBe('saurabh');
+            expect(node.is_accessible).toBe(true);
+            expect(node.perm).toBe('-rw-rw-r--');
+            expect(node.perm_string).toBe('664');
+            expect(node.size).toBe('4.0 KiB');
+        });
+
+        it('getFilepathsForDir', function(){
+            httpBackend.expectGET(/\/filebrowser\/filetree\/a\/dir\?dirpath=.*/).respond(function(){
+            return [200, files];
+            });
+            isolateScope.getDirContents(isolateScope.treeData.filetreeContents[0], true);
+            //   httpBackend.flush();
+            var node = isolateScope.getNodeFromPath(isolateScope.treeData.filetreeContents[0].filepath, isolateScope.treeData.filetreeContents);
+            expect(node.children.length).toBe(3);
+        });
+
+        it('removeNodeFromFiletree', function(){
+            // Get contents of first node
+            isolateScope.getDirContents(isolateScope.treeData.filetreeContents[0], true);
+            // Remove the second node
+            var node = isolateScope.treeData.filetreeContents[0].children[1];
+            isolateScope.removeNodeFromFiletree(node);
+            expect(isolateScope.treeData.filetreeContents[0].children.length).toBe(2);
+
+            // Try removing same node again
+            isolateScope.removeNodeFromFiletree(node);
+            expect(isolateScope.treeData.filetreeContents[0].children.length).toBe(2);
+        });
+
+        it('isExpanded', function(){
+            isolateScope.treeData.expandedNodes = [dirs[0]];
+            expect(isolateScope.isExpanded(dirs[0].filepath)).toBe(true);
+            expect(isolateScope.isExpanded(dirs[1].filepath)).not.toBe(true);
+        });
+
+        it('describeSelection', function(){
+            var node = isolateScope.treeData.filetreeContents[0];
+            isolateScope.describeSelection(node, true);
+            expect(isolateScope.treeData.selectedNodes.length).toBe(1);
+            isolateScope.describeSelection(node, false);
+            expect(isolateScope.treeData.selectedNodes.length).toBe(0);
+        });
+
+        it('$rootScope.$on: filtree:created_file', function() {
+            spyOn(isolateScope, 'updateFiletree');
+            rootScope.$emit('filetree:created_file', {
+                filepath: '/tmp/some-file.txt'
+            });
+            expect(isolateScope.updateFiletree).toHaveBeenCalled();
+        });
+        it('$rootScope.$on: filtree:deleted_file', function() {
+            spyOn(isolateScope, 'updateFiletree');
+            rootScope.$emit('filetree:deleted_file', {
+                filepath: '/tmp/some-file.txt'
+            });
+            expect(isolateScope.updateFiletree).toHaveBeenCalled();
+        });
+        it('$rootScope.$on: filetree:moved_file', function() {
+            spyOn(isolateScope, 'updateFiletree');
+            rootScope.$emit('filetree:moved_file', {
+                src_filepath: '/home/user/somefile',
+                dest_filepath: '/home/user/some_new_file'
+            });
+            expect(isolateScope.updateFiletree).toHaveBeenCalled();
+        });
       });
-      isolateScope.getDirContents(isolateScope.treeData.filetreeContents[0], true);
-      httpBackend.flush();
-      var node = isolateScope.getNodeFromPath(isolateScope.treeData.filetreeContents[0].filepath, isolateScope.treeData.filetreeContents);
-      expect(node.children.length).toBe(3);
-    });
+      describe('directive', function() {
+          beforeEach(module('sandstone.filesystemservice'));
+          beforeEach(function() {
+              scope.sd = {
+                  noSelections: true,
+                  multipleSelections: true,
+                  dirSelection: false
+              };
+              var el = angular.element('<div sandstone-filetree tree-data="ctrl.treeData" leaf-level="dir" selection-desc="sd"></div>');
+              element = $compile(el)(scope);
+              scope.$digest();
 
-    it('should remove a node from the filetree', function(){
-      var node = isolateScope.treeData.filetreeContents[3];
-      node.children[0] = files[2];
-      var childNode = node.children[0];
-      isolateScope.treeData.selectedNodes = [childNode];
-      isolateScope.removeNodeFromFiletree(childNode);
-      expect(isolateScope.treeData.filetreeContents[3].children.length).toBe(0);
-      expect(isolateScope.treeData.selectedNodes.length).toBe(0);
-    });
+              // Get isolate scope
+              isolateScope = element.isolateScope();
+          });
+          var getExpandedNodes = function(tpl) {
+              var matches = tpl.match(/fa-caret-down/g);
+              if(!matches) {
+                  return [];
+              }
+              return matches;
+          };
 
-    it('should return true if given filepath is expanded', function(){
-      isolateScope.treeData.expandedNodes = [dirs[0]];
-      expect(isolateScope.isExpanded(dirs[0].filepath)).toBeTruthy();
-    });
+          var getContractedNodes = function(tpl) {
+              var matches = tpl.match(/fa-caret-right/g);
+              if(!matches) {
+                  return [];
+              }
+              return matches;
+          };
 
-    it('should return false if given filepath is not expanded', function(){
-      expect(isolateScope.isExpanded(dirs[0].filepath)).not.toBeTruthy();
-    });
+          var getSelectedNodes = function(tpl) {
+              var matches = tpl.match(/tree-selected/g);
+              if(!matches) {
+                  return [];
+              }
+              return matches;
+          };
 
-    it('should describe the selection', function(){
-      var node = isolateScope.treeData.filetreeContents[0];
-      isolateScope.describeSelection(node, true);
-      expect(isolateScope.treeData.selectedNodes.length).toBe(1);
-      isolateScope.describeSelection(node, false);
-      expect(isolateScope.treeData.selectedNodes.length).toBe(0);
-    });
+          var getTemplate = function() {
+              scope.$digest();
+              return element.html();
+          };
 
-    it('should update the filetree on getting a filtree:created_file event', function() {
-        spyOn(isolateScope, 'updateFiletree');
-        rootScope.$emit('filetree:created_file', {
-            filepath: '/tmp/some-file.txt'
-        });
-        expect(isolateScope.updateFiletree).toHaveBeenCalled();
-    });
-    it('should update the filetree on getting a filtree:deleted_file event', function() {
-        spyOn(isolateScope, 'updateFiletree');
-        rootScope.$emit('filetree:deleted_file', {
-            filepath: '/tmp/some-file.txt'
-        });
-        expect(isolateScope.updateFiletree).toHaveBeenCalled();
-    });
-  });
+          it('should show correctly expanded nodes and leaf nodes', function() {
+              // Expand the first node
+              isolateScope.treeData.expandedNodes = [isolateScope.treeData.filetreeContents[0]];
+              isolateScope.getDirContents(isolateScope.treeData.filetreeContents[0], true);
 
+              var template = getTemplate();
+              var expandedNodes = getExpandedNodes(template);
+              var contractedNodes = getContractedNodes(template);
+              expect(expandedNodes.length).toBe(1);
+              expect(contractedNodes.length).toBe(5);
+          });
+          it('should have a single selected node', function() {
+              // Select the first node
+              isolateScope.describeSelection(isolateScope.treeData.filetreeContents[0], true);
+              var template = getTemplate();
+              var selectedNodes = getSelectedNodes(template);
+              expect(selectedNodes.length).toBe(1);
+          });
+          it('initializeFiletree', function() {
+              scope.sd = {
+                  noSelections: true,
+                  multipleSelections: true,
+                  dirSelection: false
+              };
+              expect(isolateScope.selectionDesc.multipleSelections).toBe(true);
+              expect(isolateScope.selectionDesc.noSelections).toBe(true);
+              expect(isolateScope.selectionDesc.dirSelection).not.toBe(true);
+          });
+          it('should show correctly expanded nodes and leaf nodes', function() {
+              // Expand the first node
+              isolateScope.treeData.expandedNodes = [isolateScope.treeData.filetreeContents[0]];
+              isolateScope.getDirContents(isolateScope.treeData.filetreeContents[0], true);
+
+              var template = getTemplate();
+              var expandedNodes = getExpandedNodes(template);
+              var contractedNodes = getContractedNodes(template);
+              expect(expandedNodes.length).toBe(1);
+              expect(contractedNodes.length).toBe(5);
+          });
+          it('should multiple selected nodes', function() {
+              scope.sd = {
+                  noSelections: true,
+                  multipleSelections: true,
+                  dirSelection: false
+              };
+              // Select the first node
+              isolateScope.describeSelection(isolateScope.treeData.filetreeContents[0], true);
+              // Select the second node
+              isolateScope.describeSelection(isolateScope.treeData.filetreeContents[1], true);
+
+              isolateScope.treeData.selectedNodes = [isolateScope.treeData.filetreeContents[0], isolateScope.treeData.filetreeContents[1]]
+
+              var template = getTemplate();
+              var selectedNodes = getSelectedNodes(template);
+              expect(selectedNodes.length).toBe(2);
+          });
+    });
 });

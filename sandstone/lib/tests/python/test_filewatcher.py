@@ -78,3 +78,26 @@ class FilewatcherTestCase(unittest.TestCase):
         broadcast_call_msg = mock_broadcast.call_args[0][0]
         self.assertEqual(key, broadcast_call_msg.key)
         self.assertEqual(data, broadcast_call_msg.data)
+
+    @mock.patch('sandstone.filewatcher.BroadcastManager.broadcast')
+    def test_file_moved_event(self, mock_broadcast):
+        # create a temporary file
+        filepath = os.path.join(self.test_dir, 'tmp.txt')
+        fd = open(filepath, 'w')
+        fd.close()
+        # watch the directory
+        Filewatcher.add_directory_to_watch(self.test_dir)
+        new_path = os.path.join(self.test_dir, 'new_temp.txt');
+        # move the file
+        shutil.move(filepath, new_path)
+        time.sleep(1)
+
+        key = 'filetree:moved_file'
+        data = {
+            'src_filepath': filepath,
+            'dest_filepath': new_path
+        }
+        self.assertTrue(mock_broadcast.called)
+        broadcast_call_msg = mock_broadcast.call_args[0][0]
+        self.assertEqual(key, broadcast_call_msg.key)
+        self.assertEqual(data, broadcast_call_msg.data)
