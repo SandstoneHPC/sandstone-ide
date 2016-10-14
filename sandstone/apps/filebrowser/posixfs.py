@@ -130,6 +130,8 @@ class PosixFS():
                 continue
             if parts[-1] != '.' and parts[-1] != '..':
                 filepath = os.path.join(dirpath, parts[-1])
+                if os.path.isdir(filepath):
+                    filepath = os.path.join(filepath, '')
 
                 if os.path.isdir(filepath):
                     size = PosixFS.get_size(filepath)
@@ -144,7 +146,8 @@ class PosixFS():
                     'perm_string': PosixFS.get_permissions(parts[1]),
                     'owner': parts[3],
                     'group': parts[4],
-                    'filepath': os.path.join(filepath, ''),
+                    'filepath': filepath,
+                    'is_accessible': 'true' if os.access(filepath, os.W_OK) else 'false',
                     'filename': parts[-1]
                     })
         return dir_contents
