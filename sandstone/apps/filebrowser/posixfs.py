@@ -144,7 +144,7 @@ class PosixFS():
                     'perm_string': PosixFS.get_permissions(parts[1]),
                     'owner': parts[3],
                     'group': parts[4],
-                    'filepath': filepath,
+                    'filepath': os.path.join(filepath, ''),
                     'filename': parts[-1]
                     })
         return dir_contents
