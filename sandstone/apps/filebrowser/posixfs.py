@@ -156,6 +156,9 @@ class PosixFS():
     def get_dir_folders(dirpath):
         contents = []
         for i in os.listdir(dirpath):
+            # drop hidden
+            if i[0] == '.':
+                continue
             filepath = os.path.join(dirpath,i)
             is_dir = os.path.isdir(filepath)
             if is_dir:
