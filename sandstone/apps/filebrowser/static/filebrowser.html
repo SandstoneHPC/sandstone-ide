@@ -8,7 +8,9 @@
       <p class="volume-info" ng-show="ctrl.showVolumeInfo()">{{ ctrl.volumeUsed + ' GB' }} of {{ ctrl.volumeSize + ' GB' }} used</p>
     </div>
     <!-- <div ui-view="filetree"></div> -->
-    <div sandstone-filetree tree-data="ctrl.treeData" leaf-level="dir" selection-desc="ctrl.sd"></div>
+    <div class="sidebar-filetree">
+      <div sandstone-filetree tree-data="ctrl.treeData" leaf-level="dir" selection-desc="ctrl.sd"></div>
+    </div>
   </div>
   <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main fill" style="padding: 10px;">
     <div class="row">
@@ -172,7 +174,7 @@
             </div>
           </div>
         </div>
-          <button type="button" class="btn btn-primary" ng-click="ctrl.openFileInEditor()">Open in Editor</button>  
+          <button type="button" class="btn btn-primary" ng-click="ctrl.openFileInEditor()">Open in Editor</button>
       </div>
     </div>
   </div>

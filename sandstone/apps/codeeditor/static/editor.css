@@ -251,7 +251,3 @@
 .sidebar > div[ui-view] {
   height: 100%;
 }
-
-#saveas-ft-container {
-  height: 60vh;
-}
