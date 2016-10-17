@@ -118,7 +118,7 @@ class PosixFS():
 
         dir_contents = []
 
-        p = subprocess.Popen(['ls', '-lsah', dirpath], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(['ls', '-lsh', '--group-directories-first', dirpath], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         out, err = p.communicate()
 
