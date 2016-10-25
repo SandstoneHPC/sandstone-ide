@@ -20,6 +20,7 @@ setup(
         'tornado>=4',
         'terminado',
         'watchdog',
+        'PyDispatcher'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
