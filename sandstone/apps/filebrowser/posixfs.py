@@ -133,12 +133,12 @@ class PosixFS():
                 if os.path.isdir(filepath):
                     filepath = os.path.join(filepath, '')
 
-                if os.path.isdir(filepath):
-                    size = PosixFS.get_size(filepath)
-                else:
-                    size = parts[5]
-                    if not size[-1].isalpha():
-                        size = size + ' bytes'
+                # if os.path.isdir(filepath):
+                #     size = PosixFS.get_size(filepath)
+                # else:
+                size = parts[5]
+                if not size[-1].isalpha():
+                    size = size + ' bytes'
 
                 dir_contents.append({
                     'size': size,

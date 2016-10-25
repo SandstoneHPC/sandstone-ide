@@ -39,7 +39,7 @@ class FilewatcherTestCase(unittest.TestCase):
         Filewatcher.remove_directory_to_watch(self.test_dir)
         self.assertEqual(len(Filewatcher._watches), 0)
 
-    @mock.patch('sandstone.filewatcher.BroadcastManager.broadcast')
+    @mock.patch('sandstone.lib.broadcast.manager.BroadcastManager.broadcast')
     def test_file_created_event(self, mock_broadcast):
         Filewatcher.add_directory_to_watch(self.test_dir)
         # create temp file
@@ -58,7 +58,7 @@ class FilewatcherTestCase(unittest.TestCase):
         self.assertEqual(key, broadcast_call_msg.key)
         self.assertEqual(data, broadcast_call_msg.data)
 
-    @mock.patch('sandstone.filewatcher.BroadcastManager.broadcast')
+    @mock.patch('sandstone.lib.broadcast.manager.BroadcastManager.broadcast')
     def test_file_deleted_event(self, mock_broadcast):
         # create temp file
         filepath = os.path.join(self.test_dir, 'tmp.txt')
@@ -79,7 +79,7 @@ class FilewatcherTestCase(unittest.TestCase):
         self.assertEqual(key, broadcast_call_msg.key)
         self.assertEqual(data, broadcast_call_msg.data)
 
-    @mock.patch('sandstone.filewatcher.BroadcastManager.broadcast')
+    @mock.patch('sandstone.lib.broadcast.manager.BroadcastManager.broadcast')
     def test_file_moved_event(self, mock_broadcast):
         # create a temporary file
         filepath = os.path.join(self.test_dir, 'tmp.txt')
