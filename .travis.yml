@@ -6,9 +6,6 @@ python:
     - "2.7"
 # command to install dependencies
 
-notifications:
-  slack: XuJOFyi7wxFivfqbHS6KDMSw
-
 before_install:
     - export CHROME_BIN=chromium-browser
     - "export DISPLAY=:99.0"
@@ -25,10 +22,14 @@ install:
 
 script:
     - export PROJECT_ROOT=$(pwd)
+    - export PATH_FILE=/home/travis/virtualenv/python2.7.10/lib/python2.7/site-packages/sandstone.pth
+    - echo $PROJECT_ROOT > $PATH_FILE
+    - pip install -r requirements.txt
     - cd sandstone/client
     - npm install
-    - cd $PROJECT_ROOT
-    - python setup.py install
-    - cd /home/travis/virtualenv/python2.7.10/lib/python2.7/site-packages/sandstone-*-py2.7.egg/sandstone/scripts
+    - cd $PROJECT_ROOT/sandstone/scripts
     - python run_server_tests.py
     - python run_client_tests.py
+    - cd $PROJECT_ROOT
+    - rm $PATH_FILE
+    - python setup.py install
