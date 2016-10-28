@@ -21,14 +21,11 @@ install:
 # command to run tests
 
 script:
-    - python setup.py install
-    - pip install -r requirements.txt
+    - export PROJECT_ROOT=$(pwd)
     - cd sandstone/client
     - npm install
-    - cd /home/travis/virtualenv/python2.7.10/lib/python2.7/site-packages
-    - cd sandstone-*-py2.7.egg/
-    - rm -rf sandstone/
-    - ln -s ~/build/saurabhsood91/sandstone-ide/sandstone/
-    - cd ~/build/saurabhsood91/sandstone-ide/sandstone/scripts
+    - cd $PROJECT_ROOT
+    - python setup.py install
+    - cd sandstone/scripts
     - python run_server_tests.py
     - python run_client_tests.py
