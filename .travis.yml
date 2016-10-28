@@ -7,7 +7,7 @@ python:
 # command to install dependencies
 
 notifications:
-  slack: ZZPndKgRwyaBuA1rWFm/nRxGl1M6hkXGns8QK9lzB6YkV7AVR5tjFAU/02K0JYDiZrre6vWTopm8/xMpfeMqKSEy+IF/fSk9DsDEtzinS3ZtIChaG2gioqacKfQJo/bgRfo+cjJK3SAQqBuvi+Khr5COY7VhnnCYeklbYY5hqTg=
+  slack: XuJOFyi7wxFivfqbHS6KDMSw
 
 before_install:
     - export CHROME_BIN=chromium-browser
@@ -29,6 +29,6 @@ script:
     - npm install
     - cd $PROJECT_ROOT
     - python setup.py install
-    - cd sandstone/scripts
+    - cd /home/travis/virtualenv/python2.7.10/lib/python2.7/site-packages/sandstone-*-py2.7.egg/sandstone/scripts
     - python run_server_tests.py
     - python run_client_tests.py
