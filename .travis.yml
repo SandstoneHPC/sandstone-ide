@@ -6,6 +6,9 @@ python:
     - "2.7"
 # command to install dependencies
 
+notifications:
+  slack: ZZPndKgRwyaBuA1rWFm/nRxGl1M6hkXGns8QK9lzB6YkV7AVR5tjFAU/02K0JYDiZrre6vWTopm8/xMpfeMqKSEy+IF/fSk9DsDEtzinS3ZtIChaG2gioqacKfQJo/bgRfo+cjJK3SAQqBuvi+Khr5COY7VhnnCYeklbYY5hqTg=
+
 before_install:
     - export CHROME_BIN=chromium-browser
     - "export DISPLAY=:99.0"
