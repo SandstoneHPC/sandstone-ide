@@ -91,6 +91,8 @@ with open(os.path.join(core_path,'sandstone.test.js'), "w+") as test_file:
 
 os.chdir(test_path)
 if (len(sys.argv) > 1) and (sys.argv[1] == '--debug'):
-    subprocess.call(['npm','run','test'])
+    ret = subprocess.call(['npm','run','test'])
 else:
-    subprocess.call(['npm','run','test-single-run'])
+    ret = subprocess.call(['npm','run','test-single-run'])
+
+sys.exit(ret)

@@ -1,6 +1,8 @@
 import unittest
 import os
 from sandstone import settings
+import sys
+
 
 
 
@@ -16,4 +18,6 @@ for app in settings.INSTALLED_APPS:
         print 'No tests found for {}'.format(app)
 
 runner = unittest.TextTestRunner()
-runner.run(sandstone_suite)
+# runner.run(sandstone_suite)
+ret = not runner.run(sandstone_suite).wasSuccessful()
+sys.exit(ret)
