@@ -76,15 +76,17 @@ class FileTreeHandlerTestCase(TestHandlerBase):
                 follow_redirects=False)
             res = json.loads(response.body)
             self.assertEqual(response.code, 200)
+            u_exec_user = unicode(EXEC_USER)
+            u_subdir = unicode(os.path.join(subdir,''))
             expd = [
                 {
-                    u'group': EXEC_USER,
-                    u'filepath': subdir,
+                    u'group': u_exec_user,
+                    u'filepath': u_subdir,
                     u'is_accessible': True,
                     u'perm_string': u'775',
                     u'perm': u'drwxrwxr-x',
                     u'filename': u'subdir',
-                    u'owner': EXEC_USER,
+                    u'owner': u_exec_user,
                     u'type': u'dir',
                     u'size': u'4.0K'
                 },

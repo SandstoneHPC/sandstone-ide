@@ -212,7 +212,7 @@ class PosixFSTestCase(unittest.TestCase):
         self.assertFalse(os.path.exists(rel_fp))
 
     def test_get_dir_contents(self):
-        dp = os.path.join(self.test_dir,'testDir')
+        dp = os.path.join(self.test_dir,'testDir','')
         os.mkdir(dp)
         sub_fp = os.path.join(dp,'testfile.txt')
         open(sub_fp,'w').close()
@@ -228,6 +228,7 @@ class PosixFSTestCase(unittest.TestCase):
                 'perm': 'drwxrwxr-x',
                 'perm_string': '775',
                 'owner': user,
+                'is_accessible': 'true',
                 'group': user,
                 'filepath': dp,
                 'filename': 'testDir'
@@ -237,6 +238,7 @@ class PosixFSTestCase(unittest.TestCase):
                 'perm': '-rw-rw-r--',
                 'perm_string': '664',
                 'owner': user,
+                'is_accessible': 'true',
                 'group': user,
                 'filepath': fp,
                 'filename': 'testfile.txt'
