@@ -4,7 +4,9 @@ dist: trusty
 language: python
 python:
     - "2.7"
-# command to install dependencies
+
+notifications:
+    slack: rmacc:XuJOFyi7wxFivfqbHS6KDMSw
 
 before_install:
     - export CHROME_BIN=chromium-browser
