@@ -7,7 +7,7 @@
       tooltip-trigger="mouseenter"
       tooltip-placement="bottom"
       ng-disabled="ctrl.sd.noSelections||ctrl.sd.dirSelected"
-      ng-click="ctrl.openFilesInEditor()">
+      ng-click="ctrl.openFilesInEditor()" data-telemetry-id="editor-filetree-controls-open-in-editor">
       <span class="fa fa-pencil"></span>
     </button>
   </div>
@@ -19,7 +19,7 @@
       tooltip-trigger="mouseenter"
       tooltip-placement="bottom"
       ng-disabled="ctrl.sd.noSelections||ctrl.sd.multipleSelections"
-      ng-click="ctrl.createDuplicate()">
+      ng-click="ctrl.createDuplicate()" data-telemetry-id="editor-filetree-controls-create-duplicate">
       <span class="fa fa-files-o"></span>
     </button>
   </div>
@@ -31,7 +31,7 @@
       tooltip-trigger="mouseenter"
       tooltip-placement="bottom"
       ng-disabled="ctrl.sd.noSelections"
-      ng-click="ctrl.deleteFiles()">
+      ng-click="ctrl.deleteFiles()" data-telemetry-id="editor-filetree-controls-delete-files">
       <span class="fa fa-trash-o"></span>
     </button>
   </div>
@@ -48,7 +48,7 @@
       tooltip-trigger="mouseenter"
       tooltip-placement="bottom"
       ng-disabled="ctrl.sd.noSelections"
-      dropdown-toggle>
+      dropdown-toggle data-telemetry-id="editor-filetree-controls-more-actions">
       <span class="fa fa-caret-down"></span>
     </button>
     <ul class="dropdown-menu filetree-dropdown" role="menu">
@@ -56,7 +56,7 @@
         <a
           class="btn fc-dropdown-link"
           ng-disabled="ctrl.sd.noSelections||(ctrl.sd.multipleSelections||!ctrl.sd.dirSelected)"
-          ng-click="ctrl.createNewFile()">
+          ng-click="ctrl.createNewFile()" data-telemetry-id="editor-filetree-controls-new-file">
           New File
         </a>
       </li>
@@ -64,7 +64,7 @@
         <a
           class="btn fc-dropdown-link"
           ng-disabled="ctrl.sd.noSelections||(ctrl.sd.multipleSelections||!ctrl.sd.dirSelected)"
-          ng-click="ctrl.createNewDir()">
+          ng-click="ctrl.createNewDir()" data-telemetry-id="editor-filetree-controls-new-dir">
           New Folder
         </a>
       </li>
@@ -72,7 +72,7 @@
         <a
           class="btn fc-dropdown-link"
           ng-disabled="ctrl.sd.noSelections"
-          ng-click="ctrl.copyFiles()">
+          ng-click="ctrl.copyFiles()" data-telemetry-id="editor-filetree-controls-copy-files">
           Copy
         </a>
       </li>
@@ -80,7 +80,7 @@
         <a
           class="btn fc-dropdown-link"
           ng-disabled="ctrl.clipboardEmpty() || ctrl.sd.noSelections || (ctrl.sd.multipleSelections || !ctrl.sd.dirSelected)"
-          ng-click="ctrl.pasteFiles()">
+          ng-click="ctrl.pasteFiles()" data-telemetry-id="editor-filetree-controls-paste-files">
           Paste
         </a>
       </li>
@@ -88,7 +88,7 @@
         <a
           class="btn fc-dropdown-link"
           ng-disabled="ctrl.sd.noSelections||ctrl.sd.multipleSelections"
-          ng-click="ctrl.renameFile()">
+          ng-click="ctrl.renameFile()" data-telemetry-id="editor-filetree-controls-rename-file">
           Rename
         </a>
       </li>
