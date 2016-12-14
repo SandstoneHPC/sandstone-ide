@@ -5,6 +5,6 @@
   <span class="modal-body-message">Are you sure you want to delete {{ctrl.selectedFile.filename}}?</span>
 </div>
 <div class="modal-footer">
-  <button class="btn btn-success" ng-click="ctrl.remove()">Remove Files</button>
-  <button class="btn btn-danger" ng-click="ctrl.cancel()">Cancel</button>
+  <button data-telemetry-id="fb-delete-modal-remove" class="btn btn-success" ng-click="ctrl.remove()">Remove Files</button>
+  <button data-telemetry-id="fb-delete-modal-cancel" class="btn btn-danger" ng-click="ctrl.cancel()">Cancel</button>
 </div>
