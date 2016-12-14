@@ -24,7 +24,7 @@ install:
 
 script:
     - export PROJECT_ROOT=$(pwd)
-    - export PATH_FILE=/home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages/sandstone.pth
+    - export PATH_FILE=/home/travis/virtualenv/python2.7*/lib/python2.7/site-packages/sandstone.pth
     - echo $PROJECT_ROOT > $PATH_FILE
     - pip install -r requirements.txt
     - cd sandstone/client
