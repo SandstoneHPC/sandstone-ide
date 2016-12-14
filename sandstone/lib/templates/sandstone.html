@@ -26,46 +26,6 @@
     <link rel="stylesheet" type="text/css" href="/static/core/filetree.css">
     <link rel="stylesheet" type="text/css" href="/static/core/components/filetreedirective/templates/filetree.css" />
 
-    <script type="text/javascript" src="https://rawgit.com/ResearchComputing/web-telemetry/master/scripts/telemetry.js"></script>
-
-    <script type="text/javascript">
-        function easingTimeout(delay, fn) {
-          var id,
-          invoker = function() {
-            fn();
-            delay *= 2
-            if (delay) {
-              id = setTimeout(invoker, delay);
-            } else {
-              id = null;
-            }
-          }
-
-          // start it off
-          id = setTimeout(invoker, delay);
-
-          return {
-              clear: function() {
-                  console.log('clearing ' + id);
-                  if (id) {
-                      clearTimeout(id);
-                      id = null;
-                  }
-              }
-            }
-        }
-
-        timeout = easingTimeout(500, function() {
-            if(typeof telemetry !== 'undefined') {
-                telemetry.bootstrapTelemetry({
-                     backendURL: 'http://127.0.0.1:8000/telemetry/insert/',
-                     sessionURL: 'http://127.0.0.1:8000/telemetry/checksession/'
-                 });
-                 timeout.clear();
-            }
-        });
-    </script>
-
   </head>
 
   <body ng-controller="PageCtrl as pageCtrl">
@@ -129,5 +89,46 @@
         <script src="/static/{{module_spec['module_name']}}/{{mod_dep}}"></script>
       {% end %}
     {% end %}
+
+    <script type="text/javascript" src="https://rawgit.com/ResearchComputing/web-telemetry/master/scripts/telemetry.js"></script>
+
+    <script type="text/javascript">
+        function easingTimeout(delay, fn) {
+          var id,
+          invoker = function() {
+            fn();
+            delay *= 2
+            if (delay) {
+              id = setTimeout(invoker, delay);
+            } else {
+              id = null;
+            }
+          }
+
+          // start it off
+          id = setTimeout(invoker, delay);
+
+          return {
+              clear: function() {
+                  console.log('clearing ' + id);
+                  if (id) {
+                      clearTimeout(id);
+                      id = null;
+                  }
+              }
+            }
+        }
+
+        timeout = easingTimeout(500, function() {
+            if(typeof telemetry !== 'undefined') {
+                telemetry.bootstrapTelemetry({
+                     backendURL: 'http://127.0.0.1:8000/telemetry/insert/',
+                     sessionURL: 'http://127.0.0.1:8000/telemetry/checksession/'
+                 });
+                 timeout.clear();
+            }
+        });
+    </script>
+
   </body>
 </html>
