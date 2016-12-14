@@ -12,7 +12,7 @@
             type="text"
             ng-required="true"
             ng-model="newFile.filename"
-            ng-change="updateSaveName()">
+            ng-change="updateSaveName()" data-telemetry-id="editor-saveas-modal-save-name">
         </div>
       </div>
       <div class="form-group form-group-sm">
@@ -36,8 +36,8 @@
   <button
     class="btn btn-success"
     ng-click="saveAs()"
-    ng-disabled="invalidFilepath||form.$invalid">
+    ng-disabled="invalidFilepath||form.$invalid" data-telemetry-id="editor-saveas-modal-save">
     Save File As
   </button>
-  <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+  <button class="btn btn-warning" data-telemetry-id="editor-saveas-modal-cancel" ng-click="cancel()">Cancel</button>
 </div>
