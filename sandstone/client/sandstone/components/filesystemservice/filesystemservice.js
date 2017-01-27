@@ -54,9 +54,7 @@ angular.module('sandstone.filesystemservice', [])
     createNewFile: function(newFilePath, callback){
       $http({
         url: '/filebrowser/localfiles'+newFilePath,
-        method: 'POST',
-        // headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
-        params: {_xsrf:getCookie('_xsrf')}
+        method: 'POST'
         })
         .success(function (data, status, headers, config) {
           callback(data, status, headers, config);
@@ -68,7 +66,6 @@ angular.module('sandstone.filesystemservice', [])
         url: '/filebrowser/a/fileutil',
         method: 'POST',
         params: {
-          _xsrf:getCookie('_xsrf'),
           operation: 'RENAME',
           filepath: node.filepath,
           newFileName: newFilename
@@ -84,7 +81,6 @@ angular.module('sandstone.filesystemservice', [])
         url: '/filebrowser/a/fileutil',
         method: 'POST',
         params: {
-          _xsrf:getCookie('_xsrf'),
           operation: 'COPY',
           origpath: originalPath,
           newpath: newPath
@@ -98,10 +94,7 @@ angular.module('sandstone.filesystemservice', [])
     deleteFile: function(filepath, callback) {
       $http({
         url: '/filebrowser/localfiles'+filepath,
-        method: 'DELETE',
-        params: {
-          _xsrf:getCookie('_xsrf')
-          }
+        method: 'DELETE'
         })
         .success(function(data, status, headers, config){
           callback(data, status, headers, config);
@@ -128,7 +121,6 @@ angular.module('sandstone.filesystemservice', [])
         url: '/filebrowser/a/fileutil',
         method: 'POST',
         params: {
-          _xsrf:getCookie('_xsrf'),
           operation: 'COPY',
           origpath: selectedFile,
           newpath: newFilePath
@@ -159,7 +151,6 @@ angular.module('sandstone.filesystemservice', [])
         method: 'POST',
         // headers : {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
         params: {
-          _xsrf:getCookie('_xsrf'),
           isDir: true
         }
         })
@@ -173,7 +164,6 @@ angular.module('sandstone.filesystemservice', [])
         url: '/filebrowser/a/fileutil',
         method: 'POST',
         params: {
-          _xsrf:getCookie('_xsrf'),
           operation: 'CHANGE_PERMISSIONS',
           permissions: permissionString,
           filepath: filepath
@@ -189,7 +179,6 @@ angular.module('sandstone.filesystemservice', [])
         url: '/filebrowser/a/fileutil',
         method: 'GET',
         params: {
-          _xsrf:getCookie('_xsrf'),
           operation: 'GET_GROUPS',
         }
       })
@@ -203,7 +192,6 @@ angular.module('sandstone.filesystemservice', [])
         url: '/filebrowser/a/fileutil',
         method: 'POST',
         params: {
-          _xsrf:getCookie('_xsrf'),
           operation: 'CHANGE_GROUP',
           filepath: filepath,
           group: group
@@ -219,7 +207,6 @@ angular.module('sandstone.filesystemservice', [])
         url: '/filebrowser/a/fileutil',
         method: 'GET',
         params: {
-          _xsrf:getCookie('_xsrf'),
           operation: 'GET_ROOT_DIR',
           filepath: filepath
         }
@@ -234,7 +221,6 @@ angular.module('sandstone.filesystemservice', [])
         url: '/filebrowser/a/fileutil',
         method: 'GET',
         params: {
-          _xsrf:getCookie('_xsrf'),
           operation: 'GET_VOLUME_INFO',
           filepath: filepath
         }

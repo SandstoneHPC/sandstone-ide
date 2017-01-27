@@ -296,9 +296,6 @@ angular.module('sandstone.editor')
             $http({
               url: '/filebrowser/localfiles'+filepath,
               method: 'PUT',
-              params: {
-                _xsrf: getCookie('_xsrf')
-              },
               data: {'content': content}
             })
             .success(function (data,status, headers, config) {
@@ -311,18 +308,12 @@ angular.module('sandstone.editor')
           } else {
             $http({
               url: '/filebrowser/localfiles'+filepath,
-              method: 'POST',
-              params: {
-                _xsrf: getCookie('_xsrf')
-              }
+              method: 'POST'
             })
             .success(function (data,status, headers, config) {
               $http({
                 url: '/filebrowser/localfiles'+filepath,
                 method: 'PUT',
-                params: {
-                  _xsrf: getCookie('_xsrf')
-                },
                 data: {'content': content}
               })
               .success(function (data,status, headers, config) {
