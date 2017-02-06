@@ -6,6 +6,8 @@ from sandstone.lib.broadcast.handlers import BroadcastHandler
 from sandstone.lib.app_loader import DependencyHandler
 from sandstone.lib.app_loader import get_installed_app_urls
 
+import sandstone.lib.filesystem.urls as fs_api
+
 
 
 APP_SCHEMA = get_installed_app_urls()
@@ -16,4 +18,4 @@ URL_SCHEMA = [
             (r"/a/deps", DependencyHandler),
             (r"/a/state", StateHandler),
             (r"/messages", BroadcastHandler),
-        ] + APP_SCHEMA
+        ] + fs_api.URL_SCHEMA + APP_SCHEMA

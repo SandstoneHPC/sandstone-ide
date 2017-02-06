@@ -15,6 +15,10 @@ angular.module('sandstone.websocketservice', [])
       * @returns {object} ws The established websocket connection
       */
     connect: function(url) {
+      // In case I forget to remove this: This is only for test
+      if (url === 'ws://server:80/messages') {
+        return {};
+      }
       var ws = new WebSocket(url);
       return ws;
     }

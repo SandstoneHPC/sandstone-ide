@@ -2,8 +2,8 @@
 
 angular.module('sandstone.editor')
 
-.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', '$rootScope', '$document',
-  function ($scope, $modal, $log, EditorService, $rootScope, $document) {
+.controller('EditorTabsCtrl', ['$scope', '$modal', '$log', 'EditorService', 'FilesystemService', '$rootScope', '$document',
+  function ($scope, $modal, $log, EditorService, FilesystemService, $rootScope, $document) {
     var self = this;
     self.getOpenDocs = function() {
       return EditorService.getOpenDocs();
@@ -29,7 +29,7 @@ angular.module('sandstone.editor')
 
         self.unsavedModalInstance.result.then(function (file) {
           if (file.saveFile) {
-            if (tab.filepath.substring(0,2) !== '-/') {
+            if (FilesystemService.isAbsolute(tab.filepath)) {
               EditorService.saveDocument(file.filepath);
               $log.debug('Saved files at: ' + new Date());
               EditorService.closeDocument(file.filepath);
@@ -59,14 +59,19 @@ angular.module('sandstone.editor')
         controllerAs: 'ctrl',
         resolve: {
           file: function () {
-            return tab;
+            var dirpath = FilesystemService.dirname(tab.filepath);
+            var file = {
+              name: tab.filename,
+              dirpath: dirpath
+            };
+            return file;
           }
         }
       });
 
-      self.saveAsModalInstance.result.then(function (newFile) {
-        EditorService.fileRenamed(newFile.oldFilepath,newFile.filepath);
-        EditorService.saveDocument(newFile.filepath);
+      self.saveAsModalInstance.result.then(function (filepath) {
+        EditorService.fileRenamed(tab.filepath,filepath);
+        EditorService.saveDocument(filepath);
         $log.debug('Saved files at: ' + new Date());
         self.saveAsModalInstance = null;
       }, function () {
@@ -75,7 +80,7 @@ angular.module('sandstone.editor')
       });
     };
     self.saveDocument = function (tab) {
-      if(tab.filepath.substring(0,2) == '-/') {
+      if(!FilesystemService.isAbsolute(tab.filepath)) {
         self.saveDocumentAs(tab);
       } else {
         EditorService.saveDocument(tab.filepath);
@@ -120,56 +125,45 @@ angular.module('sandstone.editor')
     });
 
   }])
-.controller('SaveAsModalCtrl', function ($scope, $modalInstance, $http, file) {
-  $scope.treeData = {
-    filetreeContents: [],
-    selectedNodes: []
+.controller('SaveAsModalCtrl', function ($scope, $modalInstance, $http, file, FilesystemService) {
+  var self = this;
+  self.treeData = {
+    contents: [],
+    selected: [],
+    expanded: []
   };
 
-  $scope.newFile = {};
-  $scope.invalidFilepath = false;
-  if (file.filepath.substring(0,1) === '-') {
-    $scope.newFile.filepath = '-/';
-    $scope.invalidFilepath = true;
-  } else {
-    var index = file.filepath.lastIndexOf('/')+1;
-    var filepath = file.filepath.substring(0,index);
-    $scope.newFile.filepath = filepath;
-    $scope.invalidFilepath = false;
-  }
-  $scope.newFile.filename = file.filename;
-  $scope.newFile.oldFilename = file.filename;
-  $scope.newFile.oldFilepath = file.filepath;
-
-  $scope.$watch(function(){
-    return $scope.treeData.selectedNodes;
-  }, function(newValue){
-    if(newValue.length > 0) {
-      if (newValue[0].type === 'file') {
-        $scope.newFile.filename = newValue[0].filename;
-        $scope.newFile.filepath = newValue[0].filepath.replace(newValue[0].filename,'');
+  self.filetreeOnSelect = function(node,selected) {
+    if (selected) {
+      if ( (node.type === 'directory') || (node.type === 'volume') ) {
+        self.newFile.dirpath = node.filepath;
       } else {
-        $scope.newFile.filepath = newValue[0].filepath;
-        if (newValue[0].filepath.substr(newValue[0].filepath.length-1) !== '/') {
-          $scope.newFile.filepath = $scope.newFile.filepath + '/';
-        }
+        self.newFile.dirpath = node.dirpath;
+        self.newFile.name = node.name;
       }
     }
-    $scope.updateSaveName();
-  });
-
-  $scope.updateSaveName = function () {
-    if (($scope.newFile.filepath.substr(0,1) !== '-') && $scope.newFile.filename) {
-      $scope.invalidFilepath = false;
-    }
   };
 
-  $scope.saveAs = function () {
-    $scope.newFile.filepath = $scope.newFile.filepath + $scope.newFile.filename;
-    $modalInstance.close($scope.newFile);
+  self.newFile = {
+    name: file.name,
+    dirpath: file.dirpath
   };
 
-  $scope.cancel = function () {
+  self.validFilepath = function() {
+    var valid = (self.newFile.name.length && self.newFile.dirpath.length);
+    valid = valid && (FilesystemService.isAbsolute(self.newFile.dirpath));
+    return valid;
+  };
+
+  self.saveAs = function () {
+    var filepath;
+    var dirpath = FilesystemService.normalize(self.newFile.dirpath);
+
+    filepath = FilesystemService.join(dirpath,self.newFile.name);
+    $modalInstance.close(filepath);
+  };
+
+  self.cancel = function () {
     $modalInstance.dismiss('cancel');
   };
 })

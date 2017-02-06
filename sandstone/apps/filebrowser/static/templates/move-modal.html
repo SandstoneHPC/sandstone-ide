@@ -1,17 +1,17 @@
 <div class="modal-header">
-  <h3 class="modal-title">Save File As</h3>
+    <h3 class="modal-title">Move File</h3>
 </div>
 <div class="modal-body">
   <div class="container-fluid">
-    <form name="form" class="form form-horizontal">
+    <form class="form form-horizontal">
       <div class="form-group form-group-sm">
-        <label class="col-sm-3 control-label">File Name</label>
+        <label class="col-sm-3 control-label">New File Name</label>
         <div class="col-sm-6">
           <input id="filename-input" class="form-control" type="text" ng-model="ctrl.newFile.name">
         </div>
       </div>
       <div class="form-group form-group-sm">
-        <label class="col-sm-3 control-label">Save Directory</label>
+        <label class="col-sm-3 control-label">New Directory</label>
         <div class="col-sm-6">
           <input class="form-control" type="text" ng-model="ctrl.newFile.dirpath" ng-disabled="true">
           <!-- <span class="modal-body-message">{{newFilePath}}{{newFileName}}</span> -->
@@ -26,9 +26,9 @@
 <div class="modal-footer">
   <button
     class="btn btn-success"
-    ng-click="ctrl.saveAs()"
+    ng-click="ctrl.move()"
     ng-disabled="!ctrl.validFilepath()">
-    Save File As
+    Move
   </button>
   <button class="btn btn-warning" ng-click="ctrl.cancel()">Cancel</button>
 </div>

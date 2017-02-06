@@ -1,111 +1,185 @@
 'use strict';
 
 angular.module('sandstone.editor')
-.controller('FiletreeCtrl', ['$modal', '$log', 'EditorService', '$rootScope', 'FilesystemService', function($modal,$log, EditorService, $rootScope, FilesystemService){
+.controller('FiletreeCtrl', ['$modal', '$log', '$scope', '$document', 'EditorService', '$rootScope', 'FilesystemService', function($modal, $log, $scope, $document, EditorService, $rootScope, FilesystemService){
   var self = this;
   self.treeData = {
-    filetreeContents: [
-      // { "type": "dir", "filepath": "/tmp/", "filename" : "tmp", "children" : []}
-    ]
+    contents: [],
+    selected: [],
+    expanded: []
+  };
+  self.treeOptions = {
+    multiSelection: false
   };
 
+  // Toggle multi-selection when meta or control keys are pressed
+  var filetreeKeydown = function(event) {
+    if (event.key === 'Meta' || event.key === 'Control') {
+      self.treeOptions.multiSelection = true;
+      $scope.$digest();
+    }
+  };
+  var filetreeKeyup = function(event) {
+    if (event.key === 'Meta' || event.key === 'Control') {
+      self.treeOptions.multiSelection = false;
+      $scope.$digest();
+    }
+  };
+  $document.on('keydown',filetreeKeydown);
+  $document.on('keyup',filetreeKeyup);
+  $scope.$on('$destroy', function () {
+    $document.off('keydown',filetreeKeydown);
+  });
+  $scope.$on('$destroy', function () {
+    $document.off('keyup',filetreeKeyup);
+  });
+  // End of multiselection code
+
   self.sd = {
-    noSelections: true,
-    multipleSelections: false,
-    dirSelected: false
+    noSelections: function() {
+      return (self.treeData.selected.length === 0);
+    },
+    multipleSelections: function() {
+      return (self.treeData.selected.length > 1);
+    },
+    dirSelected: function() {
+      var td = self.treeData.selected;
+      for (var i=0;i<td.length;i++) {
+        if ( (td[i].type === 'directory') || (td[i].type === 'volume') ) {
+          return true;
+        }
+      }
+      return false;
+    }
   };
 
   self.fcDropdown = false;
+
   self.clipboard = [];
   self.clipboardEmpty = function(){
     return self.clipboard.length === 0;
   };
 
-  self.updateFiletree = function () {
-    // for (var i=0;i<self.treeData.expandedNodes.length;i++) {
-    //   self.getDirContents(self.treeData.expandedNodes[i]);
-    // }
-    $rootScope.$emit('refreshFiletree');
-  };
-
   self.openFilesInEditor = function () {
     //FiletreeService.openFilesInEditor();
-    var treeData = self.treeData.selectedNodes;
+    var treeData = self.treeData.selected;
     for(var i = 0; i < treeData.length; i++) {
       EditorService.openDocument(treeData[i].filepath);
       $log.debug('Opened document: ', treeData[i].filepath);
     }
   };
 
-  // Callback of invocation to FilesystemService to create a file
-  // Update the filetree to show the new file
-  self.createFileCallback = function(data, status, headers, config){
-    $log.debug('POST: ', data);
-    $rootScope.$emit('refreshFiletree');
-  };
-
-  // Callback for invoking the FilesystemService to create a new folder
-  // Update the filetree to show the new folder
-  self.createFolderCallback = function(data, status, headers, config) {
-      $log.debug('POST: ', data);
-      $rootScope.$emit('refreshFiletree');
-  }
-
-  // Callback of invocation to FilesystemService to get the next Untitled FIle
-  // Invoke the FilesystemService to create the new file
-  self.gotNewUntitledFile = function(data, status, headers, config) {
-    $log.debug('GET: ', data);
-    var newFilePath = data.result;
-    // Post back new file to backend
-    FilesystemService.createNewFile(newFilePath, self.createFileCallback);
-  };
-
-  // Callback for getting the next duplicated file for selected file
-  self.gotNextDuplicateFile = function(data, status, headers, config) {
-    $log.debug('GET: ', data);
-     var newFilePath = data.result;
-     FilesystemService.duplicateFile(data.originalFile, newFilePath, self.duplicatedFile);
-  };
-
-  // Callback for getting the next duplicate folder name
-  self.gotNewUntitledDir = function(data) {
-      var newFolderPath = data.result;
-      FilesystemService.createNewDir(newFolderPath, self.createFolderCallback);
-  }
-
-  // Callback for duplicating a file
-  self.duplicatedFile = function(data, status, headers, config) {
-    $log.debug('Copied: ', data.result);
-    self.updateFiletree();
-  };
-
   self.createNewFile = function () {
-    //Invokes filesystem service to create a new file
-    var selectedDir = self.treeData.selectedNodes[0].filepath;
-    FilesystemService.getNextUntitledFile(selectedDir, self.gotNewUntitledFile);
+    var selectedDir = self.treeData.selected[0];
+    var createModalInstance = $modal.open({
+      templateUrl: '/static/editor/templates/create-modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: 'CreateModalCtrl as ctrl',
+      resolve: {
+        action: function () {
+          return {
+            type: 'File',
+            baseDirectory: selectedDir,
+            filename: 'Untitled'
+          };
+        }
+      }
+    });
+
+    createModalInstance.result.then(function (newFileName) {
+      var newPath, normDirpath;
+      normDirpath = FilesystemService.normalize(selectedDir.filepath);
+      newPath = FilesystemService.join(normDirpath,newFileName);
+
+      var createFile = FilesystemService.createFile(newPath);
+      createFile.then(
+        function(uri){
+          $log.debug('File created at: ' + newPath);
+        }
+      );
+    }, function () {
+      $log.debug('Modal dismissed at: ' + new Date());
+    });
   };
   self.createNewDir = function () {
-    var selectedDir = self.treeData.selectedNodes[0].filepath;
-    FilesystemService.getNextUntitledDir(selectedDir, self.gotNewUntitledDir);
+    var selectedDir = self.treeData.selected[0];
+    var createModalInstance = $modal.open({
+      templateUrl: '/static/editor/templates/create-modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: 'CreateModalCtrl as ctrl',
+      resolve: {
+        action: function () {
+          return {
+            type: 'Directory',
+            baseDirectory: selectedDir,
+            filename: 'UntitledDir'
+          };
+        }
+      }
+    });
+
+    createModalInstance.result.then(function (newFileName) {
+      var newPath, normDirpath;
+      normDirpath = FilesystemService.normalize(selectedDir.filepath);
+      newPath = FilesystemService.join(normDirpath,newFileName);
+
+      var createDirectory = FilesystemService.createDirectory(newPath);
+      createDirectory.then(
+        function(uri){
+          $log.debug('Directory created at: ' + newPath);
+        }
+      );
+    }, function () {
+      $log.debug('Modal dismissed at: ' + new Date());
+    });
   };
   self.createDuplicate = function () {
-    var selectedFile = self.treeData.selectedNodes[0].filepath;
-    FilesystemService.getNextDuplicate(selectedFile, self.gotNextDuplicateFile);
+    var selectedFile = self.treeData.selected[0];
+    var createModalInstance = $modal.open({
+      templateUrl: '/static/editor/templates/create-modal.html',
+      backdrop: 'static',
+      keyboard: false,
+      controller: 'CreateModalCtrl as ctrl',
+      resolve: {
+        action: function () {
+          return {
+            type: selectedFile.type,
+            baseDirectory: selectedFile.dirpath,
+            filename: selectedFile.name,
+            action: 'duplicate'
+          };
+        }
+      }
+    });
+
+    createModalInstance.result.then(function (newFileName) {
+      var newPath, normDirpath;
+      normDirpath = FilesystemService.normalize(selectedFile.dirpath);
+      newPath = FilesystemService.join(normDirpath,newFileName);
+
+      if (selectedFile.type === 'directory') {
+        var createDirectory = FilesystemService.createDirectory(newPath);
+        createDirectory.then(
+          function(uri){
+            $log.debug('Directory duplicated at: ' + newPath);
+          }
+        );
+      } else if (selectedFile.type === 'file') {
+        var createFile = FilesystemService.createFile(newPath);
+        createFile.then(
+          function(uri){
+            $log.debug('File duplicated at: ' + newPath);
+          }
+        );
+      }
+    }, function () {
+      $log.debug('Modal dismissed at: ' + new Date());
+    });
   };
 
-  $rootScope.$on('fileRenamed',function(event, oldPath, newPath){
-    EditorService.fileRenamed(oldPath, newPath);
-  });
-
-  $rootScope.$on('fileDeleted', function(event, path){
-    EditorService.fileDeleted(path);
-  });
-
-  self.deletedFile = function(data, status, headers, config, node) {
-    $rootScope.$emit('deletedFile', data, status, headers, config, node);
-  };
-
-  self.deleteFiles = function () {
+  self.delete = function () {
     self.deleteModalInstance = $modal.open({
       templateUrl: '/static/editor/templates/delete-modal.html',
       backdrop: 'static',
@@ -113,57 +187,49 @@ angular.module('sandstone.editor')
       controller: 'DeleteModalCtrl as ctrl',
       resolve: {
         files: function () {
-          return self.treeData.selectedNodes;
+          return self.treeData.selected;
         }
       }
     });
 
     self.deleteModalInstance.result.then(function () {
-      $log.debug('Files deleted at: ' + new Date());
-      for (var i=0;i<self.treeData.selectedNodes.length;i++) {
-        var filepath = self.treeData.selectedNodes[i].filepath;
-        FilesystemService.deleteFile(filepath, self.deletedFile);
+      for (var i=0;i<self.treeData.selected.length;i++) {
+        var filepath = self.treeData.selected[i].filepath;
+        var deleteFile = FilesystemService.delete(filepath);
+        deleteFile.then(
+          function(){
+            $log.debug('Deleted file: ',filepath);
+          }
+        );
         self.deleteModalInstance = null;
       }
     }, function () {
-      $log.debug('Modal dismissed at: ' + new Date());
       self.deleteModalInstance = null;
     });
   };
-  self.copyFiles = function () {
+  self.copy = function () {
     var node, i;
-    for (i=0;i<self.treeData.selectedNodes.length;i++) {
-      node = self.treeData.selectedNodes[i]
-      self.clipboard.push({
-        'filename': node.filename,
-        'filepath': node.filepath
-      });
+    self.clipboard = [];
+    for (i=0;i<self.treeData.selected.length;i++) {
+      node = self.treeData.selected[i]
+      self.clipboard.push(node);
     }
     $log.debug('Copied ', i, ' files to clipboard: ', self.clipboard);
   };
 
-  // Callback for invocation to FilesystemService pasteFile method
-  self.pastedFiles = function(data, status, headers, config, node){
-    $log.debug('POST: ', data.result);
-  };
+  self.paste = function () {
+    var node, destPath;
+    var i = 0;
+    var newDirPath = FilesystemService.normalize(self.treeData.selected[0].filepath);
 
-  self.pasteFiles = function () {
-    var i;
-    var newDirPath = self.treeData.selectedNodes[0].filepath;
-    for (i=0;i<self.clipboard.length;i++) {
-      FilesystemService.pasteFile(self.clipboard[i].filepath, newDirPath + self.clipboard[i].filename, self.pastedFiles);
+    while (self.clipboard.length > 0) {
+      node = self.clipboard.shift();
+      destPath = FilesystemService.join(newDirPath,node.name);
+      var copyFile = FilesystemService.copy(node.filepath,destPath);
     }
-    self.clipboard = [];
-    $rootScope.$emit('pastedFiles', newDirPath);
   };
 
-  self.fileRenamed = function(data, status, headers, config, node) {
-    $rootScope.$emit('fileRenamed', node.filepath, data.result);
-    self.updateFiletree();
-    $log.debug('POST: ', data.result);
-  };
-
-  self.renameFile = function () {
+  self.rename = function () {
     var renameModalInstance = $modal.open({
       templateUrl: '/static/editor/templates/rename-modal.html',
       backdrop: 'static',
@@ -171,15 +237,15 @@ angular.module('sandstone.editor')
       controller: 'RenameModalCtrl as ctrl',
       resolve: {
         files: function () {
-          return self.treeData.selectedNodes;
+          return self.treeData.selected;
         }
       }
     });
 
     renameModalInstance.result.then(function (newFileName) {
-      $log.debug('Files renamed at: ' + new Date());
-      var node = self.treeData.selectedNodes[0];
-      FilesystemService.renameFile(newFileName, node, self.fileRenamed);
+      $log.debug('File renamed at: ' + new Date());
+      var node = self.treeData.selected[0];
+      var renameFile = FilesystemService.rename(node.filepath,newFileName);
     }, function () {
       $log.debug('Modal dismissed at: ' + new Date());
     });
@@ -187,6 +253,25 @@ angular.module('sandstone.editor')
 
 
 }])
+.controller('CreateModalCtrl', function ($modalInstance, action) {
+  var self = this;
+  self.action = action.action;
+  self.type = action.type;
+  self.baseDirectory = action.baseDirectory;
+  if (action.hasOwnProperty('filename')) {
+    self.newFileName = action.filename;
+  } else {
+    self.newFileName = 'Untitled';
+  }
+
+  self.create = function () {
+    $modalInstance.close(self.newFileName);
+  };
+
+  self.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+})
 .controller('RenameModalCtrl', function ($modalInstance, files) {
   var self = this;
   self.files = files;

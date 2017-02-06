@@ -9,7 +9,7 @@
  */
 angular.module('sandstone.editor')
 
-.factory('EditorService', ['$window', '$http', '$log', 'AceModeService','$rootScope', function ($window, $http,$log,AceModeService, $rootScope) {
+.factory('EditorService', ['$window', '$http', '$log', 'AceModeService', 'FilesystemService', '$rootScope', function ($window, $http,$log,AceModeService, FilesystemService, $rootScope) {
   var editor = {};
 
   // clipboard will hold all copy/paste text for editor
@@ -46,9 +46,9 @@ angular.module('sandstone.editor')
     editor.getSession().setUseWrapMode(editorSettings.wordWrap);
   };
 
-  $rootScope.$on('editor:openDocument', function(event, data) {
+  $rootScope.$on('editor:open-document', function(event, data) {
       console.log(data);
-      openDocument(data.filename);
+      openDocument(data.filepath);
   });
 
   // Called when the contents of the current session have changed. Bound directly to
@@ -56,15 +56,6 @@ angular.module('sandstone.editor')
   var onSessionModified = function(e) {
     var filepath = getCurrentDoc();
     openDocs[filepath].unsaved = true;
-  };
-
-  // Given a filepath, this function will return a filename
-  var getFilenameFromPath = function(filepath) {
-    var filename = filepath.substring(
-      filepath.lastIndexOf('/')+1,
-      filepath.length
-    );
-    return filename;
   };
 
   // Returns the next available filepath enumeration for untitled documents
@@ -134,7 +125,7 @@ angular.module('sandstone.editor')
 
     openDocs[filepath] = {
       filepath: filepath,
-      filename: getFilenameFromPath(filepath),
+      filename: FilesystemService.basename(filepath),
       unsaved: false,
       active: false
     };
@@ -156,14 +147,15 @@ angular.module('sandstone.editor')
       } else {
         // Load document from filesystem
         $log.debug('Load '+filepath+' from filesystem.');
-        $http
-          .get('/filebrowser/localfiles'+filepath)
-          .success(function (data, status, headers, config) {
+        var fileContents = FilesystemService.getFileContents(filepath);
+        fileContents.then(
+          function(contents) {
             var mode = AceModeService.getModeForPath(filepath);
             $rootScope.$emit('aceModeChanged', mode);
-            createNewSession(filepath,data.content,mode.mode);
+            createNewSession(filepath,contents,mode.mode);
             switchSession(filepath);
-          });
+          }
+        );
       }
     }
 };
@@ -281,57 +273,32 @@ angular.module('sandstone.editor')
      */
     saveDocument: function(filepath) {
       var content = openDocs[filepath].session.getValue();
-      $http
-        .get(
-          '/filebrowser/a/fileutil',
-          {
-            params: {
-              operation: 'CHECK_EXISTS',
-              filepath: filepath
-            }
+      var updateContents = function() {
+        var writeContents = FilesystemService.writeFileContents(filepath,content);
+        writeContents.then(
+          function() {
+            $log.debug('Saved file: ', filepath);
+            openDocs[filepath].unsaved = false;
+            $rootScope.$emit('refreshFiletree');
+            var mode = AceModeService.getModeForPath(filepath);
+            $rootScope.$emit('aceModeChanged', mode);
           }
-        )
-        .success(function (data, status, headers, config) {
-          if (data.result) {
-            $http({
-              url: '/filebrowser/localfiles'+filepath,
-              method: 'PUT',
-              data: {'content': content}
-            })
-            .success(function (data,status, headers, config) {
-              $log.debug('Saved file: ', filepath);
-              openDocs[filepath].unsaved = false;
-              $rootScope.$emit('refreshFiletree');
-              var mode = AceModeService.getModeForPath(filepath);
-              $rootScope.$emit('aceModeChanged', mode);
-            });
-          } else {
-            $http({
-              url: '/filebrowser/localfiles'+filepath,
-              method: 'POST'
-            })
-            .success(function (data,status, headers, config) {
-              $http({
-                url: '/filebrowser/localfiles'+filepath,
-                method: 'PUT',
-                data: {'content': content}
-              })
-              .success(function (data,status, headers, config) {
-                $log.debug('Saved file: ', filepath);
-                openDocs[filepath].unsaved = false;
-                $rootScope.$emit('refreshFiletree');
-                var mode = AceModeService.getModeForPath(filepath);
-                $rootScope.$emit('aceModeChanged', mode);
-              });
-            });
-          }
-        });
+        );
+      };
+      var createAndUpdate = function(data,status) {
+        if (status === 404) {
+          var createFile = FilesystemService.createFile(filepath);
+          createFile.then(updateContents);
+        }
+      };
+      var fileDetails = FilesystemService.getFileDetails(filepath);
+      fileDetails.then(updateContents,createAndUpdate);
     },
     fileRenamed: function(oldpath,newpath) {
       if (oldpath in openDocs) {
         openDocs[newpath] = {
           filepath: newpath,
-          filename: getFilenameFromPath(newpath),
+          filename: FilesystemService.basename(newpath),
           unsaved: openDocs[oldpath].unsaved,
           active: openDocs[oldpath].active,
           session: openDocs[oldpath].session

@@ -12,13 +12,14 @@ APP_SPECIFICATION = {
     ),
     'NG_MODULE_SCRIPTS': (
         'filebrowser.js',
-        'file.service.js',
-        'filetree.controller.js',
-        'filebrowser.controller.js',
+        'filebrowser.service.js',
+        'volumes.controller.js',
+        'details.controller.js',
+        'createmodal.controller.js',
+        'movemodal.controller.js',
+        'deletemodal.controller.js',
+        'uploadmodal.controller.js',
+        'fb-filedetails/fb-filedetails.directive.js',
+        'syncfocuswith/syncfocuswith.directive.js',
     ),
 }
-
-FILESYSTEM_ROOT_DIRECTORIES = (
-    os.path.join('$HOME', ''),
-    '/tmp/',
-    )

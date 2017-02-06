@@ -4,7 +4,7 @@ from setuptools import find_packages
 
 setup(
     name='sandstone',
-    version='0.12.10',
+    version='1.0.0',
     author=u'Zebula Sampedro',
     author_email='sampedro@colorado.edu',
     packages=find_packages(),
@@ -20,6 +20,7 @@ setup(
         'tornado>=4',
         'terminado',
         'watchdog',
+        'cerberus',
         'PyDispatcher'
     ],
     classifiers=[

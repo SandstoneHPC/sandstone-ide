@@ -25,3 +25,8 @@ INSTALLED_APPS = (
     'sandstone.apps.filebrowser',
     'sandstone.apps.webterminal'
 )
+
+VOLUMES = (
+    os.path.join('$HOME', ''),
+    '/tmp/',
+)
