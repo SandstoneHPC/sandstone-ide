@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
 *.log
+*.egg-info/
 bower_components/
 node_modules/
 tmp/

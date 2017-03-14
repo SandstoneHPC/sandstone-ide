@@ -14,3 +14,4 @@ terminado==0.6
 tornado==4.3
 pydispatcher==2.0.5
 watchdog==0.8.3
+mock==2.0.0

@@ -69,6 +69,8 @@ class PosixFS:
         t = 'file'
         if perms[0] == 'd':
             t = 'directory'
+        if perms[-1] == '.':
+            perms = perms[:-1]
         perms = perms[1:]
         owner = contents[3]
         group = contents[4]
