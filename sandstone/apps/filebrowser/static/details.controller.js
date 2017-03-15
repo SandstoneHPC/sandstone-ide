@@ -5,24 +5,26 @@ angular.module('sandstone.filebrowser')
 .controller('DetailsCtrl', ['$scope', '$modal', 'FilebrowserService', 'FilesystemService', function($scope,$modal,FilebrowserService,FilesystemService) {
   var self = this;
 
-  self.filesystem = {};
-  $scope.$watch(function() {
-    return FilebrowserService.getFilesystem();
-  }, function(newValue) {
-    self.filesystem = newValue;
-  });
-
   self.breadcrumbs = [];
-  $scope.$watch(function() {
-    return FilebrowserService.getBreadcrumbs();
-  }, function(newValue) {
-    self.breadcrumbs = newValue;
-  },true);
 
-  self.changeDirectory = function(index) {
-    FilebrowserService.setSelection({
-      cwd: self.breadcrumbs[index]
-    });
+  var setBreadcrumbs = function() {
+    if (!self.selection.volume) {
+      // No volume selected yet
+      self.breadcrumbs = [];
+    } else if(!self.selection.cwd) {
+      // Only a volume is selected
+      self.breadcrumbs = [self.selection.volume.filepath];
+    } else {
+      var crumbs = [];
+      var volPath = FilesystemService.normalize(self.selection.volume.filepath);
+      var cwdPath = FilesystemService.normalize(self.selection.cwd.filepath);
+      var crumbPath = FilesystemService.normalize(cwdPath.replace(volPath,''));
+      crumbs.push(volPath);
+      var crumbCmps = FilesystemService.split(crumbPath).slice(1);
+      for (var i=0; i<crumbCmps.length; i++) {
+        self.breadcrumbs.push(crumbCmps[i]);
+      }
+    }
   };
 
   self.selection = {};
@@ -30,6 +32,7 @@ angular.module('sandstone.filebrowser')
     return FilebrowserService.getSelection();
   }, function(newValue) {
     self.selection = newValue;
+    setBreadcrumbs();
   },true);
 
   // Directory Details
@@ -37,17 +40,16 @@ angular.module('sandstone.filebrowser')
     if (file.type === 'file') {
       self.selectFile(file);
     } else {
-      FilebrowserService.setSelection({
-        cwd: file
-      });
+      FilebrowserService.setCwd(file.filepath);
     }
   };
 
   self.selectFile = function(file) {
-    FilebrowserService.setSelection({
-      cwd: self.selection.cwd,
-      selectedFile: file
-    });
+    FilebrowserService.setSelectedFile(file);
+  };
+
+  self.changeDirectory = function(filepath) {
+    FilebrowserService.setCwd(filepath);
   };
 
   self.create = function(type) {

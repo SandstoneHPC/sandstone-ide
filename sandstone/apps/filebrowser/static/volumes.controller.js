@@ -13,9 +13,7 @@ angular.module('sandstone.filebrowser')
   });
 
   self.changeVolume = function(volume) {
-    FilebrowserService.setSelection({
-      cwd: volume
-    });
+    FilebrowserService.setVolume(volume);
   };
 
   self.selection = {};
