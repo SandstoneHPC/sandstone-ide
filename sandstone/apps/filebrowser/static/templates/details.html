@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-9">
     <ol class="breadcrumb">
-      <li ng-click="ctrl.changeDirectory($index)" ng-repeat="directory in ctrl.breadcrumbs track by $index" ng-class="{active: $last}">{{directory}}</li>
+      <li ng-click="ctrl.selectCrumb($index)" ng-repeat="directory in ctrl.breadcrumbs track by $index" ng-class="{active: $last}">{{directory}}</li>
     </ol>
   </div>
   <div class="col-md-3">
