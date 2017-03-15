@@ -89,10 +89,7 @@ angular.module('sandstone.filebrowser')
 
       var createReq;
       var setSelection = function(filepath) {
-        FilebrowserService.setSelection({
-          cwd: self.selection.cwd,
-          selectedFile: self.selection.selectedFile
-        });
+        FilebrowserService.setSelectedFile(self.selection.selectedFile);
       };
       if (type === 'file') {
         createReq = FilesystemService.createFile(newPath);

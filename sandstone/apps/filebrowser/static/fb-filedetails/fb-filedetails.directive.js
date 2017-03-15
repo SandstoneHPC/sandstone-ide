@@ -50,10 +50,7 @@ angular.module('sandstone.filebrowser')
               .getFileDetails(newpath)
               .then(function(file) {
                 angular.extend(self.selection.selectedFile,file);
-                FilebrowserService.setSelection({
-                  cwd: self.selection.cwd,
-                  selectedFile: self.selection.selectedFile
-                });
+                FilebrowserService.setSelectedFile(self.selection.selectedFile);
               });
           });
       };
@@ -63,10 +60,7 @@ angular.module('sandstone.filebrowser')
           .changeGroup(self.selection.selectedFile.filepath,self.editFile.group)
           .then(function() {
             self.selection.selectedFile.group = self.editFile.group;
-            FilebrowserService.setSelection({
-              cwd: self.selection.cwd,
-              selectedFile: self.selection.selectedFile
-            });
+            FilebrowserService.setSelectedFile(self.selection.selectedFile);
           });
       }
 
@@ -84,10 +78,7 @@ angular.module('sandstone.filebrowser')
           .changePermissions(self.selection.selectedFile.filepath,perms)
           .then(function() {
             self.selection.selectedFile.permissions = perms;
-            FilebrowserService.setSelection({
-              cwd: self.selection.cwd,
-              selectedFile: self.selection.selectedFile
-            });
+            FilebrowserService.setSelectedFile(self.selection.selectedFile);
           });
       };
 
@@ -123,10 +114,7 @@ angular.module('sandstone.filebrowser')
         FilesystemService
           .copy(self.selection.selectedFile.filepath,basepath+suffix)
           .then(function(copypath) {
-            FilebrowserService.setSelection({
-              cwd: self.selection.cwd,
-              selectedFile: self.selection.selectedFile
-            });
+            FilebrowserService.setSelectedFile(self.selection.selectedFile);
           });
       };
 
@@ -169,9 +157,7 @@ angular.module('sandstone.filebrowser')
           FilesystemService
             .delete(self.selection.selectedFile.filepath)
             .then(function() {
-              FilebrowserService.setSelection({
-                cwd: self.selection.cwd
-              });
+              FilebrowserService.setSelectedFile();
             });
         }, function () {
           self.deleteModalInstance = null;
