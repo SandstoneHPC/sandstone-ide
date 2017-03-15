@@ -1,8 +1,9 @@
-from terminado import SingleTermManager
+from terminado import UniqueTermManager
 from sandstone.apps.webterminal.handlers import AuthTermSocket
 
 
-term_manager = SingleTermManager(shell_command=['bash'])
+
+term_manager = UniqueTermManager(max_terminals=3,shell_command=['bash'])
 
 URL_SCHEMA = [
             (r"/terminal/a/term", AuthTermSocket,
