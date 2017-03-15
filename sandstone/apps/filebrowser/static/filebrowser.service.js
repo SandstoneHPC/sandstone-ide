@@ -33,6 +33,10 @@ angular.module('sandstone.filebrowser')
       }
     );
     cwdDetails.then(function(dirDetails) {
+      // Update filewatchers, if the CWD has changed
+      var newPath = FilesystemService.normalize(dirDetails.filepath);
+      FilesystemService.createFilewatcher(newPath);
+      // Update directory
       selectionInfo.cwd = dirDetails;
     });
   };
@@ -55,5 +59,53 @@ angular.module('sandstone.filebrowser')
       filesystem = filesystemDetails;
     }
   );
+
+  // Filewatcher updates
+  $rootScope.$on('filesystem:file_created', function(event,data) {
+    var dirpath = FilesystemService.normalize(data.dirpath);
+    var cwdPath = FilesystemService.normalize(selectionInfo.cwd.filepath);
+
+    if(dirpath === cwdPath) {
+      self.setCwd(cwdPath);
+    }
+  });
+
+  $rootScope.$on('filesystem:file_deleted', function(event,data) {
+    var filepath = FilesystemService.normalize(data.filepath);
+    var dirpath = FilesystemService.normalize(data.dirpath);
+    var cwdPath = FilesystemService.normalize(selectionInfo.cwd.filepath);
+    var selPath = FilesystemService.normalize(selectionInfo.selectedFile.filepath);
+
+    if(data.is_directory && (filepath === cwdPath)) {
+      // CWD deleted, change cwd to selected volume
+      self.changeDirectory(selectionInfo.volume.filepath);
+    } else {
+      if(dirpath === cwdPath) {
+        // Contents of CWD have changed, update them
+        self.setCwd(cwdPath);
+      }
+      if(filepath === selPath) {
+        // Currently selected file deleted, deselect
+        self.setSelectedFile();
+      }
+    }
+  });
+
+  $rootScope.$on('filesystem:file_moved', function(event,data) {
+    var srcDir = FilesystemService.normalize(data.src_dirpath);
+    var destDir = FilesystemService.normalize(data.dest_dirpath);
+    var cwdPath = FilesystemService.normalize(selectionInfo.cwd.filepath);
+    if ((srcDir === cwdPath) || (destDir === cwdPath)) {
+      // CWD contents have changed, update them
+      self.setCwd(cwdPath);
+    }
+
+    var srcPath = FilesystemService.normalize(data.src_filepath);
+    var selPath = FilesystemService.normalize(selectionInfo.selectedFile.filepath);
+    if(srcPath === selPath) {
+      // Selected file has moved, deselect
+      self.setSelectedFile();
+    }
+  });
 
 }]);

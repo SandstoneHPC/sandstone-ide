@@ -55,6 +55,7 @@ angular.module('sandstone.filebrowser')
     if (file.type === 'file') {
       self.selectFile(file);
     } else {
+      FilebrowserService.setSelectedFile();
       FilebrowserService.setCwd(file.filepath);
     }
   };
@@ -64,6 +65,7 @@ angular.module('sandstone.filebrowser')
   };
 
   self.changeDirectory = function(filepath) {
+    FilebrowserService.setSelectedFile();
     FilebrowserService.setCwd(filepath);
   };
 
