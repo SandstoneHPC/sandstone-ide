@@ -8,7 +8,7 @@ from sandstone.lib.handlers.base import BaseHandler
 
 class MainHandler(BaseHandler):
 
-    @sandstone.lib.decorators.authenticated
+    @sandstone.lib.decorators.authenticated_or_redirect
     def get(self):
         ctx = {}
         self.render('lib/templates/sandstone.html', **ctx)

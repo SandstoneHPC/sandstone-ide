@@ -2,6 +2,7 @@ function getSandstoneModule(depList) {
   return angular.module('sandstone', depList)
     .config(['$urlRouterProvider','$httpProvider', function($urlRouterProvider,$httpProvider) {
       $httpProvider.interceptors.push('XsrfInjector');
+      $httpProvider.interceptors.push('AuthInjector');
       $urlRouterProvider.otherwise('/editor');
     }])
     .run(function(BroadcastService) {
@@ -17,6 +18,17 @@ function getSandstoneModule(depList) {
         request: function(config) {
           config.headers['X-XSRFToken'] = getCookie('_xsrf');
           return config;
+        }
+      };
+    }])
+    .factory('AuthInjector', ['$q','$window','$location',function($q,$window,$location) {
+      return {
+        'responseError': function(rejection) {
+          if(rejection.status === 403) {
+            var next = $location.path();
+            $window.location = '/auth/login?next=%2F#' + next;
+          }
+          return $q.reject(rejection);
         }
       };
     }])
