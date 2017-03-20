@@ -42,5 +42,47 @@ function getSandstoneModule(depList) {
           return '/#'+$location.path();
         }
       };
+    }])
+    .service('AlertService',[function() {
+      var self = this;
+      var alerts = {};
+
+      function generateUUID() {
+        var d = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = (d + Math.random()*16)%16 | 0;
+          d = Math.floor(d/16);
+          return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+        });
+        return uuid;
+      };
+
+      self.getAlerts = function() {
+        return alerts;
+      };
+
+      self.addAlert = function(alertParams) {
+        var close = true;
+        if('close' in alertParams) {
+          close = alertParams.close;
+        }
+        // Make a unique identifier for this alert so
+        // it can be referenced and modified later.
+        var uuid = generateUUID();
+        var alert = {
+          type: alertParams.type,
+          message: alertParams.message,
+          close: close
+        };
+        alerts[uuid] = alert;
+        return uuid;
+      };
+
+      self.removeAlert = function(uuid) {
+        if(uuid in alerts) {
+          delete alerts[uuid];
+        }
+      };
+
     }]);
 }

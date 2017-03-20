@@ -45,3 +45,11 @@ body {
     margin: 10px 10px 10px -5px;
   }
 }
+
+.ss-alerts-box {
+  position: fixed;
+  top: 65px;
+  left: 20vw;
+  right: 20vw;
+  z-index: 3000;
+}

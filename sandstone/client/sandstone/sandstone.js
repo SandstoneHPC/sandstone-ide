@@ -17,6 +17,7 @@
       depList.push('sandstone.websocketservice');
       depList.push('sandstone.broadcastservice');
       depList.push('sandstone.filesystemservice');
+      depList.push('sandstone.alertsdirective');
       depList.push('sandstone.filetreedirective');
       var sandstone = getSandstoneModule(depList);
 
