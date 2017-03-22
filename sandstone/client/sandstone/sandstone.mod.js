@@ -3,6 +3,7 @@ function getSandstoneModule(depList) {
     .config(['$urlRouterProvider','$httpProvider', function($urlRouterProvider,$httpProvider) {
       $httpProvider.interceptors.push('XsrfInjector');
       $httpProvider.interceptors.push('AuthInjector');
+      $httpProvider.interceptors.push('ConnectionLostInjector');
       $urlRouterProvider.otherwise('/editor');
     }])
     .run(function(BroadcastService) {
@@ -27,6 +28,20 @@ function getSandstoneModule(depList) {
           if(rejection.status === 403) {
             var next = $location.path();
             $window.location = '/auth/login?next=%2F#' + next;
+          }
+          return $q.reject(rejection);
+        }
+      };
+    }])
+    .factory('ConnectionLostInjector', ['$q','AlertService',function($q,AlertService) {
+      return {
+        'responseError': function(rejection) {
+          if(rejection.status === -1) {
+            AlertService.addAlert({
+              type: 'danger',
+              message: 'Cannot connect to server. Please refresh the page.',
+              close: false
+            });
           }
           return $q.reject(rejection);
         }
