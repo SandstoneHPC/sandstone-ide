@@ -72,7 +72,25 @@ xdescribe('sandstone.filebrowser.fbFileDetails', function() {
       expect(FilesystemService.getFilesystemDetails).toHaveBeenCalled();
     });
 
-    it('initial tree contents load and render',function() {});
+    it('watches for selection changes on the scope',function() {});
+
+    it('creates a deep copy of the selected file for editing',function() {});
+
+    it('edit file contains a model for permissions edits',function() {});
+
+    it('editing filename renames the file',function() {});
+
+    it('selecting a new group changes the group',function() {});
+
+    it('editing permissions model changes permissions',function() {});
+
+    it('opening in editor sends signal and changes location',function() {});
+
+    it('duplicates created with proper suffix',function() {});
+
+    it('file moved to location specified by move modal',function() {});
+
+    it('file is deleted and selection is cleared',function() {});
 
   });
 
@@ -117,7 +135,11 @@ xdescribe('sandstone.filebrowser.fbFileDetails', function() {
       isolateScope = element.isolateScope();
     }));
 
-    it('initial tree contents load and render',function() {});
+    it('changes to edit propagate to template',function() {});
+
+    it('group select is populated',function() {});
+
+    it('permissions matrix renders properly',function() {});
 
   });
 
