@@ -10,12 +10,6 @@ angular.module('sandstone.filesystemservice', [])
   var _fsDirUrl = '/a/filesystem/directories/';
   var _fsFileUrl = '/a/filesystem/files/';
 
-  var _error = function(data,status) {
-    var errMsg = "Error " + status + ":\n\n" + data;
-    $log.error(errMsg);
-    throw errMsg;
-  };
-
   // FS object constructors
   self.Volume = function(filepath,size,used,available,usedPercent) {
     var filepathRegex = /^(\/(?:[^\/]+\/)*)+([^\/]+)[\/]?$/;

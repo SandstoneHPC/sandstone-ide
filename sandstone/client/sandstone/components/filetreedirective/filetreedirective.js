@@ -12,7 +12,7 @@ angular.module('sandstone.filetreedirective', [])
       filterComparator: '='
     },
     templateUrl: '/static/core/components/filetreedirective/templates/filetree.html',
-    controller: ['$scope', '$element', '$rootScope', 'FilesystemService', function($scope, $element, $rootScope, FilesystemService) {
+    controller: ['$scope', '$element', '$rootScope', 'FilesystemService', 'AlertService', function($scope, $element, $rootScope, FilesystemService, AlertService) {
       var self = $scope;
 
       if (self.treeData.contents.length === 0) {
@@ -23,6 +23,13 @@ angular.module('sandstone.filetreedirective', [])
               filesystem.volumes[i].name = filesystem.volumes[i].filepath;
               self.treeData.contents.push(filesystem.volumes[i]);
             }
+          },
+          function(data, status) {
+            AlertService.addAlert({
+              type: 'danger',
+              message: 'Failed to retrieve filetree contents. Please refresh this page.',
+              close: false
+            });
           }
         );
       }
@@ -89,6 +96,12 @@ angular.module('sandstone.filetreedirective', [])
               newChildren.push(dir);
             }
             node.children = newChildren;
+          },
+          function(data, status) {
+            AlertService.addAlert({
+              type: 'warning',
+              message: 'Failed to retrieve contents for ' + node.filepath
+            });
           }
         );
       };
