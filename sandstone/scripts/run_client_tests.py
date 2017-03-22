@@ -22,7 +22,7 @@ file_list = [
     'sandstone/bower_components/angular-mocks/angular-mocks.js',
     'sandstone/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
     'sandstone/bower_components/ace-builds/src-min-noconflict/ace.js',
-    'sandstone/bower_components/angular-ui-ace/ui-ace.js',
+    'sandstone/bower_components/angular-ui-ace/src/ui-ace.js',
     'sandstone/bower_components/angular-tree-control/angular-tree-control.js',
     'sandstone/bower_components/angular-smart-table/dist/smart-table.js',
     'sandstone/bower_components/angular-file-upload/dist/angular-file-upload.js',

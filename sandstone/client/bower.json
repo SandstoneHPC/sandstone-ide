@@ -12,7 +12,7 @@
     "html5-boilerplate": "~4.3.0",
     "bootstrap": "",
     "angular-bootstrap": "0.13.x",
-    "angular-ui-ace": "",
+    "angular-ui-ace": "https://github.com/SandstoneHPC/ui-ace.git#0.2.5",
     "ng-context-menu": "",
     "angular-tree-control": "https://github.com/SandstoneHPC/angular-tree-control.git#1.0.0",
     "term.js": "",
