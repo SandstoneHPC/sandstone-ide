@@ -1,19 +1,55 @@
 'use strict';
 
 describe('sandstone.filebrowser.DetailsCtrl', function() {
-  var FilebrowserService;
+  var FilesystemService, FilebrowserService, AlertService;
   var ctrl;
   var $controller;
-  var $scope;
+  var $rootScope, $scope;
 
   beforeEach(module('sandstone'));
+  beforeEach(module('sandstone.filesystemservice'));
   beforeEach(module('sandstone.filebrowser'));
 
-  beforeEach(inject(function(_FilebrowserService_,_$rootScope_,_$controller_) {
+  beforeEach(inject(function(_FilesystemService_,_$q_,_$rootScope_) {
+    mockResolve = function(data) {
+      var deferred = _$q_.defer();
+      deferred.resolve(data);
+      return deferred.promise;
+    };
+    mockReject = function(data) {
+      var deferred = _$q_.defer();
+      deferred.reject(data);
+      return deferred.promise;
+    };
+
+    $rootScope = _$rootScope_;
+
+    FilesystemService = _FilesystemService_;
+    // FilebrowserService automatically calls FS service methods
+    var volumeDetails = {
+      available: '11G',
+      filepath: '/volume1/',
+      size: '18G',
+      type: 'volume',
+      used: '6.0G',
+      used_pct: 36
+    };
+    var fsDetails = {
+      groups: ['testgrp'],
+      type: 'filesystem',
+      volumes: [volumeDetails]
+    };
+    spyOn(FilesystemService,'getFilesystemDetails').and.callFake(function() {
+      return mockResolve(fsDetails);
+    });
+  }));
+
+  beforeEach(inject(function(_FilebrowserService_,_AlertService_,_$controller_) {
+    AlertService = _AlertService_;
     FilebrowserService = _FilebrowserService_;
     $controller = _$controller_;
 
-    $scope = _$rootScope_.$new();
+    $scope = $rootScope.$new();
     ctrl = $controller('DetailsCtrl', {$scope:$scope});
 
   }));

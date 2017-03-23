@@ -2,7 +2,7 @@
 
 angular.module('sandstone.filebrowser')
 
-.controller('DetailsCtrl', ['$scope', '$modal', 'FilebrowserService', 'FilesystemService', function($scope,$modal,FilebrowserService,FilesystemService) {
+.controller('DetailsCtrl', ['$scope', '$modal', 'FilebrowserService', 'FilesystemService', 'AlertService', function($scope,$modal,FilebrowserService,FilesystemService,AlertService) {
   var self = this;
 
   // Breadcrumbs
@@ -93,12 +93,18 @@ angular.module('sandstone.filebrowser')
       var setSelection = function(filepath) {
         FilebrowserService.setSelectedFile(self.selection.selectedFile);
       };
+      var failedToCreate = function(data,status) {
+        AlertService.addAlert({
+          type: 'danger',
+          message: 'Failed to create ' + newPath
+        });
+      };
       if (type === 'file') {
         createReq = FilesystemService.createFile(newPath);
-        createReq.then(setSelection);
+        createReq.then(setSelection,failedToCreate);
       } else {
         createReq = FilesystemService.createDirectory(newPath);
-        createReq.then(setSelection);
+        createReq.then(setSelection,failedToCreate);
       }
     });
   };
@@ -117,9 +123,7 @@ angular.module('sandstone.filebrowser')
     });
 
     modalInstance.result.then(function() {
-      FilebrowserService.setSelection({
-        cwd: self.selection.cwd
-      });
+      FilebrowserService.setCwd(self.selection.cwd);
     });
   };
 
