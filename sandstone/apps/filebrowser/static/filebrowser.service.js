@@ -60,11 +60,16 @@ angular.module('sandstone.filebrowser')
   };
 
   var fsDetails = FilesystemService.getFilesystemDetails();
-  fsDetails.then(
-    function(filesystemDetails) {
-      filesystem = filesystemDetails;
-    }
-  );
+  fsDetails.then(function(filesystemDetails) {
+    filesystem = filesystemDetails;
+  },
+  function(data,status) {
+    AlertService.addAlert({
+      type: 'danger',
+      message: 'Failed to retrieve filesystem details. Please refresh this page.',
+      close: false
+    });
+  });
 
   // Filewatcher updates
   $rootScope.$on('filesystem:file_created', function(event,data) {

@@ -5,7 +5,7 @@ describe('sandstone.filebrowser.FilebrowserService', function() {
   var FilebrowserService;
   var AlertService;
   var mockResolve, mockReject;
-  var digest;
+  var $rootScope, digest;
 
   beforeEach(module('sandstone'));
   beforeEach(module('sandstone.filesystemservice'));
@@ -21,10 +21,6 @@ describe('sandstone.filebrowser.FilebrowserService', function() {
       var deferred = _$q_.defer();
       deferred.reject(data);
       return deferred.promise;
-    };
-
-    digest = function() {
-      _$rootScope_.$digest();
     };
 
     FilesystemService = _FilesystemService_;
@@ -50,6 +46,11 @@ describe('sandstone.filebrowser.FilebrowserService', function() {
   beforeEach(inject(function(_FilebrowserService_,_AlertService_,_$q_,_$rootScope_) {
     FilebrowserService = _FilebrowserService_;
     AlertService = _AlertService_;
+    $rootScope = _$rootScope_;
+
+    digest = function() {
+      $rootScope.$digest();
+    };
   }));
 
   describe('selection methods', function() {
@@ -90,7 +91,7 @@ describe('sandstone.filebrowser.FilebrowserService', function() {
       });
       spyOn(AlertService,'addAlert').and.returnValue('uuid-4444');
       FilebrowserService.setCwd(filepath);
-      digest();
+      $rootScope.$digest();
       expect(AlertService.addAlert.calls.count()).toEqual(1);
     });
 
