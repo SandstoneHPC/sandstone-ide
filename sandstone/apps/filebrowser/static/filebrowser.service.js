@@ -2,7 +2,7 @@
 
 angular.module('sandstone.filebrowser')
 
-.service('FilebrowserService', ['$rootScope', 'FilesystemService', function($rootScope,FilesystemService){
+.service('FilebrowserService', ['$rootScope', 'FilesystemService', 'AlertService', function($rootScope,FilesystemService,AlertService){
   var self = this;
 
   // Selection Info
@@ -38,6 +38,12 @@ angular.module('sandstone.filebrowser')
       FilesystemService.createFilewatcher(newPath);
       // Update directory
       selectionInfo.cwd = dirDetails;
+    },
+    function(data,status) {
+      AlertService.addAlert({
+        type: 'warning',
+        message: 'Failed to retrieve directory contents for ' + filepath
+      });
     });
   };
 
