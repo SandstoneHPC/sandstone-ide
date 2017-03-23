@@ -5,6 +5,7 @@ describe('sandstone.filebrowser.DetailsCtrl', function() {
   var ctrl;
   var $controller;
   var $rootScope, $scope;
+  var mockResolve, mockReject;
 
   beforeEach(module('sandstone'));
   beforeEach(module('sandstone.filesystemservice'));
