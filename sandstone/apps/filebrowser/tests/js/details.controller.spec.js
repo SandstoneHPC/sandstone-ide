@@ -80,6 +80,16 @@ describe('sandstone.filebrowser.DetailsCtrl', function() {
   });
 
   describe('directory actions: create', function() {
+    var $modal;
+
+    beforeEach(inject(function(_$modal_) {
+      $modal = _$modal_;
+
+      var newFileName = 'filename';
+      spyOn($modal,'open').and.callFake(function() {
+        return mockResolve(newFileName);
+      });
+    }));
 
     it('creates a new file selects it',function() {});
 
