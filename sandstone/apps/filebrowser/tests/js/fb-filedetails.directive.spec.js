@@ -1,4 +1,6 @@
-xdescribe('sandstone.filebrowser.fbFileDetails', function() {
+'use strict';
+
+describe('sandstone.filebrowser.fbFileDetails', function() {
   var baseElement = '<div fb-file-details></div>';
 
   var volumeDetails = {
@@ -36,32 +38,44 @@ xdescribe('sandstone.filebrowser.fbFileDetails', function() {
     contents: [fileDetails]
   };
 
+  var FilesystemService;
+  var FilebrowserService;
+  var AlertService;
+  var mockResolve, mockReject;
+  var $rootScope, digest, $q;
+
   beforeEach(module('sandstone'));
   beforeEach(module('sandstone.templates'));
   beforeEach(module('sandstone.broadcastservice'));
   beforeEach(module('sandstone.filesystemservice'));
   beforeEach(module('sandstone.filebrowser'));
 
+  beforeEach(inject(function(_FilesystemService_,_$q_) {
+    $q = _$q_;
+
+    FilesystemService = _FilesystemService_;
+    // FilebrowserService automatically calls FS service methods
+    var deferredGetFsDetails = $q.defer();
+    deferredGetFsDetails.resolve(fsDetails);
+    spyOn(FilesystemService,'getFilesystemDetails').and.returnValue(deferredGetFsDetails.promise);
+  }));
+
+  beforeEach(inject(function(_FilebrowserService_,_AlertService_,_$rootScope_) {
+    FilebrowserService = _FilebrowserService_;
+    AlertService = _AlertService_;
+    $rootScope = _$rootScope_;
+
+    digest = function() {
+      $rootScope.$digest();
+    };
+  }));
+
   describe('controller', function() {
-    var $compile, $scope, isolateScope, element, FilesystemService, FilebrowserService, BroadcastService, mockResolve;
+    var $compile, $scope, isolateScope, element;
 
-    beforeEach(inject(function(_$compile_,_$rootScope_,_$q_,_FilesystemService_,_FilebrowserService_,_BroadcastService_) {
-      mockResolve = function(data) {
-        var deferred = _$q_.defer();
-        deferred.resolve(data);
-        return deferred.promise;
-      };
-
-      FilesystemService = _FilesystemService_;
-      FilebrowserService = _FilebrowserService_;
-      BroadcastService = _BroadcastService_;
+    beforeEach(inject(function(_$compile_) {
       $compile = _$compile_;
-      $scope = _$rootScope_.$new();
-
-      // Called on load
-      spyOn(FilesystemService,'getFilesystemDetails').and.callFake(function() {
-        return mockResolve(fsDetails);
-      });
+      $scope = $rootScope.$new();
 
       element = $compile(baseElement)($scope);
       $scope.$digest();
@@ -69,16 +83,92 @@ xdescribe('sandstone.filebrowser.fbFileDetails', function() {
     }));
 
     it('gets filesystem details on load',function() {
-      expect(FilesystemService.getFilesystemDetails).toHaveBeenCalled();
+      spyOn(FilebrowserService,'getFilesystem').and.returnValue(fsDetails);
+      element = $compile(baseElement)($scope);
+      $scope.$digest();
+      expect(FilebrowserService.getFilesystem).toHaveBeenCalled();
     });
 
-    it('watches for selection changes on the scope',function() {});
+    it('watches for selection changes and deep copies file',function() {
+      // File is selected
+      var selection = {selectedFile: fileDetails};
+      spyOn(FilebrowserService,'getSelection').and.returnValue(selection);
+      $scope.$digest();
+      expect(isolateScope.selection).toBe(selection);
+      expect(isolateScope.editFile).not.toBe(fileDetails);
+      expect(isolateScope.editFile.filepath).toEqual(fileDetails.filepath);
+      // Selected file is undefined
+      selection = {selectedFile: undefined};
+      FilebrowserService.getSelection = jasmine.createSpy().and.returnValue(selection);
+      $scope.$digest();
+      expect(isolateScope.selection).toBe(selection);
+      expect(isolateScope.editFile).toEqual({});
+    });
 
-    it('creates a deep copy of the selected file for editing',function() {});
+    it('edit file contains a model for permissions edits',function() {
+      var selection = {selectedFile: fileDetails};
+      var permModel = {
+        0: true,
+        1: true,
+        2: true,
+        3: true,
+        4: true,
+        5: false,
+        6: true,
+        7: false,
+        8: false
+      }
+      spyOn(FilebrowserService,'getSelection').and.returnValue(selection);
+      $scope.$digest();
+      expect(isolateScope.editFile.permModel).toEqual(permModel);
+    });
 
-    it('edit file contains a model for permissions edits',function() {});
+    it('editing filename renames the file',function() {
+      var filepath = '/file/path';
+      var filename = 'filename';
+      var newpath = '/volume1/file1';
 
-    it('editing filename renames the file',function() {});
+      var deferredRename = $q.defer();
+      deferredRename.resolve(newpath);
+      spyOn(FilesystemService,'rename').and.returnValue(deferredRename.promise);
+      var deferredGetFileDetails = $q.defer();
+      deferredGetFileDetails.resolve(fileDetails);
+      spyOn(FilesystemService,'getFileDetails').and.returnValue(deferredGetFileDetails.promise);
+      spyOn(FilebrowserService,'setSelectedFile').and.callThrough();
+
+      isolateScope.editFile = {name: filename};
+      isolateScope.selection = {selectedFile: {filepath: filepath}};
+      isolateScope.renameFile();
+      $scope.$digest();
+
+      expect(FilesystemService.rename.calls.argsFor(0)).toEqual([filepath,filename]);
+      expect(FilebrowserService.setSelectedFile.calls.argsFor(0)).toEqual([fileDetails]);
+    });
+
+    it('rename error shows alert and resets filename',function() {
+      var filepath = '/file/path';
+      var filename = 'filename';
+      var originalFilename = 'orig-filename';
+      var newpath = '/volume1/file1';
+
+      var deferredRename = $q.defer();
+      deferredRename.reject({},500);
+      spyOn(FilesystemService,'rename').and.returnValue(deferredRename.promise);
+      spyOn(AlertService,'addAlert').and.returnValue('uuid-4444');
+
+      isolateScope.editFile = {name: filename};
+      isolateScope.selection = {
+        selectedFile: {
+          filepath: filepath,
+          name: originalFilename
+        }
+      };
+      isolateScope.renameFile();
+      $scope.$digest();
+
+      expect(AlertService.addAlert.calls.count()).toEqual(1);
+      expect(isolateScope.editFile.name).toEqual(originalFilename);
+    });
 
     it('selecting a new group changes the group',function() {});
 
@@ -95,7 +185,7 @@ xdescribe('sandstone.filebrowser.fbFileDetails', function() {
   });
 
   describe('directive', function() {
-    var $compile, $scope, isolateScope, element, FilesystemService, FilebrowserService, BroadcastService, mockResolve;
+    var $compile, $scope, isolateScope, element;
 
     var getMatchesFromTpl = function(pattern,tpl) {
       var matches = tpl.match(pattern);
@@ -112,23 +202,9 @@ xdescribe('sandstone.filebrowser.fbFileDetails', function() {
       return tpl;
     };
 
-    beforeEach(inject(function(_$compile_,_$rootScope_,_$q_,_FilesystemService_,_FilebrowserService_,_BroadcastService_) {
-      mockResolve = function(data) {
-        var deferred = _$q_.defer();
-        deferred.resolve(data);
-        return deferred.promise;
-      };
-
-      FilesystemService = _FilesystemService_;
-      FilebrowserService = _FilebrowserService_;
-      BroadcastService = _BroadcastService_;
+    beforeEach(inject(function(_$compile_) {
       $compile = _$compile_;
-      $scope = _$rootScope_.$new();
-
-      // Called on load
-      spyOn(FilebrowserService,'getFilesystem').and.callFake(function() {
-        return mockResolve(fsDetails);
-      });
+      $scope = $rootScope.$new();
 
       element = $compile(baseElement)($scope);
       $scope.$digest();

@@ -7,7 +7,7 @@ angular.module('sandstone.filebrowser')
     restrict: 'A',
     scope: {},
     templateUrl: '/static/filebrowser/fb-filedetails/fb-filedetails.html',
-    controller: ['$scope', '$element', '$modal', 'FilesystemService', 'FilebrowserService', 'BroadcastService', function($scope,$element,$modal,FilesystemService,FilebrowserService,BroadcastService) {
+    controller: ['$scope', '$element', '$modal', 'FilesystemService', 'FilebrowserService', 'BroadcastService', 'AlertService', function($scope,$element,$modal,FilesystemService,FilebrowserService,BroadcastService,AlertService) {
       var self = $scope;
 
       var permStringToModel = function(perms) {
@@ -25,16 +25,20 @@ angular.module('sandstone.filebrowser')
         self.filesystem = newValue;
       });
 
-      self.editFile = {};
       self.selection = {};
+      self.editFile = {};
       $scope.$watch(function() {
         return FilebrowserService.getSelection();
       }, function(newValue) {
         self.selection = newValue;
         // Create a deep copy of the selected file for editing
-        self.editFile = angular.copy(newValue.selectedFile);
-        if (self.editFile) {
-          self.editFile.permModel = permStringToModel(self.editFile.permissions);
+        if(!self.selection.selectedFile) {
+          self.editFile = {};
+        } else {
+          self.editFile = angular.copy(newValue.selectedFile);
+          if (self.editFile) {
+            self.editFile.permModel = permStringToModel(self.editFile.permissions);
+          }
         }
       },true);
 
@@ -51,7 +55,22 @@ angular.module('sandstone.filebrowser')
               .then(function(file) {
                 angular.extend(self.selection.selectedFile,file);
                 FilebrowserService.setSelectedFile(self.selection.selectedFile);
+              },
+              function(data,status) {
+                AlertService.addAlert({
+                  type: 'warning',
+                  message: 'Failed to retrieve file details.'
+                });
+                FilebrowserService.setSelectedFile();
               });
+          },
+          function(data,status) {
+            // Show an alert and roll back changes to the editFile
+            AlertService.addAlert({
+              type: 'danger',
+              message: 'Error while trying to rename file.'
+            });
+            self.editFile.name = self.selection.selectedFile.name;
           });
       };
 
@@ -61,6 +80,14 @@ angular.module('sandstone.filebrowser')
           .then(function() {
             self.selection.selectedFile.group = self.editFile.group;
             FilebrowserService.setSelectedFile(self.selection.selectedFile);
+          },
+          function(data,status) {
+            // Show an alert and roll back changes to the editFile
+            AlertService.addAlert({
+              type: 'danger',
+              message: 'Error while trying to change group.'
+            });
+            self.editFile.group = self.selection.selectedFile.group;
           });
       }
 
@@ -79,6 +106,14 @@ angular.module('sandstone.filebrowser')
           .then(function() {
             self.selection.selectedFile.permissions = perms;
             FilebrowserService.setSelectedFile(self.selection.selectedFile);
+          },
+          function(data,status) {
+            // Show an alert and roll back changes to the editFile
+            AlertService.addAlert({
+              type: 'danger',
+              message: 'Error while trying to change permissions.'
+            });
+            self.editFile.permModel = permStringToModel(self.selection.selectedFile.permissions);
           });
       };
 
@@ -115,6 +150,12 @@ angular.module('sandstone.filebrowser')
           .copy(self.selection.selectedFile.filepath,basepath+suffix)
           .then(function(copypath) {
             FilebrowserService.setSelectedFile(self.selection.selectedFile);
+          },
+          function(data,status) {
+            AlertService.addAlert({
+              type: 'danger',
+              message: 'Failed to duplicate file.'
+            });
           });
       };
 
@@ -136,7 +177,13 @@ angular.module('sandstone.filebrowser')
         moveModalInstance.result.then(function (newpath) {
           FilesystemService
             .move(self.selection.selectedFile.filepath,newpath)
-            .then(function(filepath) {});
+            .then(function(filepath) {},
+            function(data,status) {
+              AlertService.addAlert({
+                type: 'danger',
+                message: 'Failed to move file.'
+              });
+            });
         });
       };
 
@@ -158,6 +205,12 @@ angular.module('sandstone.filebrowser')
             .delete(self.selection.selectedFile.filepath)
             .then(function() {
               FilebrowserService.setSelectedFile();
+            },
+            function(data,status) {
+              AlertService.addAlert({
+                type: 'danger',
+                message: 'Failed to delete file.'
+              });
             });
         }, function () {
           self.deleteModalInstance = null;
