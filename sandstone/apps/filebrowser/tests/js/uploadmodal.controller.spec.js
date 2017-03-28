@@ -1,6 +1,6 @@
 'use strict';
 
-xdescribe('sandstone.filebrowser.UploadModalInstanceCtrl', function() {
+describe('sandstone.filebrowser.UploadModalInstanceCtrl', function() {
   var FilesystemService;
   var FileUploader;
   var $controller;

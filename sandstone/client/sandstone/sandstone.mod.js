@@ -10,14 +10,14 @@ function getSandstoneModule(depList) {
         // Loads the BroadcastService
         BroadcastService.initialize();
     })
-    .factory('XsrfInjector',[function() {
-      var getCookie = function(name) {
-        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
-        return r ? r[1] : undefined;
-      };
+    .value('getXsrfCookie', function() {
+      var r = document.cookie.match("\\b_xsrf=([^;]*)\\b");
+      return r ? r[1] : undefined;
+    })
+    .factory('XsrfInjector',['getXsrfCookie', function(getXsrfCookie) {
       return {
         request: function(config) {
-          config.headers['X-XSRFToken'] = getCookie('_xsrf');
+          config.headers['X-XSRFToken'] = getXsrfCookie();
           return config;
         }
       };
