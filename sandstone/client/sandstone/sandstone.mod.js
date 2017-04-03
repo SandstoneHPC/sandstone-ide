@@ -2,6 +2,7 @@ function getSandstoneModule(depList) {
   return angular.module('sandstone', depList)
     .config(['$urlRouterProvider','$httpProvider', function($urlRouterProvider,$httpProvider) {
       $httpProvider.interceptors.push('XsrfInjector');
+      $httpProvider.interceptors.push('PrefixInjector');
       $httpProvider.interceptors.push('AuthInjector');
       $httpProvider.interceptors.push('ConnectionLostInjector');
       $urlRouterProvider.otherwise('/editor');
@@ -14,10 +15,27 @@ function getSandstoneModule(depList) {
       var r = document.cookie.match("\\b_xsrf=([^;]*)\\b");
       return r ? r[1] : undefined;
     })
+    .value('getUrlPrefix', function() {
+      // URLPREFIX is defined as a global via tornado.template
+      var prefix = (typeof URLPREFIX === 'undefined') ? '' : URLPREFIX;
+      return prefix;
+    })
     .factory('XsrfInjector',['getXsrfCookie', function(getXsrfCookie) {
       return {
         request: function(config) {
           config.headers['X-XSRFToken'] = getXsrfCookie();
+          return config;
+        }
+      };
+    }])
+    .factory('PrefixInjector',['$q','getUrlPrefix',function($q,getUrlPrefix) {
+      return {
+        request: function(config) {
+          // We only need to manipulate absolute paths.
+          // Relative paths will behave correctly.
+          if(config.url[0] === '/') {
+            config.url = getUrlPrefix() + config.url;
+          }
           return config;
         }
       };

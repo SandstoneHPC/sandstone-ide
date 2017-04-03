@@ -13,9 +13,12 @@ USE_SSL = False
 # SSL_CERT = '/path/to/.pem'
 # SSL_KEY = '/path/to/.pem'
 
-# OIDE Core settings
+# URL prefix (with no trailing slash) to be used by
+# this instance of Sandstone. Example: "/sandstone/user"
+URL_PREFIX = ''
+
 DEBUG = True
-LOGIN_URL = '/auth/login'
+
 COOKIE_SECRET = 'YouShouldProbablyChangeThisValueForYourProject'
 
 # App-Wide settings
