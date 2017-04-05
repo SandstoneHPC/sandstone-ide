@@ -66,8 +66,8 @@ class MainAppTestCase(unittest.TestCase):
         self.assertEqual(handlers[0]._path,'/static/core/%s')
         self.assertTrue(issubclass(handlers[0].handler_class,StaticFileHandler))
 
-        self.assertTrue('/' in hpaths)
-        i = hpaths.index('/')
+        self.assertTrue('/?' in hpaths)
+        i = hpaths.index('/?')
         self.assertTrue(issubclass(handlers[i].handler_class,MainHandler))
         self.assertTrue('/auth/login' in hpaths)
         i = hpaths.index('/auth/login')
@@ -92,8 +92,8 @@ class MainAppTestCase(unittest.TestCase):
         self.assertEqual(handlers[0]._path,'{}/static/core/%s'.format(TEST_PREFIX))
         self.assertTrue(issubclass(handlers[0].handler_class,StaticFileHandler))
 
-        self.assertTrue('{}/'.format(TEST_PREFIX) in hpaths)
-        i = hpaths.index('{}/'.format(TEST_PREFIX))
+        self.assertTrue('{}/?'.format(TEST_PREFIX) in hpaths)
+        i = hpaths.index('{}/?'.format(TEST_PREFIX))
         self.assertTrue(issubclass(handlers[i].handler_class,MainHandler))
         self.assertTrue('{}/auth/login'.format(TEST_PREFIX) in hpaths)
         i = hpaths.index('{}/auth/login'.format(TEST_PREFIX))
