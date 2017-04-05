@@ -12,7 +12,7 @@ import sandstone.lib.filesystem.urls as fs_api
 APP_SCHEMA = get_installed_app_urls()
 URL_SCHEMA = [
             (r"/auth/logout", LogoutHandler),
-            (r"/", MainHandler),
+            (r"/?", MainHandler),
             (r"/a/deps", DependencyHandler),
             (r"/a/state", StateHandler),
             (r"/messages", BroadcastHandler),

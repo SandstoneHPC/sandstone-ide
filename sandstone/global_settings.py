@@ -4,6 +4,9 @@ import sys
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 # sys.path.insert(0,PROJECT_DIR)
 
+# Port the Sandstone instance will listen on.
+PORT = '8888'
+
 # DB configuration
 DATABASE = os.path.join('$HOME','.sandstone','sandstone.db')
 

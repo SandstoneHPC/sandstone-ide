@@ -76,16 +76,21 @@ class SandstoneApplication(tornado.web.Application):
         return login_urlspec
 
 
-def main():
+def main(**kwargs):
+    port = kwargs.get('port', '8888')
+    prefix = kwargs.get('prefix', None)
+
+    if prefix: settings.URL_PREFIX = prefix
+
     application = SandstoneApplication(debug=settings.DEBUG)
     if settings.USE_SSL:
         ssl_server = tornado.httpserver.HTTPServer(application, ssl_options={
             "certfile": settings.SSL_CERT,
             "keyfile": settings.SSL_KEY,
         })
-        ssl_server.listen(int(os.environ.get('SANDSTONE_PORT', 8888)))
+        ssl_server.listen(int(port))
     else:
-        application.listen(int(os.environ.get('SANDSTONE_PORT', 8888)))
+        application.listen(int(port))
     tornado.ioloop.IOLoop.instance().start()
 
 

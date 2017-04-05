@@ -1,6 +1,7 @@
 import os
 import sys
 import imp
+import argparse
 
 import global_settings
 
@@ -51,4 +52,14 @@ settings = SettingsLoader()
 
 import app
 def run_server():
-    app.main()
+    parser = argparse.ArgumentParser(description='Run Sandstone IDE.')
+    parser.add_argument('--port')
+    parser.add_argument('--prefix')
+    args = parser.parse_args()
+
+    kwargs = {}
+
+    if args.port: kwargs['port'] = args.port
+    if args.prefix: kwargs['prefix'] = args.prefix
+
+    app.main(**kwargs)
