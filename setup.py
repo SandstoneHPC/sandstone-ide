@@ -17,7 +17,7 @@ setup(
     install_requires=[
         'peewee',
         'simplepam',
-        'tornado>=4',
+        'tornado==4.3',
         'terminado',
         'watchdog',
         'cerberus',
