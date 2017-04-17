@@ -24,6 +24,10 @@ URL_PREFIX = ''
 # is sandstone.lib.handlers.pam_auth.PAMLoginHandler
 LOGIN_HANDLER = 'sandstone.lib.handlers.pam_auth.PAMLoginHandler'
 
+# Handler used to logout of a Sandstone session. The default
+# is sandstone.lib.handlers.logout.LogoutHandler
+LOGOUT_HANDLER = 'sandstone.lib.handlers.logout.LogoutHandler'
+
 DEBUG = True
 
 COOKIE_SECRET = 'YouShouldProbablyChangeThisValueForYourProject'

@@ -32,20 +32,18 @@ class SandstoneApplication(tornado.web.Application):
                 (s_url, tornado.web.StaticFileHandler, {'path': spec[1]})
             )
 
-        # Build the URLSpec for the configured login handler
-        login_url = '/auth/login'
-        prefixed_login_url = url_prefix + login_url
-        login_urlspec = self._build_login_urlspec(login_url)
+        # Build the URLSpecs for the configured auth handlers
+        self._login_url = '/auth/login'
+        auth_urls = self._build_auth_urlspecs()
 
         handlers = [
                 (r"/static/core/(.*)", tornado.web.StaticFileHandler, {'path': STATIC_DIR}),
-                login_urlspec,
-            ] + app_static_handlers + URL_SCHEMA
+            ] + auth_urls + app_static_handlers + URL_SCHEMA
 
         app_settings = dict(
             project_dir=PROJECT_DIR,
             static_dir=STATIC_DIR,
-            login_url=prefixed_login_url,
+            login_url=url_prefix+self._login_url,
             cookie_secret = settings.COOKIE_SECRET,
             xsrf_cookies=True,
             ui_methods=ui_methods,
@@ -63,17 +61,30 @@ class SandstoneApplication(tornado.web.Application):
             # This is necessary for url reversals to work properly
             handler._path = prefix + handler._path
 
-    def _build_login_urlspec(self, url_path):
-        module_path = settings.LOGIN_HANDLER
+    def _get_handler_for_module(self, module_path):
         module_cmps = module_path.split('.')
         mod_path = '.'.join(module_cmps[:-1])
+        handler_class = module_cmps[-1]
         handler_class = module_cmps[-1]
 
         mod = __import__(mod_path, fromlist=[handler_class])
         handler = getattr(mod, handler_class)
+        return handler
 
-        login_urlspec = url(url_path,handler)
-        return login_urlspec
+    def _build_auth_urlspecs(self):
+        prefix = settings.URL_PREFIX
+
+        login_handler_mod = settings.LOGIN_HANDLER
+        logout_handler_mod = settings.LOGOUT_HANDLER
+        login_handler = self._get_handler_for_module(login_handler_mod)
+        logout_handler = self._get_handler_for_module(logout_handler_mod)
+
+        url_specs = []
+        login_urlspec = url(self._login_url,login_handler)
+        url_specs.append(login_urlspec)
+        logout_urlspec = url('/auth/logout',logout_handler)
+        url_specs.append(logout_urlspec)
+        return url_specs
 
 
 def main(**kwargs):
