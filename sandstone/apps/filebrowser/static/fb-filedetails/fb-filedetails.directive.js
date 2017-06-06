@@ -7,7 +7,7 @@ angular.module('sandstone.filebrowser')
     restrict: 'A',
     scope: {},
     templateUrl: '/static/filebrowser/fb-filedetails/fb-filedetails.html',
-    controller: ['$scope', '$element', '$modal', 'FilesystemService', 'FilebrowserService', 'BroadcastService', 'AlertService', function($scope,$element,$modal,FilesystemService,FilebrowserService,BroadcastService,AlertService) {
+    controller: ['$scope', '$element', '$uibModal', 'FilesystemService', 'FilebrowserService', 'BroadcastService', 'AlertService', function($scope,$element,$uibModal,FilesystemService,FilebrowserService,BroadcastService,AlertService) {
       var self = $scope;
 
       var permStringToModel = function(perms) {
@@ -38,6 +38,12 @@ angular.module('sandstone.filebrowser')
           self.editFile = angular.copy(newValue.selectedFile);
           if (self.editFile) {
             self.editFile.permModel = permStringToModel(self.editFile.permissions);
+
+            if (self.editFile.type === 'file') {
+              self.downloadUrl = FilesystemService.getFileDownloadLink(self.editFile.filepath);
+            } else {
+              self.downloadUrl = undefined;
+            }
           }
         }
       },true);
@@ -160,7 +166,7 @@ angular.module('sandstone.filebrowser')
       };
 
       self.move = function() {
-        var moveModalInstance = $modal.open({
+        self.moveModalInstance = $uibModal.open({
           templateUrl: '/static/filebrowser/templates/move-modal.html',
           backdrop: 'static',
           keyboard: false,
@@ -174,7 +180,7 @@ angular.module('sandstone.filebrowser')
           }
         });
 
-        moveModalInstance.result.then(function (newpath) {
+        self.moveModalInstance.result.then(function (newpath) {
           FilesystemService
             .move(self.selection.selectedFile.filepath,newpath)
             .then(function(filepath) {},
@@ -188,7 +194,7 @@ angular.module('sandstone.filebrowser')
       };
 
       self.delete = function() {
-        self.deleteModalInstance = $modal.open({
+        self.deleteModalInstance = $uibModal.open({
           templateUrl: '/static/filebrowser/templates/delete-modal.html',
           backdrop: 'static',
           keyboard: false,
