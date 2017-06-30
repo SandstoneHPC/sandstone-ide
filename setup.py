@@ -4,7 +4,7 @@ from setuptools import find_packages
 
 setup(
     name='sandstone',
-    version='1.1.0',
+    version='1.1.1',
     author=u'Zebula Sampedro',
     author_email='sampedro@colorado.edu',
     packages=find_packages(),
@@ -21,7 +21,8 @@ setup(
         'terminado',
         'watchdog',
         'cerberus',
-        'PyDispatcher'
+        'PyDispatcher',
+        'python-magic',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
